@@ -137,4 +137,46 @@
 		public Dictionary<string, PrizeAward> Weekend { get; set; }
 	}
 
+	public class AwardRegistry
+	{
+		public List<EventRecord> Records { get; set; }
+		public string LastUpdatedDateTime { get; set; }
+		public string LastUpdatedBy { get; set; }
+
+		public AwardRegistry(string lastUpdatedBy)
+		{
+			LastUpdatedBy = lastUpdatedBy;
+			LastUpdatedDateTime = DateTime.UtcNow.ToString("o"); // ISO 8601 format
+			Records = new List<EventRecord>();
+		}
+	}
+
+	public class EventRecord
+	{
+		public string Name { get; set; }
+		public List<RaceRecord> Races { get; set; }
+		public List<Award> WeekendAwards { get; set; }
+	}
+
+	public class RaceRecord
+	{
+		public string Timestamp { get; set; }
+		public int RaceId { get; set; }
+		public List<Award> Awards { get; set; }
+	}
+
+	public class Award
+	{
+		public string DriverName { get; set; }
+		public string SponsorName { get; set; }
+		public string Value { get; set; }
+
+		public Award(string driverName, string sponsorName, string value)
+		{
+			DriverName = driverName;
+			SponsorName = sponsorName;
+			Value = value;
+		}
+	}
+
 }
