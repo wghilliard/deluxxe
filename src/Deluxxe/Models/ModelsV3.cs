@@ -1,21 +1,31 @@
 namespace Deluxxe.ModelsV3;
 
-public class Driver
+public record RaceResult
 {
-    public required string FirstName;
-    public required string LastName;
+    public required Driver Driver;
+    public int Position;
+    // public required string Number;
+    public int RaceId;
+    public required string CarClass;
+    // gap from leader? it might be DNS
+    public required string Gap;
+}
+
+public record Driver
+{
+    public required string Name;
     public required string Email;
     public required string CarNumber;
 }
 
-public class WeekendPrizeDescription
+public record WeekendPrizeDescription
 {
-    public string SponsorName { get; set; }
-    public string Description { get; set; }
+    public required string SponsorName;
+    public required string Description;
 }
 
-public class WeekendPrizeWinner
+public record WeekendPrizeWinner
 {
-    public required WeekendPrizeDescription prizeDescription;
-    public required Driver driver;
+    public required WeekendPrizeDescription PrizeDescription;
+    public required Driver Driver;
 }
