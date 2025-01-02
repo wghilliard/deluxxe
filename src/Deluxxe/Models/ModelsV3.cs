@@ -18,14 +18,18 @@ public record Driver
     public required string CarNumber;
 }
 
-public record WeekendPrizeDescription
+public record PrizeDescription
 {
     public required string SponsorName;
     public required string Description;
 }
 
-public record WeekendPrizeWinner
+public record WeekendPrizeDescription : PrizeDescription;
+public record RacePrizeDescription : PrizeDescription;
+
+
+public record PrizeWinner<T>
 {
-    public required WeekendPrizeDescription PrizeDescription;
+    public required T PrizeDescription;
     public required Driver Driver;
 }

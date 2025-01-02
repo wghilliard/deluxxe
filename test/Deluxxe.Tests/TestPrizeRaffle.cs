@@ -6,9 +6,9 @@ using Xunit.Abstractions;
 
 namespace Deluxxe.Tests;
 
-public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
+public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
 {
-    private readonly ILogger<WeekendPrizeRaffle> _logger = XUnitLogger.CreateLogger<WeekendPrizeRaffle>(testOutputHelper);
+    private readonly ILogger<PrizeRaffle<PrizeDescription>> _logger = XUnitLogger.CreateLogger<PrizeRaffle<PrizeDescription>>(testOutputHelper);
 
     [Fact]
     public void DrawPrize_DriverHasSticker()
@@ -19,7 +19,7 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
             .WithStickers()
             .Build();
 
-        var winner = new WeekendPrizeRaffle(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
+        var winner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
         Assert.NotNull(winner);
         testOutputHelper.WriteLine(winner.ToString());
 
@@ -35,7 +35,7 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
             .WithNoStickers()
             .Build();
 
-        var winner = new WeekendPrizeRaffle(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
+        var winner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
         Assert.Null(winner);
     }
 
@@ -48,16 +48,52 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
             .WithStickers()
             .Build();
 
-        var firstWinner = new WeekendPrizeRaffle(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
+        var firstWinner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
         Assert.NotNull(firstWinner);
         testOutputHelper.WriteLine(firstWinner.ToString());
 
-        var previousWinners = new List<WeekendPrizeWinner>();
+        var previousWinners = new List<PrizeWinner<PrizeDescription>>();
         previousWinners.AddRange(given.PreviousWinners);
         previousWinners.Add(firstWinner);
 
-        var secondWinner = new WeekendPrizeRaffle(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, previousWinners);
+        var secondWinner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, previousWinners);
         Assert.Null(secondWinner);
+    }
+
+    [Fact]
+    public void DrawPrizes_AllPrizesAwarded()
+    {
+        var given = Given()
+            .WithDrivers(2)
+            .WithPrizeDescriptions(2, true)
+            .WithStickers()
+            .Build();
+
+        var (winners, notAwarded) = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrizes(given.PrizeDescriptions, given.RaceResults, given.PreviousWinners);
+        Assert.NotNull(winners);
+        Assert.Equal(2, winners.Count);
+
+        Assert.NotEqual(winners[0].Driver.Name, winners[1].Driver.Name);
+
+        Assert.NotNull(notAwarded);
+        Assert.Empty(notAwarded);
+    }
+
+    [Fact]
+    public void DrawPrizes_MorePrizesThanDrivers()
+    {
+        var given = Given()
+            .WithDrivers(1)
+            .WithPrizeDescriptions(2, true)
+            .WithStickers()
+            .Build();
+
+        var (winners, notAwarded) = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrizes(given.PrizeDescriptions, given.RaceResults, given.PreviousWinners);
+        Assert.NotNull(winners);
+        Assert.Single(winners);
+
+        Assert.NotNull(notAwarded);
+        Assert.Single(notAwarded);
     }
 
     TestHarnessBuilder Given()
@@ -67,21 +103,21 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
 
     public class TestHarnessBuilder
     {
-        private readonly IList<WeekendPrizeDescription> _prizeDescriptions = new List<WeekendPrizeDescription>();
+        private readonly IList<PrizeDescription> _prizeDescriptions = new List<PrizeDescription>();
         private IList<Driver> _drivers = new List<Driver>();
         private IDictionary<string, string> _driverToCarMap = new Dictionary<string, string>();
         private IDictionary<string, IDictionary<string, bool>> _carToStickerMap = new Dictionary<string, IDictionary<string, bool>>();
 
         private readonly IList<RaceResult> _raceResults = new List<RaceResult>();
-        private readonly IList<WeekendPrizeWinner> _previousWinners = new List<WeekendPrizeWinner>();
+        private readonly IList<PrizeWinner<PrizeDescription>> _previousWinners = new List<PrizeWinner<PrizeDescription>>();
 
         private readonly Random _random = new();
 
         private static readonly string[] MostSponsorNames = ["_425", "AAF", "Alpinestars", "Bimmerworld", "Griots", "Redline", "RoR"];
 
-        private static readonly WeekendPrizeDescription ToyoPrize = new()
+        private static readonly PrizeDescription ToyoPrize = new()
         {
-            SponsorName = "Toyo",
+            SponsorName = Constants.ToyoTiresSponsorName,
             Description = "4 toyo tires"
         };
 
@@ -90,7 +126,7 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
             .RuleFor(a => a.CarNumber, f => f.Random.Number(1, 100).ToString())
             .RuleFor(a => a.Email, f => f.Lorem.Word() + "@nyan.cat");
 
-        private readonly Faker<WeekendPrizeDescription> _prizeFaker = new Faker<WeekendPrizeDescription>()
+        private readonly Faker<PrizeDescription> _prizeFaker = new Faker<PrizeDescription>()
             .RuleFor(a => a.SponsorName, f => f.PickRandom(MostSponsorNames))
             .RuleFor(a => a.Description, f => f.Lorem.Sentence());
 
@@ -164,7 +200,7 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
 
             if (withToyo)
             {
-                _previousWinners.Add(new WeekendPrizeWinner
+                _previousWinners.Add(new PrizeWinner<PrizeDescription>
                 {
                     Driver = _drivers.First(),
                     PrizeDescription = ToyoPrize
@@ -179,7 +215,7 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
 
             for (var i = 0; i < count; i++)
             {
-                _previousWinners.Add(new WeekendPrizeWinner
+                _previousWinners.Add(new PrizeWinner<PrizeDescription>
                 {
                     Driver = _drivers[_random.Next(_drivers.Count)],
                     PrizeDescription = _prizeDescriptions[_random.Next(_prizeDescriptions.Count)]
@@ -223,12 +259,12 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
 
         public TestHarness Build()
         {
-            return new TestHarness()
+            return new TestHarness
             {
+                PrizeDescriptions = _prizeDescriptions as IReadOnlyList<PrizeDescription>,
                 Drivers = _drivers as IReadOnlyList<Driver>,
-                PrizeDescriptions = _prizeDescriptions as IReadOnlyList<WeekendPrizeDescription>,
                 RaceResults = _raceResults as IReadOnlyList<RaceResult>,
-                PreviousWinners = _previousWinners as IReadOnlyList<WeekendPrizeWinner>,
+                PreviousWinners = _previousWinners as IReadOnlyList<PrizeWinner<PrizeDescription>>,
                 DriverToCarMap = _driverToCarMap as IReadOnlyDictionary<string, string>,
                 CarToStickerMap = _carToStickerMap
             };
@@ -237,12 +273,12 @@ public class TestWeekendPrizeRaffle(ITestOutputHelper testOutputHelper)
 
     public record TestHarness
     {
-        public IReadOnlyList<WeekendPrizeDescription> PrizeDescriptions;
-        public IReadOnlyList<Driver> Drivers;
-        public IReadOnlyList<RaceResult> RaceResults;
-        public IReadOnlyList<WeekendPrizeWinner> PreviousWinners;
-        public IReadOnlyDictionary<string, string> DriverToCarMap;
-        public IDictionary<string, IDictionary<string, bool>> CarToStickerMap;
+        public required IReadOnlyList<PrizeDescription> PrizeDescriptions;
+        public required IReadOnlyList<Driver> Drivers;
+        public required IReadOnlyList<RaceResult> RaceResults;
+        public required IReadOnlyList<PrizeWinner<PrizeDescription>> PreviousWinners;
+        public required IReadOnlyDictionary<string, string> DriverToCarMap;
+        public required IDictionary<string, IDictionary<string, bool>> CarToStickerMap;
 
         public StickerManager GetStickerManager()
         {

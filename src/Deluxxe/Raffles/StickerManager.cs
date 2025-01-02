@@ -1,16 +1,7 @@
 namespace Deluxxe.Raffles;
 
-public class StickerManager
+public class StickerManager(IReadOnlyDictionary<string, string> driverToCarMap, IDictionary<string, IDictionary<string, bool>> carToStickerMap)
 {
-    private IReadOnlyDictionary<string, string> driverToCarMap;
-    private IDictionary<string, IDictionary<string, bool>> carToStickerMap;
-
-    public StickerManager(IReadOnlyDictionary<string, string> driverToCarMap, IDictionary<string, IDictionary<string, bool>> carToStickerMap)
-    {
-        this.driverToCarMap = driverToCarMap;
-        this.carToStickerMap = carToStickerMap;
-    }
-
     public bool DriverHasSticker(string driverName, string sponsorName)
     {
         if (!driverToCarMap.TryGetValue(driverName, out var car))
