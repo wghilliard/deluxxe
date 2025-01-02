@@ -8,6 +8,9 @@
         <RootNamespace>Deluxxe</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Deluxxe\Deluxxe.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Microsoft.Azure.Functions.Worker"/>
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http"/>
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk"/>
