@@ -13,7 +13,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Xunit.Abstractions;
 
-namespace Deluxxe.Tests;
+namespace Deluxxe.Tests.Raffles;
 
 public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
 {
@@ -280,7 +280,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
 
     public record TestHarness : IDisposable
     {
-        private static readonly ActivitySource Source = new("Deluxxe.Tests.TestPrizeRaffle");
+        private static readonly ActivitySource Source = new("Deluxxe.Tests.Raffles.TestPrizeRaffle");
         private TracerProvider? _tracerProvider;
         
         public required IReadOnlyList<PrizeDescription> PrizeDescriptions;
@@ -300,7 +300,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
             _tracerProvider = Sdk.CreateTracerProviderBuilder()
                 .SetResourceBuilder(ResourceBuilder.CreateDefault()
                     .AddService("RaffleService"))
-                .AddSource("Deluxxe.Tests.TestPrizeRaffle")
+                .AddSource("Deluxxe.Tests.Raffles.TestPrizeRaffle")
                 .AddConsoleExporter(opts => opts.Targets = ConsoleExporterOutputTargets.Debug)
                 .AddOtlpExporter(opts =>
                 {

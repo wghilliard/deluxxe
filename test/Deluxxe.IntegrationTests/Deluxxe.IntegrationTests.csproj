@@ -34,10 +34,4 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Deluxxe\Deluxxe.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <None Update="TestData\race-results.csv">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
 </Project>

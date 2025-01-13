@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{70E5CE74-5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deluxxe.Tests", "test\deluxxe.tests\Deluxxe.Tests.csproj", "{5F3B98AA-EDB3-4389-B113-296660DA08FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deluxxe.IntegrationTests", "test\Deluxxe.IntegrationTests\Deluxxe.IntegrationTests.csproj", "{2B10B1B1-52E3-4E6D-8DE0-B050E75B8D0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,8 +42,13 @@ Global
 		{7C951B15-BCF4-4D9F-BD85-09A45933A2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C951B15-BCF4-4D9F-BD85-09A45933A2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C951B15-BCF4-4D9F-BD85-09A45933A2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B10B1B1-52E3-4E6D-8DE0-B050E75B8D0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B10B1B1-52E3-4E6D-8DE0-B050E75B8D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B10B1B1-52E3-4E6D-8DE0-B050E75B8D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B10B1B1-52E3-4E6D-8DE0-B050E75B8D0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5F3B98AA-EDB3-4389-B113-296660DA08FE} = {70E5CE74-5DD1-4745-9318-D327058BF3EF}
+		{2B10B1B1-52E3-4E6D-8DE0-B050E75B8D0D} = {70E5CE74-5DD1-4745-9318-D327058BF3EF}
 	EndGlobalSection
 EndGlobal

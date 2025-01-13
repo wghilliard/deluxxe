@@ -1,6 +1,6 @@
 namespace Deluxxe.RaceResults;
 
-public class RaceResultsService
+public class RaceResultsService(SpeedHiveClient speedHiveClient)
 {
     
 }

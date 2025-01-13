@@ -35,7 +35,7 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
                 notAwarded.Add(description);
             }
         }
-        
+
         activity?.AddTag("awarded", prizeWinners.Count);
         activity?.AddTag("notAwarded", notAwarded.Count);
 
@@ -52,8 +52,11 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
 
                 candidateActivity?.AddTag("sponsor", description.SponsorName);
                 candidateActivity?.AddTag("driveName", raceResult.Driver.Name);
+
+                var stickerStatus = stickerManager.DriverHasSticker(raceResult.Driver.Name, description.SponsorName);
+                candidateActivity?.AddTag("stickerStatus", stickerStatus);
                 
-                if (!stickerManager.DriverHasSticker(raceResult.Driver.Name, description.SponsorName))
+                if (stickerStatus != StickerStatus.CarHasSticker)
                 {
                     logger.LogInformation("no sticker for this sponsor [driver={}] [description={}]", raceResult.Driver.Name, description);
 

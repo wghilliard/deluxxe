@@ -7,25 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Extensions;
 
-public class LoggerTraceListener : TraceListener
+public class LoggerTraceListener(ILoggerFactory loggerFactory) : TraceListener
 {
-    private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger _defaultLogger;
+    private readonly ILogger _defaultLogger = loggerFactory.CreateLogger(nameof(LoggerTraceListener));
     private readonly ConcurrentDictionary<string, ILogger> _loggers = new();
     private readonly StringBuilder _builder = new();
-
-    public LoggerTraceListener(ILoggerFactory loggerFactory)
-    {
-        _loggerFactory = loggerFactory;
-        _defaultLogger = loggerFactory.CreateLogger(nameof(LoggerTraceListener));
-    }
 
     public override void TraceEvent(TraceEventCache? eventCache, string source, TraceEventType eventType, int id, string? message)
     {
         var logger = _loggers.GetOrAdd(
             source,
             static (s, factory) => factory.CreateLogger(s),
-            _loggerFactory);
+            loggerFactory);
         
         logger.Log(MapLevel(eventType), message);
     }
@@ -36,7 +29,7 @@ public class LoggerTraceListener : TraceListener
         var logger = _loggers.GetOrAdd(
             source,
             static (s, factory) => factory.CreateLogger(s),
-            _loggerFactory);
+            loggerFactory);
         
         logger.Log(MapLevel(eventType), format, args ?? Array.Empty<object>());
     }

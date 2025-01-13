@@ -2,25 +2,23 @@ namespace Deluxxe.Raffles;
 
 public class StickerManager(IReadOnlyDictionary<string, string> driverToCarMap, IDictionary<string, IDictionary<string, bool>> carToStickerMap)
 {
-    public bool DriverHasSticker(string driverName, string sponsorName)
+    public StickerStatus DriverHasSticker(string driverName, string sponsorName)
     {
         if (!driverToCarMap.TryGetValue(driverName, out var car))
         {
-            throw new ArgumentException($"driver-to-car mapping for {driverName} does not exist");
+            return StickerStatus.DriverNotAssignedToCar;
         }
 
         if (!carToStickerMap.TryGetValue(car, out var carStickers))
         {
-            // the car-sticker mapping is missing for this car, need to update
-            return false;
+            return StickerStatus.StickerMapMissingForCar;
         }
 
         if (!carStickers.TryGetValue(sponsorName, out var carHasSticker))
         {
-            // the car-sticker mapping is missing this sponsor
-            return false;
+            return StickerStatus.StickerValueMissingForCar;
         }
 
-        return carHasSticker;
+        return carHasSticker ? StickerStatus.CarHasSticker : StickerStatus.CarDoesNotHaveSticker;
     }
 }
