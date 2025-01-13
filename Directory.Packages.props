@@ -6,7 +6,11 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="OpenTelemetry" Version="1.10.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.10.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.10.0" />
     
     <!-- test dependencies-->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />

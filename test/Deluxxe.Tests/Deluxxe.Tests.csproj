@@ -12,6 +12,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="xunit"/>
@@ -20,6 +21,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="bogus"/>
+
+        <PackageReference Include="OpenTelemetry.Exporter.Console" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
     </ItemGroup>
 
 

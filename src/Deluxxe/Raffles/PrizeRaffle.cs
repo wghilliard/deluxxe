@@ -1,13 +1,14 @@
+using System.Diagnostics;
 using Deluxxe.ModelsV3;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, StickerManager stickerManager)
+public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activitySource, StickerManager stickerManager)
     where T : PrizeDescription
 {
     public (IList<PrizeWinner<T>> winners, IList<T> notAwarded) DrawPrizes(
-        IReadOnlyList<T> descriptions, 
+        IReadOnlyList<T> descriptions,
         IReadOnlyList<RaceResult> weekendRaceResults,
         IReadOnlyList<PrizeWinner<T>> previousWinners)
     {
@@ -16,6 +17,7 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, StickerManager stick
 
         var allPreviousWinners = previousWinners.ToList();
         logger.LogInformation("start drawing prizes");
+        using var activity = activitySource.StartActivity("drawing-prizes");
         foreach (var description in descriptions)
         {
             logger.LogInformation("start drawing for [description={}]", description);
@@ -33,44 +35,61 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, StickerManager stick
                 notAwarded.Add(description);
             }
         }
+        
+        activity?.AddTag("awarded", prizeWinners.Count);
+        activity?.AddTag("notAwarded", notAwarded.Count);
 
         return (prizeWinners, notAwarded);
     }
 
     public PrizeWinner<T>? DrawPrize(T description, IReadOnlyList<RaceResult> weekendRaceResults, IReadOnlyList<PrizeWinner<T>> previousWinners)
     {
+        using var activity = activitySource.StartActivity("processing-candidates");
+
         var eligibleCandidates = weekendRaceResults.Where(raceResult =>
             {
+                using var candidateActivity = activitySource.StartActivity("processing-candidate");
+
+                candidateActivity?.AddTag("sponsor", description.SponsorName);
+                candidateActivity?.AddTag("driveName", raceResult.Driver.Name);
+                
                 if (!stickerManager.DriverHasSticker(raceResult.Driver.Name, description.SponsorName))
                 {
                     logger.LogInformation("no sticker for this sponsor [driver={}] [description={}]", raceResult.Driver.Name, description);
+
+                    candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.StickerNotPresent);
                     return false;
                 }
 
                 if (previousWinners.Any(winner => winner.Driver.Name == raceResult.Driver.Name))
                 {
                     logger.LogInformation("this driver has previously won [driver={}] [description={}]", raceResult.Driver.Name, description);
+                    candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.PreviouslyWonThisSession);
                     return false;
                 }
 
                 if (description.SponsorName == Constants.ToyoTiresSponsorName && HasWonToyo(raceResult.Driver.Name, previousWinners))
                 {
                     logger.LogInformation("this driver has previously won Toyo Tires[driver={}] [description={}]", raceResult.Driver.Name, description);
+                    candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.PreviouslyWonThisSeason);
+                    return false;
                 }
 
-                // && !awarded.Any(award => award.Winner.DriverName == drive.DriverName && award.Prize.SponsorName == description.SponsorName)
-
+                candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.None);
                 return true;
             }
         ).ToList();
 
         logger.LogInformation("eligible candidates {}", eligibleCandidates.Count);
+        activity?.AddTag("eligible-candidates", eligibleCandidates.Count);
+        activity?.AddTag("ineligible-candidates", weekendRaceResults.Count - eligibleCandidates.Count);
 
         if (eligibleCandidates.Count == 0)
         {
             // No candidates available, track the prize as not-awarded
             logger.LogInformation("no eligible candidates");
-
+            activity?.AddTag("status-message", "no eligible candidates");
+            activity?.SetStatus(ActivityStatusCode.Error);
             return null;
         }
 
@@ -79,6 +98,8 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, StickerManager stick
         var winner = eligibleCandidates[winnerIndex];
 
         logger.LogInformation("winner found [name={}]", winner.Driver.Name);
+        activity?.AddTag("prize-winner", winner.Driver.Name);
+        activity?.SetStatus(ActivityStatusCode.Ok);
 
         return new PrizeWinner<T>()
         {

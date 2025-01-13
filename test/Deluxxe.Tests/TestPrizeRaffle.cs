@@ -1,25 +1,32 @@
-﻿using Bogus;
+﻿using System.Diagnostics;
+using Bogus;
+using Deluxxe.Extensions;
 using Deluxxe.ModelsV3;
 using Deluxxe.Raffles;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Xunit.Abstractions;
 
 namespace Deluxxe.Tests;
 
 public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
 {
-    private readonly ILogger<PrizeRaffle<PrizeDescription>> _logger = XUnitLogger.CreateLogger<PrizeRaffle<PrizeDescription>>(testOutputHelper);
-
     [Fact]
     public void DrawPrize_DriverHasSticker()
     {
-        var given = Given()
+        using var given = Given()
             .WithDrivers(2)
             .WithPrizeDescriptions(2, true)
             .WithStickers()
             .Build();
 
-        var winner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
+        var winner = given.GetPrizeRaffle(testOutputHelper).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
         Assert.NotNull(winner);
         testOutputHelper.WriteLine(winner.ToString());
 
@@ -29,26 +36,26 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
     [Fact]
     public void DrawPrize_DriverDoesNotHaveSticker()
     {
-        var given = Given()
+        using var given = Given()
             .WithDrivers(2)
             .WithPrizeDescriptions(2, true)
             .WithNoStickers()
             .Build();
 
-        var winner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
+        var winner = given.GetPrizeRaffle(testOutputHelper).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
         Assert.Null(winner);
     }
 
     [Fact]
     public void DrawPrize_DriverPreviousWon()
     {
-        var given = Given()
+        using var given = Given()
             .WithDrivers(1)
             .WithPrizeDescriptions(1, true)
             .WithStickers()
             .Build();
 
-        var firstWinner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
+        var firstWinner = given.GetPrizeRaffle(testOutputHelper).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, given.PreviousWinners);
         Assert.NotNull(firstWinner);
         testOutputHelper.WriteLine(firstWinner.ToString());
 
@@ -56,20 +63,20 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
         previousWinners.AddRange(given.PreviousWinners);
         previousWinners.Add(firstWinner);
 
-        var secondWinner = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, previousWinners);
+        var secondWinner = given.GetPrizeRaffle(testOutputHelper).DrawPrize(given.PrizeDescriptions[0], given.RaceResults, previousWinners);
         Assert.Null(secondWinner);
     }
 
     [Fact]
     public void DrawPrizes_AllPrizesAwarded()
     {
-        var given = Given()
+        using var given = Given()
             .WithDrivers(2)
             .WithPrizeDescriptions(2, true)
             .WithStickers()
             .Build();
 
-        var (winners, notAwarded) = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrizes(given.PrizeDescriptions, given.RaceResults, given.PreviousWinners);
+        var (winners, notAwarded) = given.GetPrizeRaffle(testOutputHelper).DrawPrizes(given.PrizeDescriptions, given.RaceResults, given.PreviousWinners);
         Assert.NotNull(winners);
         Assert.Equal(2, winners.Count);
 
@@ -82,13 +89,13 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
     [Fact]
     public void DrawPrizes_MorePrizesThanDrivers()
     {
-        var given = Given()
+        using var given = Given()
             .WithDrivers(1)
             .WithPrizeDescriptions(2, true)
             .WithStickers()
             .Build();
 
-        var (winners, notAwarded) = new PrizeRaffle<PrizeDescription>(_logger, given.GetStickerManager()).DrawPrizes(given.PrizeDescriptions, given.RaceResults, given.PreviousWinners);
+        var (winners, notAwarded) = given.GetPrizeRaffle(testOutputHelper).DrawPrizes(given.PrizeDescriptions, given.RaceResults, given.PreviousWinners);
         Assert.NotNull(winners);
         Assert.Single(winners);
 
@@ -96,17 +103,17 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
         Assert.Single(notAwarded);
     }
 
-    TestHarnessBuilder Given()
+    private static TestHarnessBuilder Given()
     {
         return new TestHarnessBuilder();
     }
 
     public class TestHarnessBuilder
     {
-        private readonly IList<PrizeDescription> _prizeDescriptions = new List<PrizeDescription>();
-        private IList<Driver> _drivers = new List<Driver>();
+        private readonly List<PrizeDescription> _prizeDescriptions = [];
+        private List<Driver> _drivers = [];
         private IDictionary<string, string> _driverToCarMap = new Dictionary<string, string>();
-        private IDictionary<string, IDictionary<string, bool>> _carToStickerMap = new Dictionary<string, IDictionary<string, bool>>();
+        private readonly Dictionary<string, IDictionary<string, bool>> _carToStickerMap = new();
 
         private readonly IList<RaceResult> _raceResults = new List<RaceResult>();
         private readonly IList<PrizeWinner<PrizeDescription>> _previousWinners = new List<PrizeWinner<PrizeDescription>>();
@@ -271,8 +278,11 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
         }
     }
 
-    public record TestHarness
+    public record TestHarness : IDisposable
     {
+        private static readonly ActivitySource Source = new("Deluxxe.Tests.TestPrizeRaffle");
+        private TracerProvider? _tracerProvider;
+        
         public required IReadOnlyList<PrizeDescription> PrizeDescriptions;
         public required IReadOnlyList<Driver> Drivers;
         public required IReadOnlyList<RaceResult> RaceResults;
@@ -283,6 +293,44 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper)
         public StickerManager GetStickerManager()
         {
             return new StickerManager(DriverToCarMap, CarToStickerMap);
+        }
+
+        public PrizeRaffle<PrizeDescription> GetPrizeRaffle(ITestOutputHelper testOutputHelper, bool shouldLogTraces = true)
+        {
+            _tracerProvider = Sdk.CreateTracerProviderBuilder()
+                .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                    .AddService("RaffleService"))
+                .AddSource("Deluxxe.Tests.TestPrizeRaffle")
+                .AddConsoleExporter(opts => opts.Targets = ConsoleExporterOutputTargets.Debug)
+                .AddOtlpExporter(opts =>
+                {
+                    opts.Endpoint = new Uri("http://localhost:4317");
+                })
+                .Build();
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddOpenTelemetry(logging =>
+                {
+                    // logging.AddConsoleExporter();
+                    logging.AddOtlpExporter();
+                });
+                builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, XUnitLoggerProvider>());
+                builder.Services.AddSingleton(testOutputHelper);
+            });
+
+            if (shouldLogTraces)
+            {
+                Trace.Listeners.Add(new LoggerTraceListener(loggerFactory));
+            }
+
+            return new PrizeRaffle<PrizeDescription>(loggerFactory.CreateLogger<PrizeRaffle<PrizeDescription>>(), Source, GetStickerManager());
+        }
+
+        public void Dispose()
+        {
+            _tracerProvider?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
