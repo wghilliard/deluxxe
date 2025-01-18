@@ -23,6 +23,9 @@ builder.Services.AddHostedService<CliWorker>();
 builder.Services.AddDeluxxe();
 builder.Services.AddHttpClient();
 
+var completionTokenSource = new CancellationTokenSource();
+builder.Services.AddSingleton(new CompletionToken(completionTokenSource));
+
 var host = builder.Build();
 
-host.Run();
+await host.RunAsync(completionTokenSource.Token);

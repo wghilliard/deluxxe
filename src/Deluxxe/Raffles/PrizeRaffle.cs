@@ -1,20 +1,21 @@
 using System.Diagnostics;
-using Deluxxe.ModelsV3;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activitySource, IStickerManager stickerManager)
-    where T : PrizeDescription
+public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, int randomSeed)
 {
-    public (IList<PrizeWinner<T>> winners, IList<T> notAwarded) DrawPrizes(
-        IList<T> descriptions,
-        IList<RaceResult> weekendRaceResults,
-        IList<PrizeWinner<T>> previousWinners)
+    private readonly Random _random = new(randomSeed);
+
+    public DrawingResult DrawPrizes(
+        IList<PrizeDescription> descriptions,
+        IList<Driver> weekendRaceResults,
+        IList<PrizeWinner> previousWinners,
+        DrawingType drawingType)
     {
-        var prizeWinners = new List<PrizeWinner<T>>();
-        var notAwarded = new List<T>();
+        var prizeWinners = new List<PrizeWinner>();
+        var notAwarded = new List<PrizeDescription>();
 
         var allPreviousWinners = previousWinners.ToList();
         logger.LogInformation("start drawing prizes");
@@ -40,10 +41,16 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
         activity?.AddTag("awarded", prizeWinners.Count);
         activity?.AddTag("notAwarded", notAwarded.Count);
 
-        return (prizeWinners, notAwarded);
+        return new DrawingResult()
+        {
+            winners = prizeWinners,
+            notAwarded = notAwarded,
+            drawingType = drawingType,
+            randomSeed = randomSeed
+        };
     }
 
-    public PrizeWinner<T>? DrawPrize(T description, IList<RaceResult> weekendRaceResults, IList<PrizeWinner<T>> previousWinners)
+    public PrizeWinner? DrawPrize(PrizeDescription description, IList<Driver> weekendRaceResults, IList<PrizeWinner> previousWinners)
     {
         using var activity = activitySource.StartActivity("processing-candidates");
 
@@ -51,30 +58,30 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
             {
                 using var candidateActivity = activitySource.StartActivity("processing-candidate");
 
-                candidateActivity?.AddTag("sponsor", description.SponsorName);
-                candidateActivity?.AddTag("driveName", raceResult.Driver.Name);
+                candidateActivity?.AddTag("sponsor", description.sponsorName);
+                candidateActivity?.AddTag("driveName", raceResult.name);
 
-                var stickerStatus = stickerManager.DriverHasSticker(raceResult.Driver.CarNumber, description.SponsorName);
+                var stickerStatus = stickerManager.DriverHasSticker(raceResult.carNumber, description.sponsorName);
                 candidateActivity?.AddTag("stickerStatus", stickerStatus);
-                
+
                 if (stickerStatus != StickerStatus.CarHasSticker)
                 {
-                    logger.LogInformation("no sticker for this sponsor [driver={}] [description={}]", raceResult.Driver.Name, description);
+                    logger.LogInformation("no sticker for this sponsor [driver={}] [description={}]", raceResult.name, description);
 
                     candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.StickerNotPresent);
                     return false;
                 }
 
-                if (previousWinners.Any(winner => winner.Driver.Name == raceResult.Driver.Name))
+                if (previousWinners.Any(winner => winner.driver.name == raceResult.name))
                 {
-                    logger.LogInformation("this driver has previously won [driver={}] [description={}]", raceResult.Driver.Name, description);
+                    logger.LogInformation("this driver has previously won [driver={}] [description={}]", raceResult.name, description);
                     candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.PreviouslyWonThisSession);
                     return false;
                 }
 
-                if (description.SponsorName == Constants.ToyoTiresSponsorName && HasWonToyo(raceResult.Driver.Name, previousWinners))
+                if (description.sponsorName == Constants.ToyoTiresSponsorName && HasWonToyo(raceResult.name, previousWinners))
                 {
-                    logger.LogInformation("this driver has previously won Toyo Tires[driver={}] [description={}]", raceResult.Driver.Name, description);
+                    logger.LogInformation("this driver has previously won Toyo Tires[driver={}] [description={}]", raceResult.name, description);
                     candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.PreviouslyWonThisSeason);
                     return false;
                 }
@@ -97,26 +104,25 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
             return null;
         }
 
-        var random = new Random();
-        var winnerIndex = random.Next(eligibleCandidates.Count);
+        var winnerIndex = _random.Next(eligibleCandidates.Count);
         var winner = eligibleCandidates[winnerIndex];
 
-        logger.LogInformation("winner found [name={}]", winner.Driver.Name);
-        activity?.AddTag("prize-winner", winner.Driver.Name);
+        logger.LogInformation("winner found [name={}]", winner.name);
+        activity?.AddTag("prize-winner", winner.name);
         activity?.SetStatus(ActivityStatusCode.Ok);
 
-        return new PrizeWinner<T>()
+        return new PrizeWinner()
         {
-            Driver = winner.Driver,
-            PrizeDescription = description
+            driver = winner,
+            prizeDescription = description
         };
     }
 
-    private static bool HasWonToyo(string driverName, IList<PrizeWinner<T>> previousWinners)
+    private static bool HasWonToyo(string driverName, IList<PrizeWinner> previousWinners)
     {
         // Implement logic to check if the driver has won a Toyo prize
         return previousWinners
-            .Where(winner => winner.Driver.Name == driverName)
-            .Any(winner => winner.PrizeDescription.SponsorName == Constants.ToyoTiresSponsorName);
+            .Where(winner => winner.driver.name == driverName)
+            .Any(winner => winner.prizeDescription.sponsorName == Constants.ToyoTiresSponsorName);
     }
 }

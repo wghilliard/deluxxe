@@ -1,4 +1,3 @@
-using Deluxxe.ModelsV3;
 using Deluxxe.Raffles;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +11,7 @@ public static class HostExtensions
         services.AddSingleton<IStickerManager, InMemoryStickerManager>();
         services.AddSingleton<CsvStickerRecordProvider>();
         
-        services.AddTransient<PrizeRaffle<PrizeDescription>>();
+        services.AddTransient<PrizeRaffle>();
         return services;
     }
 }
