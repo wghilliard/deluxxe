@@ -10,6 +10,7 @@ public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
     private static readonly ActivitySource Source = new("Deluxxe.Tests.RaceResults.TestSpeedHiveClient");
 
     [Fact]
+    [Trait("Category", "http")]
     public async Task TestHttpClient_IsSuccess()
     {
         IServiceCollection services = new ServiceCollection();

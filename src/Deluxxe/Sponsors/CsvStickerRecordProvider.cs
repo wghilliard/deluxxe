@@ -66,7 +66,7 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
             value[SponsorConstants.Proformance] = ToBool(values[8]);
             value[SponsorConstants.RoR] = ToBool(values[9]);
             value[SponsorConstants.Redline] = ToBool(values[10]);
-            value[SponsorConstants.Toyo] = ToBool(values[11]);
+            value[SponsorConstants.ToyoTires] = ToBool(values[11]);
         }
 
         return new StickerParseResult()

@@ -10,5 +10,5 @@ public static class SponsorConstants
     public const string Proformance = "Proformance";
     public const string RoR = "Racer on Rails";
     public const string Redline = "Red Line Oil";
-    public const string Toyo = "Toyo Tires";
+    public const string ToyoTires = "Toyo Tires";
 }

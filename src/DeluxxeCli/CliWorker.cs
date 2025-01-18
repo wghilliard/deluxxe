@@ -15,6 +15,8 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
     protected override async Task ExecuteAsync(CancellationToken token)
     {
         activitySource.StartActivity("deluxxe-cli");
+        var season = DateTimeOffset.UtcNow.Year;
+
         // 1. get the sticker map
         var stickerProvider = serviceProvider.GetRequiredService<CsvStickerRecordProvider>();
         Stream stickerStream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping.csv"), FileMode.Open);
@@ -32,7 +34,6 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
             .Select(row => new Driver()
             {
                 name = row.name,
-                email = string.Empty,
                 carNumber = row.startNumber
             }).ToList();
 
@@ -63,7 +64,12 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
         var raffleLogger = serviceProvider.GetRequiredService<ILogger<PrizeRaffle>>();
         var satRaffle = new PrizeRaffle(raffleLogger, activitySource, stickerManager, (int)randomSeed);
 
-        var satDrawingResult = satRaffle.DrawPrizes(perRacePrizePrizeDescriptions, satRaceResults, previousWinners, DrawingType.Race);
+        var satDrawingResult = satRaffle.DrawPrizes(perRacePrizePrizeDescriptions, satRaceResults, previousWinners, new DrawingConfiguration()
+        {
+            DrawingType = DrawingType.Race,
+            season = season,
+            drawingId = "event/summer-into-spring/2609223/session/sat-race/8939601"
+        });
         // previousWinners.AddRange(satWinners);
         logger.LogInformation($"sat {satDrawingResult.winners.Count} won");
         logger.LogInformation($"sat {satDrawingResult.notAwarded.Count} not-awarded");
@@ -77,14 +83,18 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
             .Select(row => new Driver()
             {
                 name = row.name,
-                email = string.Empty,
                 carNumber = row.startNumber
             }).ToList();
 
         randomSeed = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var sunRaffle = new PrizeRaffle(raffleLogger, activitySource, stickerManager, (int)randomSeed);
 
-        var sunDrawingResult = sunRaffle.DrawPrizes(perRacePrizePrizeDescriptions, sunRaceResults, previousWinners, DrawingType.Race);
+        var sunDrawingResult = sunRaffle.DrawPrizes(perRacePrizePrizeDescriptions, sunRaceResults, previousWinners, new DrawingConfiguration()
+        {
+            DrawingType = DrawingType.Race,
+            season = season,
+            drawingId = "event/summer-into-spring/2609223/session/sun-race/8948355"
+        });
         // previousWinners.AddRange(sunWinners);
 
         logger.LogInformation($"sun {sunDrawingResult.winners.Count} won");
@@ -109,7 +119,12 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
 
         randomSeed = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var eventRaffle = new PrizeRaffle(raffleLogger, activitySource, stickerManager, (int)randomSeed);
-        var eventDrawingResult = eventRaffle.DrawPrizes(perEventPrizePrizeDescriptions, eventRaceResults, previousWinners, DrawingType.Event);
+        var eventDrawingResult = eventRaffle.DrawPrizes(perEventPrizePrizeDescriptions, eventRaceResults, previousWinners, new DrawingConfiguration()
+        {
+            DrawingType = DrawingType.Event,
+            season = season,
+            drawingId = "event/summer-into-spring/2609223"
+        });
         logger.LogInformation($"event {eventDrawingResult.winners.Count} won");
         logger.LogInformation($"event {eventDrawingResult.notAwarded.Count} not-awarded");
 

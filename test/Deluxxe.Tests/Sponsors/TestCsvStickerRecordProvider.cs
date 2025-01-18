@@ -38,7 +38,7 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
         Assert.Contains(pairs, pair => pair.Key == SponsorConstants.Proformance);
         Assert.Contains(pairs, pair => pair.Key == SponsorConstants.RoR);
         Assert.Contains(pairs, pair => pair.Key == SponsorConstants.Redline);
-        Assert.Contains(pairs, pair => pair.Key == SponsorConstants.Toyo);
+        Assert.Contains(pairs, pair => pair.Key == SponsorConstants.ToyoTires);
 
         var values = pairs.Select(pair => pair.Value).ToList().Distinct();
         Assert.Equal(2, values.Count());
