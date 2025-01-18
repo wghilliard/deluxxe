@@ -24,10 +24,6 @@ public record PrizeDescription
     public required string Description;
 }
 
-public record WeekendPrizeDescription : PrizeDescription;
-public record RacePrizeDescription : PrizeDescription;
-
-
 public record PrizeWinner<T>
 {
     public required T PrizeDescription;

@@ -1,4 +1,4 @@
-namespace Deluxxe.Raffles;
+namespace Deluxxe.Sponsors;
 
 public enum StickerStatus
 {

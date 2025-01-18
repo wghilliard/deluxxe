@@ -1,0 +1,61 @@
+{
+  "perRacePrizes": [
+    {
+      "name": "425 Motorsports",
+      "description": "$100 Gift Card",
+      "count": 1
+    },
+    {
+      "name": "Advanced Auto Fabrication",
+      "description": "$50 Gift Card",
+      "count": 2
+    },
+    {
+      "name": "Alpinestars",
+      "description": "TODO",
+      "count": 0
+    },
+    {
+      "name": "Bimmerworld",
+      "description": "$100 Gift Card",
+      "count": 2
+    },
+    {
+      "name": "Griots Garage",
+      "description": "$100 Gift Card",
+      "count": 1
+    },
+    {
+      "name": "Red Line Oil",
+      "description": "$100 Cash",
+      "count": 3
+    },
+    {
+      "name": "Red Line Oil",
+      "description": "$100 Gift Card",
+      "count": 1
+    },
+    {
+      "name": "Racer on Rails",
+      "description": "$50 Gas Card",
+      "count": 1
+    },
+    {
+      "name": "Racer on Rails",
+      "description": "$500 Toyo Bucks",
+      "count": 2
+    }
+  ],
+  "perEventPrizes": [
+    {
+      "name": "Red Line Oil",
+      "description": "$100 Gift Card",
+      "count": 1
+    },
+    {
+      "name": "Racer on Rails",
+      "description": "$200 Gift Card",
+      "count": 1
+    }
+  ]
+}

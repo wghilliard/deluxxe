@@ -1,16 +1,17 @@
 using System.Diagnostics;
 using Deluxxe.ModelsV3;
+using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activitySource, StickerManager stickerManager)
+public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activitySource, IStickerManager stickerManager)
     where T : PrizeDescription
 {
     public (IList<PrizeWinner<T>> winners, IList<T> notAwarded) DrawPrizes(
-        IReadOnlyList<T> descriptions,
-        IReadOnlyList<RaceResult> weekendRaceResults,
-        IReadOnlyList<PrizeWinner<T>> previousWinners)
+        IList<T> descriptions,
+        IList<RaceResult> weekendRaceResults,
+        IList<PrizeWinner<T>> previousWinners)
     {
         var prizeWinners = new List<PrizeWinner<T>>();
         var notAwarded = new List<T>();
@@ -42,7 +43,7 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
         return (prizeWinners, notAwarded);
     }
 
-    public PrizeWinner<T>? DrawPrize(T description, IReadOnlyList<RaceResult> weekendRaceResults, IReadOnlyList<PrizeWinner<T>> previousWinners)
+    public PrizeWinner<T>? DrawPrize(T description, IList<RaceResult> weekendRaceResults, IList<PrizeWinner<T>> previousWinners)
     {
         using var activity = activitySource.StartActivity("processing-candidates");
 
@@ -53,7 +54,7 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
                 candidateActivity?.AddTag("sponsor", description.SponsorName);
                 candidateActivity?.AddTag("driveName", raceResult.Driver.Name);
 
-                var stickerStatus = stickerManager.DriverHasSticker(raceResult.Driver.Name, description.SponsorName);
+                var stickerStatus = stickerManager.DriverHasSticker(raceResult.Driver.CarNumber, description.SponsorName);
                 candidateActivity?.AddTag("stickerStatus", stickerStatus);
                 
                 if (stickerStatus != StickerStatus.CarHasSticker)
@@ -111,7 +112,7 @@ public class PrizeRaffle<T>(ILogger<PrizeRaffle<T>> logger, ActivitySource activ
         };
     }
 
-    private static bool HasWonToyo(string driverName, IReadOnlyList<PrizeWinner<T>> previousWinners)
+    private static bool HasWonToyo(string driverName, IList<PrizeWinner<T>> previousWinners)
     {
         // Implement logic to check if the driver has won a Toyo prize
         return previousWinners

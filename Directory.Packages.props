@@ -1,24 +1,24 @@
 <Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-    <PackageVersion Include="OpenTelemetry" Version="1.10.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.10.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.10.0" />
-    <PackageVersion Include="TinyCsvParser" Version="2.7.1" />
-    <!-- test dependencies-->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="bogus" Version="35.6.1" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.3" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
-  </ItemGroup>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.0.0"/>
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0"/>
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0"/>
+        <PackageVersion Include="OpenTelemetry" Version="1.10.0"/>
+        <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.10.0"/>
+        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.10.0"/>
+        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0"/>
+        <!-- test dependencies-->
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+        <PackageVersion Include="Moq" Version="4.20.72"/>
+        <PackageVersion Include="bogus" Version="35.6.1"/>
+        <PackageVersion Include="coverlet.collector" Version="6.0.3"/>
+        <PackageVersion Include="xunit" Version="2.9.2"/>
+        <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0"/>
+    </ItemGroup>
 </Project>

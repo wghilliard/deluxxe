@@ -1,0 +1,766 @@
+{
+  "type": "Race",
+  "bestLaps": {
+    "field": {
+      "resultClass": "EIP",
+      "name": "Jeffery Remfert",
+      "fieldFinishPosition": 1
+    },
+    "classes": [
+      {
+        "resultClass": "EIP",
+        "name": "Jeffery Remfert",
+        "fieldFinishPosition": 1
+      },
+      {
+        "resultClass": "CT4",
+        "name": "Matthew King",
+        "fieldFinishPosition": 4
+      },
+      {
+        "resultClass": "NCW",
+        "name": "Oliver Salmon",
+        "fieldFinishPosition": 21
+      },
+      {
+        "resultClass": "SM",
+        "name": "Eric Weller",
+        "fieldFinishPosition": 11
+      },
+      {
+        "resultClass": "CSM",
+        "name": "Daniel Shaw",
+        "fieldFinishPosition": 16
+      }
+    ]
+  },
+  "rows": [
+    {
+      "totalTime": "22:41.987",
+      "bestTime": "1:33.790",
+      "bestLap": 12,
+      "bestSpeed": 86.363,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "position": 1,
+      "startNumber": "40",
+      "name": "Jeffery Remfert",
+      "resultClass": "EIP",
+      "positionInClass": 1,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "1752746"
+        }
+      }
+    },
+    {
+      "totalTime": "22:52.072",
+      "bestTime": "1:36.316",
+      "bestLap": 8,
+      "bestSpeed": 84.098,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "10.085",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "10.085",
+        "lapsBehind": 0
+      },
+      "position": 2,
+      "startNumber": "162",
+      "name": "Adam Achepohl",
+      "resultClass": "EIP",
+      "positionInClass": 2,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-a8fd92b39cda4d46ac690ad72f7e79e0",
+        "productCategory": 0,
+        "chip": {
+          "code": "8295265"
+        }
+      }
+    },
+    {
+      "totalTime": "22:52.223",
+      "bestTime": "1:36.631",
+      "bestLap": 11,
+      "bestSpeed": 83.824,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "10.236",
+        "lapsBehind": 0
+      },
+      "position": 3,
+      "startNumber": "18",
+      "name": "Coley Tipton",
+      "resultClass": "CT4",
+      "positionInClass": 1,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "8289086"
+        }
+      }
+    },
+    {
+      "totalTime": "22:52.383",
+      "bestTime": "1:36.618",
+      "bestLap": 7,
+      "bestSpeed": 83.835,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "0.160",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "10.396",
+        "lapsBehind": 0
+      },
+      "position": 4,
+      "startNumber": "16",
+      "name": "Matthew King",
+      "resultClass": "CT4",
+      "positionInClass": 2,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "14437812"
+        }
+      }
+    },
+    {
+      "totalTime": "23:10.296",
+      "bestTime": "1:37.757",
+      "bestLap": 5,
+      "bestSpeed": 82.859,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "18.073",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "28.309",
+        "lapsBehind": 0
+      },
+      "position": 5,
+      "startNumber": "191",
+      "name": "Guy Berry",
+      "resultClass": "CT4",
+      "positionInClass": 3,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-87b11ea9c04143c4b1463849721c9b68",
+        "productCategory": 0,
+        "chip": {
+          "code": "99180"
+        }
+      }
+    },
+    {
+      "totalTime": "23:36.347",
+      "bestTime": "1:39.711",
+      "bestLap": 8,
+      "bestSpeed": 81.235,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "44.124",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "54.360",
+        "lapsBehind": 0
+      },
+      "position": 6,
+      "startNumber": "19",
+      "name": "Mark LaCombe",
+      "resultClass": "CT4",
+      "positionInClass": 4,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-48e91af68a1c4c9a8014986cd98bb1e4",
+        "productCategory": 0,
+        "chip": {
+          "code": "2686460"
+        }
+      }
+    },
+    {
+      "totalTime": "23:42.772",
+      "bestTime": "1:39.560",
+      "bestLap": 10,
+      "bestSpeed": 81.358,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "50.549",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "1:00.785",
+        "lapsBehind": 0
+      },
+      "position": 7,
+      "startNumber": "287",
+      "name": "John Houlihan",
+      "resultClass": "CT4",
+      "positionInClass": 5,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-adfeae3bf71341549e46fca85c225f0f",
+        "productCategory": 0,
+        "chip": {
+          "code": "10450510"
+        }
+      }
+    },
+    {
+      "totalTime": "24:01.453",
+      "bestTime": "1:39.907",
+      "bestLap": 13,
+      "bestSpeed": 81.075,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "1:09.230",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "1:19.466",
+        "lapsBehind": 0
+      },
+      "position": 8,
+      "startNumber": "150",
+      "name": "Lester Soman",
+      "resultClass": "CT4",
+      "positionInClass": 6,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-89a7f5aca5f64535a951252ec299121d",
+        "productCategory": 0,
+        "chip": {
+          "code": "1396989"
+        }
+      }
+    },
+    {
+      "totalTime": "24:02.647",
+      "bestTime": "1:41.153",
+      "bestLap": 11,
+      "bestSpeed": 80.077,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "1:20.660",
+        "lapsBehind": 0
+      },
+      "position": 9,
+      "startNumber": "51",
+      "name": "Preston Johnston",
+      "resultClass": "NCW",
+      "positionInClass": 1,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "1423653"
+        }
+      }
+    },
+    {
+      "totalTime": "24:13.419",
+      "bestTime": "1:41.774",
+      "bestLap": 11,
+      "bestSpeed": 79.588,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "10.772",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "1:31.432",
+        "lapsBehind": 0
+      },
+      "position": 10,
+      "startNumber": "168",
+      "name": "Grayson Hilliard",
+      "resultClass": "NCW",
+      "positionInClass": 2,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-fee46dbc16df4da7ad0a8f8c973a563d",
+        "productCategory": 100,
+        "chip": {
+          "code": "13375400"
+        }
+      }
+    },
+    {
+      "totalTime": "24:17.292",
+      "bestTime": "1:42.242",
+      "bestLap": 8,
+      "bestSpeed": 79.224,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "1:35.305",
+        "lapsBehind": 0
+      },
+      "position": 11,
+      "startNumber": "681",
+      "name": "Eric Weller",
+      "resultClass": "SM",
+      "positionInClass": 1,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "10332529"
+        }
+      }
+    },
+    {
+      "totalTime": "24:23.566",
+      "bestTime": "1:42.763",
+      "bestLap": 8,
+      "bestSpeed": 78.822,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "6.274",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "1:41.579",
+        "lapsBehind": 0
+      },
+      "position": 12,
+      "startNumber": "21",
+      "name": "Martin Rohde",
+      "resultClass": "SM",
+      "positionInClass": 2,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-cfba27f6211748358321a0719aa434c7",
+        "productCategory": 0,
+        "chip": {
+          "code": "181441"
+        }
+      }
+    },
+    {
+      "totalTime": "22:54.313",
+      "bestTime": "1:43.848",
+      "bestLap": 5,
+      "bestSpeed": 77.999,
+      "numberOfLaps": 13,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 1
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 1
+      },
+      "position": 13,
+      "startNumber": "84",
+      "name": "Brendan McIntire",
+      "resultClass": "NCW",
+      "positionInClass": 3,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "5343453"
+        }
+      }
+    },
+    {
+      "totalTime": "22:57.232",
+      "bestTime": "1:43.909",
+      "bestLap": 7,
+      "bestSpeed": 77.953,
+      "numberOfLaps": 13,
+      "diffClass": {
+        "timeDifference": "2.919",
+        "lapsBehind": 1
+      },
+      "difference": {
+        "timeDifference": "2.919",
+        "lapsBehind": 1
+      },
+      "position": 14,
+      "startNumber": "275",
+      "name": "Cody Roaderick",
+      "resultClass": "NCW",
+      "positionInClass": 4,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "763374"
+        }
+      }
+    },
+    {
+      "totalTime": "23:16.375",
+      "bestTime": "1:44.134",
+      "bestLap": 11,
+      "bestSpeed": 77.784,
+      "numberOfLaps": 13,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 1
+      },
+      "difference": {
+        "timeDifference": "22.062",
+        "lapsBehind": 1
+      },
+      "position": 15,
+      "startNumber": "172",
+      "name": "Xiaoxi 'Cathy' Zhang",
+      "resultClass": "CT4",
+      "positionInClass": 7,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-4ccc1c22529349febd11d967f6df304f",
+        "productCategory": 0,
+        "chip": {
+          "code": "10528888"
+        }
+      }
+    },
+    {
+      "totalTime": "23:19.701",
+      "bestTime": "1:46.081",
+      "bestLap": 8,
+      "bestSpeed": 76.357,
+      "numberOfLaps": 13,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "25.388",
+        "lapsBehind": 1
+      },
+      "position": 16,
+      "startNumber": "68",
+      "name": "Daniel Shaw",
+      "resultClass": "CSM",
+      "positionInClass": 1,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "1859173"
+        }
+      }
+    },
+    {
+      "totalTime": "23:56.833",
+      "bestTime": "1:47.539",
+      "bestLap": 13,
+      "bestSpeed": 75.322,
+      "numberOfLaps": 13,
+      "diffClass": {
+        "timeDifference": "1:02.520",
+        "lapsBehind": 1
+      },
+      "difference": {
+        "timeDifference": "1:02.520",
+        "lapsBehind": 1
+      },
+      "position": 17,
+      "startNumber": "75",
+      "name": "Andy Dutton",
+      "resultClass": "NCW",
+      "positionInClass": 5,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-3460e04623804ea2bb53909a85055289",
+        "productCategory": 0,
+        "chip": {
+          "code": "1950144"
+        }
+      }
+    },
+    {
+      "totalTime": "24:08.733",
+      "bestTime": "1:46.664",
+      "bestLap": 4,
+      "bestSpeed": 75.939,
+      "numberOfLaps": 13,
+      "diffClass": {
+        "timeDifference": "1:14.420",
+        "lapsBehind": 1
+      },
+      "difference": {
+        "timeDifference": "1:14.420",
+        "lapsBehind": 1
+      },
+      "position": 18,
+      "startNumber": "106",
+      "name": "Justin Elsner",
+      "resultClass": "NCW",
+      "positionInClass": 6,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "2944677"
+        }
+      }
+    },
+    {
+      "totalTime": "23:15.757",
+      "bestTime": "1:49.606",
+      "bestLap": 2,
+      "bestSpeed": 73.901,
+      "numberOfLaps": 12,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 2
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 2
+      },
+      "position": 19,
+      "startNumber": "12",
+      "name": "Travis Kuhl",
+      "resultClass": "NCW",
+      "positionInClass": 7,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "8584514"
+        }
+      }
+    },
+    {
+      "totalTime": "17:55.649",
+      "bestTime": "1:35.967",
+      "bestLap": 6,
+      "bestSpeed": 84.404,
+      "numberOfLaps": 11,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 3
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 3
+      },
+      "position": 20,
+      "startNumber": "57",
+      "name": "Duane Martinsen",
+      "resultClass": "EIP",
+      "positionInClass": 3,
+      "additionalFields": [],
+      "isQualified": true,
+      "status": "Normal",
+      "user": {
+        "mstUserId": "MYLAPS-GA-29c403be013f44fdaf90cc063ef261c1",
+        "productCategory": 0,
+        "chip": {
+          "code": "1338612"
+        }
+      }
+    },
+    {
+      "totalTime": "10:24.704",
+      "bestTime": "1:38.926",
+      "bestLap": 2,
+      "bestSpeed": 81.879,
+      "numberOfLaps": 4,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "position": 21,
+      "startNumber": "105",
+      "name": "Oliver Salmon",
+      "resultClass": "NCW",
+      "positionInClass": 0,
+      "additionalFields": [],
+      "isQualified": false,
+      "status": "DNF",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "1089372"
+        }
+      }
+    },
+    {
+      "totalTime": "5.186",
+      "bestTime": "0.000",
+      "bestLap": 0,
+      "bestSpeed": 0.0,
+      "numberOfLaps": 0,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "position": 22,
+      "startNumber": "377",
+      "name": "Tim Julian",
+      "resultClass": "NCW",
+      "positionInClass": 0,
+      "additionalFields": [],
+      "isQualified": false,
+      "status": "DNF",
+      "user": {
+        "mstUserId": null,
+        "productCategory": 0,
+        "chip": {
+          "code": "1718543"
+        }
+      }
+    },
+    {
+      "totalTime": "0.000",
+      "bestTime": "0.000",
+      "bestLap": 0,
+      "bestSpeed": 0.0,
+      "numberOfLaps": 0,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "position": 23,
+      "startNumber": "8",
+      "name": "Terry Overdiek",
+      "resultClass": "EIP",
+      "positionInClass": 0,
+      "additionalFields": [],
+      "isQualified": false,
+      "status": "DNS",
+      "user": {
+        "mstUserId": "MYLAPS-GA-80e64f2f097a47c9b8bd9f3f88b331c1",
+        "productCategory": 100,
+        "chip": {
+          "code": "11546647"
+        }
+      }
+    },
+    {
+      "totalTime": "23:05.193",
+      "bestTime": "1:37.603",
+      "bestLap": 8,
+      "bestSpeed": 82.989,
+      "numberOfLaps": 14,
+      "diffClass": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "difference": {
+        "timeDifference": "0.000",
+        "lapsBehind": 0
+      },
+      "position": 24,
+      "startNumber": "79",
+      "name": "Lyall Edey",
+      "resultClass": "CT4",
+      "positionInClass": 0,
+      "additionalFields": [],
+      "isQualified": false,
+      "status": "DQ",
+      "user": {
+        "mstUserId": "MYLAPS-GA-7de1f7b052c94f38be121185f056e8d2",
+        "productCategory": 0,
+        "chip": {
+          "code": "3520567"
+        }
+      }
+    }
+  ],
+  "classes": [
+    "EIP",
+    "CT4",
+    "NCW",
+    "SM",
+    "CSM"
+  ]
+}

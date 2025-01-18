@@ -36,8 +36,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestData\race-results.csv">
+      <Content Include="TestData/*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      </Content>
     </ItemGroup>
 </Project>

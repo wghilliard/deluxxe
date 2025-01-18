@@ -14,33 +14,26 @@ public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
     [Fact]
     public async Task TestCsvParser_IsSuccess()
     {
-        Stream stream = new FileStream(Path.Combine("TestData", "race-results.csv"), FileMode.Open);
+        Stream stream = new FileStream(Path.Combine("TestData", "race-results.json"), FileMode.Open);
         var client = new SpeedHiveClient(Source, new Mock<IHttpClientFactory>().Object);
 
-        var results = (await client.ParseAsync(Task.FromResult(stream))).ToList();
+        var results = (await client.ParseJsonAsync(Task.FromResult(stream))).ToList();
 
         Assert.True(results.Count > 0);
 
         foreach (var result in results)
         {
             Assert.NotNull(result);
-            Assert.False(string.IsNullOrEmpty(result.Position));
-            Assert.False(string.IsNullOrEmpty(result.StartNumber));
-            Assert.False(string.IsNullOrEmpty(result.Competitor));
-            Assert.False(string.IsNullOrEmpty(result.Class));
-            Assert.False(string.IsNullOrEmpty(result.TotalTime));
-            Assert.False(string.IsNullOrEmpty(result.Diff));
-            Assert.False(string.IsNullOrEmpty(result.Laps));
-            Assert.False(string.IsNullOrEmpty(result.BestLap));
-            Assert.False(string.IsNullOrEmpty(result.BestLapNumber));
-            Assert.False(string.IsNullOrEmpty(result.BestSpeed));
+            Assert.False(string.IsNullOrEmpty(result.name));
+            Assert.False(string.IsNullOrEmpty(result.status));
+            Assert.False(string.IsNullOrEmpty(result.resultClass));
         }
     }
 
     [Fact]
     public async Task TestHttpClient_IsSuccess()
     {
-        Stream stream = new FileStream(Path.Combine("TestData", "race-results.csv"), FileMode.Open);
+        Stream stream = new FileStream(Path.Combine("TestData", "race-results.json"), FileMode.Open);
 
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
         var response = new HttpResponseMessage
@@ -61,7 +54,7 @@ public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
         mockFactory.Setup(m => m.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
         var client = new SpeedHiveClient(Source, mockFactory.Object);
-        var results = (await client.GetResultsFromUrl(new Uri("http://localhost"))).ToList();
+        var results = (await client.GetResultsFromJsonUrl(new Uri("http://localhost"))).ToList();
         Assert.True(results.Count > 0);
     }
 
@@ -70,9 +63,9 @@ public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
     [InlineData("https://speedhive.mylaps.com/sessions/8939619?one=two")]
     public Task TestHttpClientUriTransform_IsSuccess(string input)
     {
-        var output = SpeedHiveClient.GetApiUrlFromUiUrl(new Uri(input));
+        var output = SpeedHiveClient.GetApiJsonUrlFromUiUrl(new Uri(input));
 
-        Assert.Equal(new Uri("https://eventresults-api.speedhive.com/api/v0.2.3/eventresults/sessions/8939619/csv"), output);
+        Assert.Equal(new Uri("https://eventresults-api.speedhive.com/api/v0.2.3/eventresults/sessions/8939619/classification"), output);
         return Task.CompletedTask;
     }
 }

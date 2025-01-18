@@ -1,0 +1,1 @@
+1. does each drive in a weekend contribute to odds of winning a weekend prize?
