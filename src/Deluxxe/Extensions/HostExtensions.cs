@@ -9,8 +9,9 @@ public static class HostExtensions
     public static IServiceCollection AddDeluxxe(this IServiceCollection services)
     {
         services.AddSingleton<IStickerManager, InMemoryStickerManager>();
-        services.AddSingleton<CsvStickerRecordProvider>();
-        
+        services.AddSingleton<IStickerRecordProvider, CsvStickerRecordProvider>();
+        services.AddSingleton<StickerProviderUriResolver>();
+
         services.AddTransient<PrizeRaffle>();
         return services;
     }

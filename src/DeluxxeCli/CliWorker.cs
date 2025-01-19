@@ -15,18 +15,16 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
 {
     protected override async Task ExecuteAsync(CancellationToken token)
     {
-        activitySource.StartActivity("deluxxe-cli");
+        using var activity = activitySource.StartActivity("deluxxe-cli");
         var season = DateTimeOffset.UtcNow.Year;
         const string eventName = "IRDC - Spring into Summer";
         const string eventId = "2609223";
         var eventResourceIdBuilder = new ResourceIdBuilder().WithSeason(season).WithEvent(eventName, eventId);
 
         // 1. get the sticker map
-        var stickerProvider = serviceProvider.GetRequiredService<CsvStickerRecordProvider>();
-        Stream stickerStream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping.csv"), FileMode.Open);
-        var stickerResult = await stickerProvider.ParseCsvAsync(Task.FromResult(stickerStream));
-        var stickerManager = new InMemoryStickerManager(stickerResult.CarToStickerMapping);
-
+        var uri = new Uri("file://Data/car-to-sticker-mapping.csv");
+        var stickerProvider = serviceProvider.GetRequiredService<StickerProviderUriResolver>();
+        var stickerManager = await stickerProvider.GetStickerManager(uri);
 
         // 2. get the race results
         Stream satRaceResultsStream = new FileStream(Path.Combine("Data", "sat-race-results.json"), FileMode.Open);

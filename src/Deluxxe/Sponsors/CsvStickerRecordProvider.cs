@@ -3,14 +3,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Sponsors;
 
-public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<CsvStickerRecordProvider> logger)
+public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<CsvStickerRecordProvider> logger) : IStickerRecordProvider
 {
+    public async Task<StickerParseResult?> Get(Uri uri)
+    {
+        if (!uri.IsFile || !uri.LocalPath.EndsWith("csv"))
+        {
+            return null;
+        }
+
+        await using Stream stickerStream = new FileStream(uri.LocalPath, FileMode.Open);
+        return await ParseCsvAsync(Task.FromResult(stickerStream));
+    }
+
     public async Task<StickerParseResult> ParseCsvAsync(Task<Stream> input)
     {
         using var activity = activitySource.StartActivity("parse-cars-csv");
         using var reader = new StreamReader(input.Result);
-        
-        var driverToCarMap = new Dictionary<string, string>();
+
         var carToStickerMap = new Dictionary<string, IDictionary<string, bool>>();
 
         var index = 0;
@@ -44,13 +54,7 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
                 continue;
             }
 
-            var driverName = values[1].Trim();
             var carNumber = values[0].Trim();
-            if (!driverToCarMap.TryAdd(driverName, carNumber))
-            {
-                rowActivity?.AddTag("warning", $"duplicate detected driverName={driverName}");
-                logger.LogWarning("duplicate detected driverName={driverName}", driverName);
-            }
 
             if (!carToStickerMap.TryGetValue(carNumber, out var value))
             {
@@ -71,7 +75,6 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
 
         return new StickerParseResult()
         {
-            DriverToCarMapping = driverToCarMap,
             CarToStickerMapping = carToStickerMap
         };
     }
