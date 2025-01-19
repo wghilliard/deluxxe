@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Deluxxe.RaceResults;
 using Deluxxe.Raffles;
+using Deluxxe.Resources;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,9 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
     {
         activitySource.StartActivity("deluxxe-cli");
         var season = DateTimeOffset.UtcNow.Year;
+        const string eventName = "IRDC - Spring into Summer";
+        const string eventId = "2609223";
+        var eventResourceIdBuilder = new ResourceIdBuilder().WithSeason(season).WithEvent(eventName, eventId);
 
         // 1. get the sticker map
         var stickerProvider = serviceProvider.GetRequiredService<CsvStickerRecordProvider>();
@@ -38,6 +42,7 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
             }).ToList();
 
         // 3. get the prize descriptions
+        // todo - validate the prize json
         Stream sponsorRecordStream = new FileStream(Path.Combine("Data", "prize-descriptions.json"), FileMode.Open);
         using var sponsorRecordStreamReader = new StreamReader(sponsorRecordStream, Encoding.UTF8);
         var sponsorRecords = JsonSerializer.Deserialize<SponsorRecords>(await sponsorRecordStreamReader.ReadToEndAsync(token));
@@ -51,6 +56,7 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
                 {
                     description = record.description,
                     sponsorName = record.name,
+                    sku = record.sku
                 });
             }
         }
@@ -68,7 +74,8 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
         {
             DrawingType = DrawingType.Race,
             season = season,
-            drawingId = "event/summer-into-spring/2609223/session/sat-race/8939601"
+            resourceIdBuilder = eventResourceIdBuilder.Copy().WithRaceDrawing("saturday-race-1", "1")
+            // resourceIdBuilder = "season/2025/event/summer-into-spring/2609223/session/sat-race/8939601"
         });
         // previousWinners.AddRange(satWinners);
         logger.LogInformation($"sat {satDrawingResult.winners.Count} won");
@@ -93,7 +100,7 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
         {
             DrawingType = DrawingType.Race,
             season = season,
-            drawingId = "event/summer-into-spring/2609223/session/sun-race/8948355"
+            resourceIdBuilder = eventResourceIdBuilder.Copy().WithRaceDrawing("sunday-race-1", "1")
         });
         // previousWinners.AddRange(sunWinners);
 
@@ -113,6 +120,7 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
                 {
                     description = record.description,
                     sponsorName = record.name,
+                    sku = record.sku
                 });
             }
         }
@@ -123,7 +131,7 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
         {
             DrawingType = DrawingType.Event,
             season = season,
-            drawingId = "event/summer-into-spring/2609223"
+            resourceIdBuilder = eventResourceIdBuilder.Copy().WithEventDrawing("3")
         });
         logger.LogInformation($"event {eventDrawingResult.winners.Count} won");
         logger.LogInformation($"event {eventDrawingResult.notAwarded.Count} not-awarded");
@@ -131,7 +139,9 @@ public class CliWorker(ActivitySource activitySource, ILogger<CliWorker> logger,
         var raffleResult = new RaffleResult()
         {
             drawings = [satDrawingResult, sunDrawingResult, eventDrawingResult],
-            eventId = "summer-into-spring"
+            resourceId = eventResourceIdBuilder.Build(),
+            name = ResourceIdBuilder.NormalizeEventName(eventName),
+            season = season
         };
 
         await new JsonRaffleResultWriter(serviceProvider.GetRequiredService<ILogger<JsonRaffleResultWriter>>(), "~/tmp").WriteAsync(raffleResult, token);

@@ -115,8 +115,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         {
             driver = winner,
             prizeDescription = description,
-            seasonAwarded = drawingConfig.season,
-            eventId = drawingConfig.drawingId,
+            resourceId = drawingConfig.resourceIdBuilder.Copy().WithPrize(description.sponsorName, description.sku).Build(),
         };
     }
 

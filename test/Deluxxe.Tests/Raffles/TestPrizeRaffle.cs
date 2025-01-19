@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Deluxxe.Raffles;
+using Deluxxe.Resources;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -123,6 +124,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         {
             sponsorName = SponsorConstants.ToyoTires,
             description = "4 toyo tires",
+            sku = "1"
         };
 
         private readonly Faker<Driver> _driverFaker = new Faker<Driver>()
@@ -207,8 +209,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
                 {
                     driver = _drivers.First(),
                     prizeDescription = ToyoPrize,
-                    seasonAwarded = DateTimeOffset.UtcNow.Year,
-                    eventId = "nyan-counting"
+                    resourceId = "nyan-counting"
                 });
                 count--;
             }
@@ -224,8 +225,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
                 {
                     driver = _drivers[_random.Next(_drivers.Count)],
                     prizeDescription = _prizeDescriptions[_random.Next(_prizeDescriptions.Count)],
-                    seasonAwarded = DateTimeOffset.UtcNow.Year,
-                    eventId = "nyan-counting"
+                    resourceId = "nyan-counting"
                 });
             }
 
@@ -283,18 +283,24 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         public required IList<PrizeWinner> PreviousWinners;
         public required IDictionary<string, IDictionary<string, bool>> CarToStickerMap;
 
-        public DrawingConfiguration eventConfig = new DrawingConfiguration()
+        public DrawingConfiguration eventConfig = new()
         {
             DrawingType = DrawingType.Event,
             season = 101,
-            drawingId = "summer-into-spring"
+            resourceIdBuilder = new ResourceIdBuilder()
+                .WithSeason(2025)
+                .WithEvent("spring-into-summer", "123")
+                .WithEventDrawing("1")
         };
 
-        public DrawingConfiguration raceConfig = new DrawingConfiguration()
+        public DrawingConfiguration raceConfig = new()
         {
             DrawingType = DrawingType.Event,
             season = 101,
-            drawingId = "summer-into-spring-race-N"
+            resourceIdBuilder = new ResourceIdBuilder()
+                .WithSeason(2025)
+                .WithEvent("spring-into-summer", "123")
+                .WithRaceDrawing("saturday-race", "1")
         };
 
         public IStickerManager GetStickerManager()
