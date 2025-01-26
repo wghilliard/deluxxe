@@ -17,7 +17,8 @@ public class RaffleCliWorker(
     IServiceProvider serviceProvider,
     CompletionToken completionToken,
     RaffleRunConfiguration runConfiguration,
-    RaffleService raffleService)
+    RaffleService raffleService,
+    RaceResultsService raceResultsService)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
@@ -55,17 +56,18 @@ public class RaffleCliWorker(
         foreach (var result in runConfiguration.raceResults)
         {
             // 4. get the race results
-            Stream raceResultsStream = new FileStream(FileUriParser.Parse(result.raceResultUri)!.FullName, FileMode.Open);
-            using var raceResultsStreamReader = new StreamReader(raceResultsStream, Encoding.UTF8);
-            var raceResultResponse = JsonSerializer.Deserialize<RaceResultResponse>(await raceResultsStreamReader.ReadToEndAsync(token));
-            var raceResults = raceResultResponse!.rows
-                .Where(row => row.status != "DNS")
-                .Where(row => row.resultClass == "PRO3")
-                .Select(row => new Driver
-                {
-                    name = row.name,
-                    carNumber = row.startNumber
-                }).ToList();
+            // Stream raceResultsStream = new FileStream(FileUriParser.Parse(result.raceResultUri)!.FullName, FileMode.Open);
+            // using var raceResultsStreamReader = new StreamReader(raceResultsStream, Encoding.UTF8);
+            // var raceResultResponse = JsonSerializer.Deserialize<RaceResultResponse>(await raceResultsStreamReader.ReadToEndAsync(token));
+            // var raceResults = raceResultResponse!.rows
+            //     .Where(row => row.status != "DNS")
+            //     .Where(row => row.resultClass == "PRO3")
+            //     .Select(row => new Driver
+            //     {
+            //         name = row.name,
+            //         carNumber = row.startNumber
+            //     }).ToList();
+            var raceResults = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
             eventRaceResults.AddRange(raceResults);
 
             var raffleConfiguration = new RaffleConfiguration
@@ -122,6 +124,7 @@ public class RaffleCliWorker(
             resourceId = eventResourceIdBuilder.Build(),
             name = ResourceIdBuilder.NormalizeEventName(runConfiguration.eventName),
             season = runConfiguration.season,
+            configurationName = runConfiguration.name
         };
 
         await new JsonRaffleResultWriter(serviceProvider.GetRequiredService<ILogger<JsonRaffleResultWriter>>(), 

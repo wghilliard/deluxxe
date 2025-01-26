@@ -1,3 +1,4 @@
+using Deluxxe.RaceResults;
 using Deluxxe.Raffles;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ public static class HostExtensions
         services.AddSingleton<IStickerRecordProvider, CsvStickerRecordProvider>();
         services.AddSingleton<StickerProviderUriResolver>();
         services.AddSingleton<RaffleService>();
+        services.AddSingleton<RaceResultsService>();
+        services.AddSingleton<SpeedHiveClient>();
 
         services.AddTransient<PrizeRaffle>();
         return services;

@@ -1,4 +1,5 @@
 {
+  "name": "2025-spring-into-summer-pro3-started",
   "season": "2025",  
   "eventName": "IRDC - Spring into Summer",
   "eventId": "2609223",
@@ -16,6 +17,11 @@
       "raceResultUri": "file://local/Data/sun-race-results.json"
     }
   ],
+  "previousResultsPattern": "file://local/Data/previousResults/*",
+  "conditions": {
+    "status": "!DNS",
+    "resultClass": "PRO3"
+  },
   "outputDirectory": ".",
   "shouldOverwrite": true
 }

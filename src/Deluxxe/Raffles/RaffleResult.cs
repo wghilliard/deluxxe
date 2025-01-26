@@ -6,6 +6,7 @@ public record RaffleResult
     public required string resourceId { get; init; }
     public required string name { get; init; }
     public required string season { get; init; }
+    public required string configurationName { get; init; }
 }
 
 public record DrawingResult
