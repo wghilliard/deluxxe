@@ -5,7 +5,7 @@ public record RaffleResult
     public required IList<DrawingResult> drawings { get; init; }
     public required string resourceId { get; init; }
     public required string name { get; init; }
-    public required int season { get; init; }
+    public required string season { get; init; }
 }
 
 public record DrawingResult
@@ -14,6 +14,12 @@ public record DrawingResult
     public required IList<PrizeDescription> notAwarded { get; init; }
     public required DrawingType drawingType { get; init; }
     public required int randomSeed { get; init; }
+}
+
+public record DrawingRoundResult
+{
+    public required IList<PrizeWinner> winners { get; init; }
+    public required IList<PrizeDescription> notAwarded { get; init; }
 }
 
 public record Driver

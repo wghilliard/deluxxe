@@ -70,7 +70,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             .WithStickers()
             .Build();
 
-        var result = GetPrizeRaffle(given).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig);
+        var result = GetPrizeRaffle(given).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, 1);
         Assert.NotNull(result.winners);
         Assert.Equal(2, result.winners.Count);
 
@@ -89,7 +89,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             .WithStickers()
             .Build();
 
-        var result = GetPrizeRaffle(given).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig);
+        var result = GetPrizeRaffle(given).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, 1);
         Assert.NotNull(result.winners);
         Assert.Single(result.winners);
 
@@ -104,7 +104,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
     private PrizeRaffle GetPrizeRaffle(TestHarness testHarness)
     {
-        return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(), activitySource, testHarness.GetStickerManager(), 1337);
+        return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(), activitySource, testHarness.GetStickerManager(), new Random(1337));
     }
 
     public class TestHarnessBuilder
@@ -133,7 +133,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         private readonly Faker<PrizeDescription> _prizeFaker = new Faker<PrizeDescription>()
             .RuleFor(a => a.sponsorName, f => f.PickRandom(MostSponsorNames))
-            .RuleFor(a => a.description, f => f.Lorem.Sentence());
+            .RuleFor(a => a.description, f => f.Lorem.Sentence())
+            .RuleFor(a => a.sku, f => f.Lorem.Word());
 
         public TestHarnessBuilder WithDrivers(int count, bool allDriversStarted = true, bool allCarsMapped = true)
         {
@@ -286,21 +287,21 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         public DrawingConfiguration eventConfig = new()
         {
             DrawingType = DrawingType.Event,
-            season = 101,
-            resourceIdBuilder = new ResourceIdBuilder()
-                .WithSeason(2025)
+            Season = "2025",
+            ResourceIdBuilder = new ResourceIdBuilder()
+                .WithSeason("2025")
                 .WithEvent("spring-into-summer", "123")
-                .WithEventDrawing("1")
+                .WithEventDrawingRound("1")
         };
 
         public DrawingConfiguration raceConfig = new()
         {
             DrawingType = DrawingType.Event,
-            season = 101,
-            resourceIdBuilder = new ResourceIdBuilder()
-                .WithSeason(2025)
+            Season = "2025",
+            ResourceIdBuilder = new ResourceIdBuilder()
+                .WithSeason("2025")
                 .WithEvent("spring-into-summer", "123")
-                .WithRaceDrawing("saturday-race", "1")
+                .WithRaceDrawingRound("saturday-race", "1234", "1")
         };
 
         public IStickerManager GetStickerManager()

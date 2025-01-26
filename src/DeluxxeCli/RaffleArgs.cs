@@ -1,6 +1,6 @@
 namespace DeluxxeCli;
 
-public class Args
+public class RaffleArgs
 {
     
 }

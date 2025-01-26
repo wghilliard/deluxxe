@@ -4,15 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, int randomSeed)
+public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, Random random)
 {
-    private readonly Random _random = new(randomSeed);
-
-    public DrawingResult DrawPrizes(
+    public DrawingRoundResult DrawPrizes(
         IList<PrizeDescription> descriptions,
         IList<Driver> weekendRaceResults,
         IList<PrizeWinner> previousWinners,
-        DrawingConfiguration drawingConfig)
+        DrawingConfiguration drawingConfig,
+        int round)
     {
         var prizeWinners = new List<PrizeWinner>();
         var notAwarded = new List<PrizeDescription>();
@@ -20,6 +19,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         var allPreviousWinners = previousWinners.ToList();
         logger.LogInformation("start drawing prizes");
         using var activity = activitySource.StartActivity("drawing-prizes");
+        activity?.AddTag("round", round);
         foreach (var description in descriptions)
         {
             logger.LogInformation("start drawing for [description={}]", description);
@@ -41,12 +41,10 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         activity?.AddTag("awarded", prizeWinners.Count);
         activity?.AddTag("notAwarded", notAwarded.Count);
 
-        return new DrawingResult()
+        return new DrawingRoundResult()
         {
             winners = prizeWinners,
-            notAwarded = notAwarded,
-            drawingType = drawingConfig.DrawingType,
-            randomSeed = randomSeed
+            notAwarded = notAwarded
         };
     }
 
@@ -104,7 +102,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
             return null;
         }
 
-        var winnerIndex = _random.Next(eligibleCandidates.Count);
+        var winnerIndex = random.Next(eligibleCandidates.Count);
         var winner = eligibleCandidates[winnerIndex];
 
         logger.LogInformation("winner found [name={}]", winner.name);
@@ -115,7 +113,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         {
             driver = winner,
             prizeDescription = description,
-            resourceId = drawingConfig.resourceIdBuilder.Copy().WithPrize(description.sponsorName, description.sku).Build(),
+            resourceId = drawingConfig.ResourceIdBuilder.Copy().WithPrize(description.sponsorName, description.sku).Build(),
         };
     }
 

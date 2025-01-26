@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Deluxxe.Raffles;
 
+[JsonConverter(typeof(JsonStringEnumConverter<DrawingType>))]
 public enum DrawingType
 {
-    Race = 0,
-    Event = 1
+    Race,
+    Event
 }

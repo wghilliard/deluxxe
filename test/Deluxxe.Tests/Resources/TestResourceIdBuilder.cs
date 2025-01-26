@@ -10,34 +10,34 @@ public class TestResourceIdBuilder(ITestOutputHelper testOutputHelper)
     public void TestResourceIdBuilder_WorksForRace()
     {
         var resourceId = new ResourceIdBuilder()
-            .WithSeason(2025)
+            .WithSeason("2025")
             .WithEvent("spring-into-summer", "123")
-            .WithRaceDrawing("saturday-group-1", "1")
+            .WithRaceDrawingRound("saturday-group-1", "1234", "1")
             .WithPrize("toyo", "1")
             .Build();
 
-        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/race/saturday-group-1/1/prize/toyo/1", resourceId);
+        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/race/saturday-group-1/1234/round/1/prize/toyo/1", resourceId);
     }
 
     [Fact]
     public void TestResourceIdBuilder_WorksForEvent()
     {
         var resourceId = new ResourceIdBuilder()
-            .WithSeason(2025)
+            .WithSeason("2025")
             .WithEvent("spring-into-summer", "123")
-            .WithEventDrawing("1")
+            .WithEventDrawingRound("1")
             .WithPrize("toyo", "1")
             .Build();
 
-        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/event/1/prize/toyo/1", resourceId);
+        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/event/round/1/prize/toyo/1", resourceId);
     }
 
     [Fact]
     public void TestResourceIdBuilder_ThrowsWhenSeasonSetTwice()
     {
         Assert.Throws<ArgumentException>(() => new ResourceIdBuilder()
-            .WithSeason(2025)
-            .WithSeason(2026));
+            .WithSeason("2025")
+            .WithSeason("2026"));
     }
 
     [Fact]
@@ -51,9 +51,9 @@ public class TestResourceIdBuilder(ITestOutputHelper testOutputHelper)
     public void TestResourceIdBuilder_Copy()
     {
         var builderOne = new ResourceIdBuilder()
-            .WithSeason(2025)
+            .WithSeason("2025")
             .WithEvent("spring-into-summer", "123")
-            .WithRaceDrawing("saturday-group-1", "1");
+            .WithRaceDrawingRound("saturday-group-1", "1234", "1");
 
         var builderTwo = builderOne.Copy();
 

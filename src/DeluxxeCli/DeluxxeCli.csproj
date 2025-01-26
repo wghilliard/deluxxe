@@ -15,5 +15,11 @@
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"/>
         <PackageReference Include="OpenTelemetry.Exporter.Console"/>
         <PackageReference Include="OpenTelemetry"/>
+        <PackageReference Include="System.CommandLine"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="local-test-config.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 </Project>

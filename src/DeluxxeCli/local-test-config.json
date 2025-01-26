@@ -1,0 +1,21 @@
+{
+  "season": "2025",  
+  "eventName": "IRDC - Spring into Summer",
+  "eventId": "2609223",
+  "stickerMapUri": "file://local/Data/car-to-sticker-mapping.csv",
+  "prizeDescriptionUri": "file://local/Data/prize-descriptions.json",
+  "raceResults": [
+    {
+      "sessionName": "sat",
+      "sessionId": "8939601",
+      "raceResultUri": "file://local/Data/sat-race-results.json"
+    },
+    {
+      "sessionName": "sun",
+      "sessionId": "8948355",
+      "raceResultUri": "file://local/Data/sun-race-results.json"
+    }
+  ],
+  "outputDirectory": ".",
+  "shouldOverwrite": true
+}

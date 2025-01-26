@@ -11,6 +11,7 @@ public static class HostExtensions
         services.AddSingleton<IStickerManager, InMemoryStickerManager>();
         services.AddSingleton<IStickerRecordProvider, CsvStickerRecordProvider>();
         services.AddSingleton<StickerProviderUriResolver>();
+        services.AddSingleton<RaffleService>();
 
         services.AddTransient<PrizeRaffle>();
         return services;

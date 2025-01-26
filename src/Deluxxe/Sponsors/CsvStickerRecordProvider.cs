@@ -12,7 +12,9 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
             return null;
         }
 
-        await using Stream stickerStream = new FileStream(uri.LocalPath, FileMode.Open);
+        var fileHandle = FileUriParser.Parse(uri);
+
+        await using Stream stickerStream = new FileStream(fileHandle!.FullName, FileMode.Open);
         return await ParseCsvAsync(Task.FromResult(stickerStream));
     }
 

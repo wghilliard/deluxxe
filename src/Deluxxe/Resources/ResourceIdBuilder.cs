@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Deluxxe.Raffles;
 
 namespace Deluxxe.Resources;
@@ -9,7 +8,13 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
     private ResourcePartsTracker _tracker = tracker;
     private const char Delimiter = '/';
 
-    public ResourceIdBuilder WithSeason(int season)
+    private const string SeasonSegmentName = "season";
+    private const string EventSegmentName = "event";
+    private const string DrawingSegmentName = "drawing";
+    private const string RoundSegmentName = "round";
+    private const string PrizeSegmentName = "prize";
+
+    public ResourceIdBuilder WithSeason(string season)
     {
         if (!_tracker.HasFlag(ResourcePartsTracker.None))
         {
@@ -22,8 +27,8 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         }
 
         _tracker |= ResourcePartsTracker.Season & ~ResourcePartsTracker.None;
-        _parts.Add("season");
-        _parts.Add(Sanitize(season.ToString()));
+        _parts.Add(SeasonSegmentName);
+        _parts.Add(Sanitize(season));
 
         return this;
     }
@@ -41,24 +46,24 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         }
 
         _tracker |= ResourcePartsTracker.Event;
-        _parts.Add("event");
+        _parts.Add(EventSegmentName);
         _parts.Add(NormalizeEventName(eventName));
         _parts.Add(Sanitize(eventId));
 
         return this;
     }
 
-    public ResourceIdBuilder WithEventDrawing(string drawingId)
+    public ResourceIdBuilder WithEventDrawingRound(string roundId)
     {
-        return WithDrawing(string.Empty, drawingId, DrawingType.Event);
+        return WithDrawingRound(string.Empty, string.Empty, roundId, DrawingType.Event);
     }
 
-    public ResourceIdBuilder WithRaceDrawing(string sessionName, string drawingId)
+    public ResourceIdBuilder WithRaceDrawingRound(string sessionName, string sessionId, string roundId)
     {
-        return WithDrawing(sessionName, drawingId, DrawingType.Race);
+        return WithDrawingRound(sessionName, sessionId, roundId, DrawingType.Race);
     }
 
-    private ResourceIdBuilder WithDrawing(string sessionName, string drawingId, DrawingType drawingType)
+    private ResourceIdBuilder WithDrawingRound(string sessionName, string sessionId, string roundId, DrawingType drawingType)
     {
         if (_tracker.HasFlag(ResourcePartsTracker.Drawing))
         {
@@ -76,14 +81,20 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         }
 
         _tracker |= ResourcePartsTracker.Drawing;
-        _parts.Add("drawing");
+        _parts.Add(DrawingSegmentName);
         _parts.Add(Sanitize(drawingType.ToString()));
         if (!string.IsNullOrWhiteSpace(sessionName))
         {
             _parts.Add(Sanitize(sessionName));
         }
 
-        _parts.Add(Sanitize(drawingId));
+        if (!string.IsNullOrWhiteSpace(sessionId))
+        {
+            _parts.Add(Sanitize(sessionId));
+        }
+
+        _parts.Add(RoundSegmentName);
+        _parts.Add(Sanitize(roundId));
 
         return this;
     }
@@ -96,7 +107,7 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         }
 
         _tracker |= ResourcePartsTracker.Prize;
-        _parts.Add("prize");
+        _parts.Add(PrizeSegmentName);
         _parts.Add(Sanitize(sponsorName));
         _parts.Add(Sanitize(prizeSku));
 

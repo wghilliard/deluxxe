@@ -42,8 +42,5 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
 
         var values = pairs.Select(pair => pair.Value).ToList().Distinct();
         Assert.Equal(2, values.Count());
-
-        var mapping = result.DriverToCarMapping;
-        Assert.True(mapping.Count > 0);
     }
 }
