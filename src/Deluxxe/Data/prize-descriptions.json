@@ -49,10 +49,11 @@
       "sku": "1"
     },
     {
-      "name": "Racer on Rails",
+      "name": "Toyo Tires",
       "description": "$500 Toyo Bucks",
       "count": 2,
-      "sku": "2"
+      "sku": "2",
+      "seasonalLimit": 1
     }
   ],
   "perEventPrizes": [
@@ -60,7 +61,7 @@
       "name": "Red Line Oil",
       "description": "$100 Gift Card",
       "count": 1,
-      "sku": "2"
+      "sku": "3"
     },
     {
       "name": "Racer on Rails",

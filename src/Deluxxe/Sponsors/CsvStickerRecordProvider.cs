@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Deluxxe.IO;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Sponsors;
@@ -12,7 +13,7 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
             return null;
         }
 
-        var fileHandle = FileUriParser.Parse(uri);
+        var fileHandle = FileUriParser.Parse(uri).First();
 
         await using Stream stickerStream = new FileStream(fileHandle!.FullName, FileMode.Open);
         return await ParseCsvAsync(Task.FromResult(stickerStream));

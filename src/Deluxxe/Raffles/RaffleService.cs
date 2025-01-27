@@ -1,22 +1,21 @@
 using System.Diagnostics;
 using Deluxxe.Resources;
 using Deluxxe.Sponsors;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class RaffleService(ActivitySource activitySource, StickerProviderUriResolver stickerProvider, IServiceProvider serviceProvider, ILogger<RaffleService> logger)
+public class RaffleService(ActivitySource activitySource, StickerProviderUriResolver stickerProvider, ILogger<RaffleService> logger, ILogger<PrizeRaffle> prizeRaffleLogger)
 {
     public async Task<DrawingResult> ExecuteRaffleAsync(
         RaffleConfiguration raffleConfiguration,
         IList<PrizeDescription> prizeDescriptions,
         IList<Driver> drivers,
         IList<PrizeWinner> previousWinners,
+        PrizeLimitChecker prizeLimitChecker,
         Func<int, ResourceIdBuilder> resourceIdBuilder
     )
     {
-        var raffleLogger = serviceProvider.GetRequiredService<ILogger<PrizeRaffle>>();
         var stickerManager = await stickerProvider.GetStickerManager(raffleConfiguration.StickerMapUri);
 
         logger.LogInformation("starting drawing rounds");
@@ -24,21 +23,23 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         var randomSeed = DateTimeOffset.UtcNow.Millisecond;
         var random = new Random(randomSeed);
 
-        var scopedPrizeDescriptions = prizeDescriptions;
+        var scopedPreviousWinners = new List<PrizeWinner>(previousWinners);
+        var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptions);
         var results = new List<DrawingRoundResult>();
         for (var round = 0; round < raffleConfiguration.MaxRounds; round++)
         {
+            using var roundActivity = activitySource.StartActivity("drawing-round");
             if (scopedPrizeDescriptions.Count == 0)
             {
                 logger.LogInformation("awarded all prizes!");
                 break;
             }
 
-            var raffle = new PrizeRaffle(raffleLogger, activitySource, stickerManager, random);
+            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker, random);
 
             var scopedResourceIdBuilder = resourceIdBuilder(round);
 
-            var drawingResult = raffle.DrawPrizes(scopedPrizeDescriptions, drivers, previousWinners, new DrawingConfiguration
+            var drawingResult = raffle.DrawPrizes(scopedPrizeDescriptions, drivers, scopedPreviousWinners, new DrawingConfiguration
                 {
                     DrawingType = raffleConfiguration.DrawingType,
                     Season = raffleConfiguration.Season,
@@ -50,10 +51,17 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
             logger.LogInformation($"sat {drawingResult.notAwarded.Count} not-awarded");
 
             results.Add(drawingResult);
-            scopedPrizeDescriptions = drawingResult.notAwarded;
+            scopedPrizeDescriptions = [..drawingResult.notAwarded];
+            scopedPreviousWinners.AddRange(drawingResult.winners);
+
+            if (drawingResult.winners.Count == 0)
+            {
+                roundActivity?.AddEvent(new ActivityEvent("clearing-previous-winners"));
+                scopedPreviousWinners.Clear();
+            }
         }
 
-        return new DrawingResult()
+        return new DrawingResult
         {
             drawingType = raffleConfiguration.DrawingType,
             randomSeed = randomSeed,

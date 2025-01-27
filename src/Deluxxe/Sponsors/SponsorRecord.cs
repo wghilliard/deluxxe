@@ -6,6 +6,7 @@ public record SponsorRecord
     public required string description { get; init; }
     public required int count { get; init; }
     public required string sku { get; init; }
+    public int seasonalLimit { get; init; }
 }
 
 public record SponsorRecords

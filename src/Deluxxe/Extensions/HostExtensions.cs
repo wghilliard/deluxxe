@@ -15,8 +15,17 @@ public static class HostExtensions
         services.AddSingleton<RaffleService>();
         services.AddSingleton<RaceResultsService>();
         services.AddSingleton<SpeedHiveClient>();
+        services.AddSingleton<PreviousWinnerLoader>();
 
         services.AddTransient<PrizeRaffle>();
+        return services;
+    }
+
+    public static IServiceCollection AddDeluxxeJson(this IServiceCollection services)
+    {
+        services.AddSingleton<IRaffleResultWriter, JsonRaffleResultWriter>();
+        services.AddSingleton<IRaffleResultReader, JsonRaffleResultReader>();
+
         return services;
     }
 }

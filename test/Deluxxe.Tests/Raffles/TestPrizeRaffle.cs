@@ -104,7 +104,11 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
     private PrizeRaffle GetPrizeRaffle(TestHarness testHarness)
     {
-        return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(), activitySource, testHarness.GetStickerManager(), new Random(1337));
+        return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(), 
+            activitySource, 
+            testHarness.GetStickerManager(), 
+            testHarness.GetPrizeLimitChecker(),
+            new Random(1337));
     }
 
     public class TestHarnessBuilder
@@ -307,6 +311,18 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         public IStickerManager GetStickerManager()
         {
             return new InMemoryStickerManager(CarToStickerMap);
+        }
+
+        public PrizeLimitChecker GetPrizeLimitChecker()
+        {
+            return new PrizeLimitChecker(this.PrizeDescriptions.Select(record => new SponsorRecord
+            {
+                name = record.sponsorName,
+                description = record.description,
+                sku = record.sku,
+                count = 1,
+                seasonalLimit = 0
+            }).ToList());
         }
     }
 }

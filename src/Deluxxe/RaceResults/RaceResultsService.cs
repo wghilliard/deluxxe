@@ -1,7 +1,6 @@
-using System.Text;
-using System.Text.Json;
+
+using Deluxxe.IO;
 using Deluxxe.Raffles;
-using Deluxxe.Sponsors;
 
 namespace Deluxxe.RaceResults;
 
@@ -12,9 +11,10 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient)
         IEnumerable<RaceResultRecord> raceResults;
         if (raceResultUri.IsFile)
         {
-            Stream raceResultsStream = new FileStream(FileUriParser.Parse(raceResultUri)!.FullName, FileMode.Open);
-            using var raceResultsStreamReader = new StreamReader(raceResultsStream, Encoding.UTF8);
-            raceResults = JsonSerializer.Deserialize<RaceResultResponse>(await raceResultsStreamReader.ReadToEndAsync(cancellationToken))!.rows;
+            // Stream raceResultsStream = new FileStream(FileUriParser.Parse(raceResultUri, extensions: ["json"])!.First().FullName, FileMode.Open);
+            // using var raceResultsStreamReader = new StreamReader(raceResultsStream, Encoding.UTF8);
+            // raceResults = JsonSerializer.Deserialize<RaceResultResponse>(await raceResultsStreamReader.ReadToEndAsync(cancellationToken))!.rows;
+            raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(raceResultUri, extensions: ["json"], cancellationToken))!.rows;
         }
         else
         {

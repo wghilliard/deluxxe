@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, Random random)
+public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, PrizeLimitChecker prizeLimitChecker, Random random)
 {
     public DrawingRoundResult DrawPrizes(
         IList<PrizeDescription> descriptions,
@@ -64,7 +64,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
 
                 if (stickerStatus != StickerStatus.CarHasSticker)
                 {
-                    logger.LogInformation("no sticker for this sponsor [driver={}] [description={}]", raceResult.name, description);
+                    logger.LogTrace("no sticker for this sponsor [driver={}] [description={}]", raceResult.name, description);
 
                     candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.StickerNotPresent);
                     return false;
@@ -72,15 +72,15 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
 
                 if (previousWinners.Any(winner => winner.driver.name == raceResult.name))
                 {
-                    logger.LogInformation("this driver has previously won [driver={}] [description={}]", raceResult.name, description);
+                    logger.LogTrace("this driver has previously won [driver={}] [description={}]", raceResult.name, description);
                     candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.PreviouslyWonThisSession);
                     return false;
                 }
 
-                if (description.sponsorName == SponsorConstants.ToyoTires && HasWonToyo(raceResult.name, previousWinners))
+                if (!prizeLimitChecker.IsBelowLimit(description, raceResult))
                 {
-                    logger.LogInformation("this driver has previously won Toyo Tires[driver={}] [description={}]", raceResult.name, description);
-                    candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.PreviouslyWonThisSeason);
+                    logger.LogTrace("this driver has reached their seasonal limit [driver={}] [description={}]", raceResult.name, description);
+                    candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.SeasonalLimitExceeded);
                     return false;
                 }
 
@@ -89,14 +89,14 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
             }
         ).ToList();
 
-        logger.LogInformation("eligible candidates {}", eligibleCandidates.Count);
+        logger.LogTrace("eligible candidates {}", eligibleCandidates.Count);
         activity?.AddTag("eligible-candidates", eligibleCandidates.Count);
         activity?.AddTag("ineligible-candidates", weekendRaceResults.Count - eligibleCandidates.Count);
 
         if (eligibleCandidates.Count == 0)
         {
             // No candidates available, track the prize as not-awarded
-            logger.LogInformation("no eligible candidates");
+            logger.LogTrace("no eligible candidates");
             activity?.AddTag("status-message", "no eligible candidates");
             activity?.SetStatus(ActivityStatusCode.Error);
             return null;
@@ -105,11 +105,11 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         var winnerIndex = random.Next(eligibleCandidates.Count);
         var winner = eligibleCandidates[winnerIndex];
 
-        logger.LogInformation("winner found [name={}]", winner.name);
+        logger.LogTrace("winner found [name={}]", winner.name);
         activity?.AddTag("prize-winner", winner.name);
         activity?.SetStatus(ActivityStatusCode.Ok);
 
-        return new PrizeWinner()
+        return new PrizeWinner
         {
             driver = winner,
             prizeDescription = description,
@@ -117,11 +117,11 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         };
     }
 
-    private static bool HasWonToyo(string driverName, IList<PrizeWinner> previousWinners)
+    private static bool HasWonToyo(string driverName, string sku, IList<PrizeWinner> previousWinners)
     {
-        // Implement logic to check if the driver has won a Toyo prize
         return previousWinners
             .Where(winner => winner.driver.name == driverName)
-            .Any(winner => winner.prizeDescription.sponsorName == SponsorConstants.ToyoTires);
+            .Any(winner => winner.prizeDescription.sponsorName == SponsorConstants.ToyoTires
+                           && winner.prizeDescription.sku == sku);
     }
 }

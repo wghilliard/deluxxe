@@ -1,3 +1,4 @@
+using Deluxxe.Extensions;
 using Deluxxe.Raffles;
 
 namespace Deluxxe.Resources;
@@ -28,7 +29,7 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
 
         _tracker |= ResourcePartsTracker.Season & ~ResourcePartsTracker.None;
         _parts.Add(SeasonSegmentName);
-        _parts.Add(Sanitize(season));
+        _parts.Add(season.Sanitize());
 
         return this;
     }
@@ -48,7 +49,7 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         _tracker |= ResourcePartsTracker.Event;
         _parts.Add(EventSegmentName);
         _parts.Add(NormalizeEventName(eventName));
-        _parts.Add(Sanitize(eventId));
+        _parts.Add(eventId.Sanitize());
 
         return this;
     }
@@ -82,19 +83,19 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
 
         _tracker |= ResourcePartsTracker.Drawing;
         _parts.Add(DrawingSegmentName);
-        _parts.Add(Sanitize(drawingType.ToString()));
+        _parts.Add(drawingType.ToString().Sanitize());
         if (!string.IsNullOrWhiteSpace(sessionName))
         {
-            _parts.Add(Sanitize(sessionName));
+            _parts.Add(sessionName.Sanitize());
         }
 
         if (!string.IsNullOrWhiteSpace(sessionId))
         {
-            _parts.Add(Sanitize(sessionId));
+            _parts.Add(sessionId.Sanitize());
         }
 
         _parts.Add(RoundSegmentName);
-        _parts.Add(Sanitize(roundId));
+        _parts.Add(roundId.Sanitize());
 
         return this;
     }
@@ -108,8 +109,8 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
 
         _tracker |= ResourcePartsTracker.Prize;
         _parts.Add(PrizeSegmentName);
-        _parts.Add(Sanitize(sponsorName));
-        _parts.Add(Sanitize(prizeSku));
+        _parts.Add(sponsorName.Sanitize());
+        _parts.Add(prizeSku.Sanitize());
 
         return this;
     }
@@ -150,7 +151,7 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
             }
         }
 
-        return Sanitize(string.Join(Delimiter, realParts.Where(part => part is not null)));
+        return string.Join(Delimiter, realParts.Where(part => part is not null)).Sanitize();
     }
 }
 

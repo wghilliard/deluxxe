@@ -6,4 +6,5 @@ public enum IneligibilityReason
     StickerNotPresent = 1,
     PreviouslyWonThisSession = 2,
     PreviouslyWonThisSeason = 3,
+    SeasonalLimitExceeded = 4,
 }

@@ -23,7 +23,7 @@ public static class Program
         };
         configFileOption.AddAlias("-c");
         raffleCommand.Add(configFileOption);
-        raffleCommand.SetHandler(async configFile => { await HandleRaffle(configFile); },
+        raffleCommand.SetHandler(async configFile => { await HandleRaffleCommand(configFile); },
             configFileOption);
 
         rootCommand.Add(raffleCommand);
@@ -32,7 +32,7 @@ public static class Program
         await rootCommand.InvokeAsync(args);
     }
 
-    private static async Task HandleRaffle(FileInfo configFile)
+    private static async Task HandleRaffleCommand(FileInfo configFile)
     {
         var reader = configFile.OpenRead();
         var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
@@ -44,7 +44,7 @@ public static class Program
         }
 
         var builder = Host.CreateApplicationBuilder();
-
+        builder.Services.AddSingleton(raffleRunConfig!.jsonOptions);
         builder.Services.AddLogging(opts => opts.AddConsole());
 
         builder.Services.AddOpenTelemetry()
@@ -57,6 +57,7 @@ public static class Program
         builder.Services.AddSingleton(new ActivitySource("DeluxxeCli"));
         builder.Services.AddHostedService<RaffleCliWorker>();
         builder.Services.AddDeluxxe();
+        builder.Services.AddDeluxxeJson();
         builder.Services.AddHttpClient();
 
         var completionTokenSource = new CancellationTokenSource();

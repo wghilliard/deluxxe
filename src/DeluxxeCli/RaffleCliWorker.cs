@@ -1,11 +1,9 @@
 using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
+using Deluxxe.IO;
 using Deluxxe.RaceResults;
 using Deluxxe.Raffles;
 using Deluxxe.Resources;
 using Deluxxe.Sponsors;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -14,11 +12,12 @@ namespace DeluxxeCli;
 public class RaffleCliWorker(
     ActivitySource activitySource,
     ILogger<RaffleCliWorker> logger,
-    IServiceProvider serviceProvider,
     CompletionToken completionToken,
     RaffleRunConfiguration runConfiguration,
     RaffleService raffleService,
-    RaceResultsService raceResultsService)
+    RaceResultsService raceResultsService,
+    IRaffleResultWriter raffleResultWriter,
+    PreviousWinnerLoader previousWinnerLoader)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
@@ -28,14 +27,11 @@ public class RaffleCliWorker(
 
         // 2. get the prize descriptions
         // todo - validate the prize json
-        Stream sponsorRecordStream = new FileStream(FileUriParser.Parse(runConfiguration.prizeDescriptionUri)!.FullName, FileMode.Open);
-        using var sponsorRecordStreamReader = new StreamReader(sponsorRecordStream, Encoding.UTF8);
-        var sponsorRecords = JsonSerializer.Deserialize<SponsorRecords>(await sponsorRecordStreamReader.ReadToEndAsync(token));
-
+        var sponsorRecords = await FileUriParser.ParseAndDeserializeSingleAsync<SponsorRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
         var perRacePrizePrizeDescriptions = new List<PrizeDescription>();
         foreach (var record in sponsorRecords!.perRacePrizes)
         {
-            for (int count = 0; count < record.count; count++)
+            for (var count = 0; count < record.count; count++)
             {
                 perRacePrizePrizeDescriptions.Add(new PrizeDescription()
                 {
@@ -46,9 +42,11 @@ public class RaffleCliWorker(
             }
         }
 
-        // 3. get previous results
-        // TODO
-        var previousWinners = new List<PrizeWinner>();
+        var prizeLimitChecker = new PrizeLimitChecker([..sponsorRecords.perEventPrizes, ..sponsorRecords.perRacePrizes]);
+
+        var previousWinners = await previousWinnerLoader.LoadAsync(runConfiguration.previousResultsUri, token);
+        prizeLimitChecker.Update(previousWinners);
+
         var eventRaceResults = new List<Driver>();
         var drawingResults = new List<DrawingResult>();
         var racePrizePreviousWinners = new List<PrizeWinner>();
@@ -56,17 +54,6 @@ public class RaffleCliWorker(
         foreach (var result in runConfiguration.raceResults)
         {
             // 4. get the race results
-            // Stream raceResultsStream = new FileStream(FileUriParser.Parse(result.raceResultUri)!.FullName, FileMode.Open);
-            // using var raceResultsStreamReader = new StreamReader(raceResultsStream, Encoding.UTF8);
-            // var raceResultResponse = JsonSerializer.Deserialize<RaceResultResponse>(await raceResultsStreamReader.ReadToEndAsync(token));
-            // var raceResults = raceResultResponse!.rows
-            //     .Where(row => row.status != "DNS")
-            //     .Where(row => row.resultClass == "PRO3")
-            //     .Select(row => new Driver
-            //     {
-            //         name = row.name,
-            //         carNumber = row.startNumber
-            //     }).ToList();
             var raceResults = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
             eventRaceResults.AddRange(raceResults);
 
@@ -77,13 +64,16 @@ public class RaffleCliWorker(
                 Season = runConfiguration.season,
                 StickerMapUri = runConfiguration.stickerMapUri,
             };
-            var drawingResult = await raffleService.ExecuteRaffleAsync(raffleConfiguration, 
-                perRacePrizePrizeDescriptions, 
-                raceResults, 
-                racePrizePreviousWinners, 
+            var drawingResult = await raffleService.ExecuteRaffleAsync(raffleConfiguration,
+                perRacePrizePrizeDescriptions,
+                raceResults,
+                racePrizePreviousWinners,
+                prizeLimitChecker,
                 round => eventResourceIdBuilder.Copy().WithRaceDrawingRound(result.sessionName, result.sessionId, round.ToString()));
             drawingResults.Add(drawingResult);
             racePrizePreviousWinners.AddRange(drawingResult.winners);
+            prizeLimitChecker.Update(drawingResult.winners);
+
             logger.LogInformation($"sat {drawingResult.winners.Count} won");
             logger.LogInformation($"sat {drawingResult.notAwarded.Count} not-awarded");
         }
@@ -91,7 +81,7 @@ public class RaffleCliWorker(
         var perEventPrizePrizeDescriptions = new List<PrizeDescription>();
         foreach (var record in sponsorRecords.perEventPrizes)
         {
-            for (int count = 0; count < record.count; count++)
+            for (var count = 0; count < record.count; count++)
             {
                 perEventPrizePrizeDescriptions.Add(new PrizeDescription()
                 {
@@ -109,10 +99,11 @@ public class RaffleCliWorker(
             Season = runConfiguration.season,
             StickerMapUri = runConfiguration.stickerMapUri
         };
-        var eventDrawingResult = await raffleService.ExecuteRaffleAsync(eventRaffleConfig, 
-            perEventPrizePrizeDescriptions, 
-            eventRaceResults, 
+        var eventDrawingResult = await raffleService.ExecuteRaffleAsync(eventRaffleConfig,
+            perEventPrizePrizeDescriptions,
+            eventRaceResults,
             previousWinners,
+            prizeLimitChecker,
             round => eventResourceIdBuilder.Copy().WithEventDrawingRound(round.ToString()));
         drawingResults.Add(eventDrawingResult);
         logger.LogInformation($"event {eventDrawingResult.winners.Count} won");
@@ -127,10 +118,7 @@ public class RaffleCliWorker(
             configurationName = runConfiguration.name
         };
 
-        await new JsonRaffleResultWriter(serviceProvider.GetRequiredService<ILogger<JsonRaffleResultWriter>>(), 
-                runConfiguration.outputDirectory, 
-                runConfiguration.shouldOverwrite)
-            .WriteAsync(raffleResult, token);
+        await raffleResultWriter.WriteAsync(raffleResult, token);
 
         completionToken.Complete();
     }
