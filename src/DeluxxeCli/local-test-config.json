@@ -25,5 +25,9 @@
   "jsonOptions": {
     "outputDirectory": ".",
     "shouldOverwrite": true
+  },
+  "raffleConfiguration": {
+    "maxRounds": 5,
+    "clearHistoryIfNoCandidates": true
   }
 }

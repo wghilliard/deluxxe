@@ -8,7 +8,7 @@ namespace Deluxxe.Raffles;
 public class RaffleService(ActivitySource activitySource, StickerProviderUriResolver stickerProvider, ILogger<RaffleService> logger, ILogger<PrizeRaffle> prizeRaffleLogger)
 {
     public async Task<DrawingResult> ExecuteRaffleAsync(
-        RaffleConfiguration raffleConfiguration,
+        RaffleExecutionConfiguration raffleExecutionConfiguration,
         IList<PrizeDescription> prizeDescriptions,
         IList<Driver> drivers,
         IList<PrizeWinner> previousWinners,
@@ -16,7 +16,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         Func<int, ResourceIdBuilder> resourceIdBuilder
     )
     {
-        var stickerManager = await stickerProvider.GetStickerManager(raffleConfiguration.StickerMapUri);
+        var stickerManager = await stickerProvider.GetStickerManager(raffleExecutionConfiguration.StickerMapUri);
 
         logger.LogInformation("starting drawing rounds");
         using var activity = activitySource.StartActivity("starting drawing rounds");
@@ -26,7 +26,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         var scopedPreviousWinners = new List<PrizeWinner>(previousWinners);
         var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptions);
         var results = new List<DrawingRoundResult>();
-        for (var round = 0; round < raffleConfiguration.MaxRounds; round++)
+        for (var round = 0; round < raffleExecutionConfiguration.MaxRounds; round++)
         {
             using var roundActivity = activitySource.StartActivity("drawing-round");
             if (scopedPrizeDescriptions.Count == 0)
@@ -41,8 +41,8 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
             var drawingResult = raffle.DrawPrizes(scopedPrizeDescriptions, drivers, scopedPreviousWinners, new DrawingConfiguration
                 {
-                    DrawingType = raffleConfiguration.DrawingType,
-                    Season = raffleConfiguration.Season,
+                    DrawingType = raffleExecutionConfiguration.DrawingType,
+                    Season = raffleExecutionConfiguration.Season,
                     ResourceIdBuilder = scopedResourceIdBuilder,
                 },
                 round);
@@ -54,7 +54,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
             scopedPrizeDescriptions = [..drawingResult.notAwarded];
             scopedPreviousWinners.AddRange(drawingResult.winners);
 
-            if (drawingResult.winners.Count == 0)
+            if (drawingResult.winners.Count == 0 && raffleExecutionConfiguration.ClearHistoryIfNoCandidates)
             {
                 roundActivity?.AddEvent(new ActivityEvent("clearing-previous-winners"));
                 scopedPreviousWinners.Clear();
@@ -63,7 +63,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
         return new DrawingResult
         {
-            drawingType = raffleConfiguration.DrawingType,
+            drawingType = raffleExecutionConfiguration.DrawingType,
             randomSeed = randomSeed,
             winners = results.SelectMany(result => result.winners).ToList(),
             notAwarded = scopedPrizeDescriptions

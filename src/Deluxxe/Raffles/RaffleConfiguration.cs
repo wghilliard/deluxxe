@@ -1,9 +1,8 @@
 namespace Deluxxe.Raffles;
 
-public record RaffleConfiguration
+public class RaffleConfiguration
 {
-    public required int MaxRounds { get; init; }
-    public required string Season { get; init; }
-    public required DrawingType DrawingType { get; init; }
-    public required Uri StickerMapUri { get; init; }
+    public int maxRounds { get; init; }
+    
+    public bool clearHistoryIfNoCandidates { get; init; }
 }

@@ -57,9 +57,10 @@ public class RaffleCliWorker(
             var raceResults = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
             eventRaceResults.AddRange(raceResults);
 
-            var raffleConfiguration = new RaffleConfiguration
+            var raffleConfiguration = new RaffleExecutionConfiguration
             {
-                MaxRounds = 5,
+                MaxRounds = runConfiguration.raffleConfiguration.maxRounds,
+                ClearHistoryIfNoCandidates = runConfiguration.raffleConfiguration.clearHistoryIfNoCandidates,
                 DrawingType = DrawingType.Race,
                 Season = runConfiguration.season,
                 StickerMapUri = runConfiguration.stickerMapUri,
@@ -92,10 +93,11 @@ public class RaffleCliWorker(
             }
         }
 
-        var eventRaffleConfig = new RaffleConfiguration
+        var eventRaffleConfig = new RaffleExecutionConfiguration
         {
+            MaxRounds = runConfiguration.raffleConfiguration.maxRounds,
+            ClearHistoryIfNoCandidates = runConfiguration.raffleConfiguration.clearHistoryIfNoCandidates,
             DrawingType = DrawingType.Event,
-            MaxRounds = 5,
             Season = runConfiguration.season,
             StickerMapUri = runConfiguration.stickerMapUri
         };
