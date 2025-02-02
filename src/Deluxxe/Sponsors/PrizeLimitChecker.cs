@@ -37,7 +37,7 @@ public class PrizeLimitChecker
         if (counts is null)
         {
             // driver hasn't been awarded any prizes
-            return false;
+            return true;
         }
 
         var prizeKey = GetPrizeKey(prize);

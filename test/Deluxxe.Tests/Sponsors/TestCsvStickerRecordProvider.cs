@@ -11,9 +11,9 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
     {
         var service = new CsvStickerRecordProvider(activitySource, loggerFactory.CreateLogger<CsvStickerRecordProvider>());
 
-        Stream stream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping.csv"), FileMode.Open);
-
-        var result = await service.ParseCsvAsync(Task.FromResult(stream));
+        await using var stream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping.csv"), FileMode.Open);
+        using var reader = new StreamReader(stream);
+        var result = await service.ParseCsvAsync(reader);
 
         var cars = result.CarToStickerMapping.Values.ToList();
         Assert.True(cars.Count > 0);
@@ -25,6 +25,7 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
                 {
                     list.Add(enumerator.Current);
                 }
+
                 enumerator.Dispose();
 
                 return list;
