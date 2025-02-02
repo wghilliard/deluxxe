@@ -24,9 +24,8 @@ public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, Json
         }
 
         logger.LogInformation($"writing to {file.FullName}");
-        await using Stream stream = new FileStream(file.FullName, FileMode.OpenOrCreate);
+        await using var stream = new FileStream(file.FullName, FileMode.OpenOrCreate);
         await JsonSerializer.SerializeAsync(stream, result, cancellationToken: cancellationToken, options: _options);
-        stream.Close();
         return FileUriParser.Generate(options.outputDirectory, fileName);
     }
 }

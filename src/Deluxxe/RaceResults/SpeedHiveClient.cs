@@ -11,26 +11,26 @@ namespace Deluxxe.RaceResults
 
         private const string ApiVersion = "v0.2.3";
 
+        private readonly HttpClient _client = httpClientFactory.CreateClient("SpeedHiveClient");
 
         public async Task<IEnumerable<RaceResultRecord>> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)
         {
-            using var client = httpClientFactory.CreateClient("SpeedHiveClient");
-            client.DefaultRequestHeaders.Add("Origin", "https://speedhive.mylaps.com");
-            client.DefaultRequestHeaders.Add("Referer", "https://speedhive.mylaps.com/");
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0)");
-            using var response = await client.GetAsync(url, token);
+            _client.DefaultRequestHeaders.Add("Origin", "https://speedhive.mylaps.com");
+            _client.DefaultRequestHeaders.Add("Referer", "https://speedhive.mylaps.com/");
+            _client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0)");
+            using var response = await _client.GetAsync(url, token);
 
             if (response.IsSuccessStatusCode)
             {
-                return await ParseJsonAsync(response.Content.ReadAsStreamAsync(token), token);
+                var reader = new StreamReader(await response.Content.ReadAsStreamAsync(token), Encoding.UTF8);
+                return await ParseJsonAsync(reader, token);
             }
 
             throw new HttpRequestException($"Unable to get race results from url: {url}, response: {response}, responseCode: {response.StatusCode}");
         }
 
-        public async Task<IEnumerable<RaceResultRecord>> ParseJsonAsync(Task<Stream> stream, CancellationToken token = default)
+        public static async Task<IEnumerable<RaceResultRecord>> ParseJsonAsync(StreamReader reader, CancellationToken token = default)
         {
-            using var reader = new StreamReader(await stream, Encoding.UTF8);
             var results = JsonSerializer.Deserialize<RaceResultResponse>(await reader.ReadToEndAsync(token));
 
             if (results == null)

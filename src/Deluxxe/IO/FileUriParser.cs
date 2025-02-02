@@ -53,9 +53,9 @@ public static class FileUriParser
 
     public static async Task<T?> ParseAndDeserializeSingleAsync<T>(Uri uri, IList<string>? extensions = null, CancellationToken cancellationToken = default)
     {
-        Stream sponsorRecordStream = new FileStream(Parse(uri, extensions).First().FullName, FileMode.Open);
-        using var sponsorRecordStreamReader = new StreamReader(sponsorRecordStream, Encoding.UTF8);
-        return JsonSerializer.Deserialize<T>(await sponsorRecordStreamReader.ReadToEndAsync(cancellationToken));
+        await using var stream = new FileStream(Parse(uri, extensions).First().FullName, FileMode.Open);
+        using var streamReader = new StreamReader(stream, Encoding.UTF8);
+        return JsonSerializer.Deserialize<T>(await streamReader.ReadToEndAsync(cancellationToken));
     }
 
     public static Uri Generate(string outputDirectory, string fileName)
