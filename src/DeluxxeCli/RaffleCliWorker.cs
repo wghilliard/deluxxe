@@ -26,8 +26,23 @@ public class RaffleCliWorker(
         var eventResourceIdBuilder = new ResourceIdBuilder().WithSeason(runConfiguration.season).WithEvent(runConfiguration.eventName, runConfiguration.eventId);
 
         // 2. get the prize descriptions
-        // todo - validate the prize json
         var sponsorRecords = await FileUriParser.ParseAndDeserializeSingleAsync<SponsorRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
+
+        if (sponsorRecords is null)
+        {
+            logger.LogError("unable to load sponsor records from URI");
+        }
+
+        var exceptions = SponsorRecordValidator.Validate(sponsorRecords!);
+
+        foreach (var exception in exceptions)
+        {
+            logger.LogError(exception.ToString());
+            return;
+        }
+
+        logger.LogInformation("sponsor records validated");
+
         var perRacePrizePrizeDescriptions = new List<PrizeDescription>();
         foreach (var record in sponsorRecords!.perRacePrizes)
         {
