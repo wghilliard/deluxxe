@@ -28,8 +28,16 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
 
         var index = 0;
 
-        foreach (var row in (await reader.ReadToEndAsync()).Trim().Split('\n'))
+        while (!reader.EndOfStream)
         {
+            var row = await reader.ReadLineAsync();
+
+            if (string.IsNullOrWhiteSpace(row))
+            {
+                index++;
+                continue;
+            }
+
             if (index == 0)
             {
                 index++;
@@ -38,7 +46,6 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
 
             using var rowActivity = activitySource.StartActivity("parse-cars-csv-row");
             rowActivity?.AddTag("rowIndex", index);
-
             if (row.Length == 0)
             {
                 rowActivity?.SetStatus(ActivityStatusCode.Error);
