@@ -128,16 +128,6 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         return string.Join(Delimiter, _parts);
     }
 
-    private static string Sanitize(string input)
-    {
-        return input
-            .Replace(' ', '-')
-            .Replace('/', '-')
-            .Replace('\\', '-')
-            .ToLower()
-            .Trim();
-    }
-
     public static string NormalizeEventName(string eventName)
     {
         string[] maybeParts = eventName.Split(' ');
@@ -160,7 +150,7 @@ public enum ResourcePartsTracker
 {
     None = 0,
     Season = 1,
-    Event = 1 << 2,
-    Drawing = 1 << 3,
-    Prize = 1 << 4,
+    Event = 1 << 1,
+    Drawing = 1 << 2,
+    Prize = 1 << 3,
 }

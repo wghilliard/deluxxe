@@ -16,13 +16,13 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
         var fileHandle = FileUriParser.Parse(uri).First();
 
         await using Stream stickerStream = new FileStream(fileHandle!.FullName, FileMode.Open);
-        return await ParseCsvAsync(Task.FromResult(stickerStream));
+        using var reader = new StreamReader(stickerStream);
+        return await ParseCsvAsync(reader);
     }
 
-    public async Task<StickerParseResult> ParseCsvAsync(Task<Stream> input)
+    public async Task<StickerParseResult> ParseCsvAsync(StreamReader reader)
     {
         using var activity = activitySource.StartActivity("parse-cars-csv");
-        using var reader = new StreamReader(input.Result);
 
         var carToStickerMap = new Dictionary<string, IDictionary<string, bool>>();
 

@@ -116,12 +116,4 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
             resourceId = drawingConfig.ResourceIdBuilder.Copy().WithPrize(description.sponsorName, description.sku).Build(),
         };
     }
-
-    private static bool HasWonToyo(string driverName, string sku, IList<PrizeWinner> previousWinners)
-    {
-        return previousWinners
-            .Where(winner => winner.driver.name == driverName)
-            .Any(winner => winner.prizeDescription.sponsorName == SponsorConstants.ToyoTires
-                           && winner.prizeDescription.sku == sku);
-    }
 }

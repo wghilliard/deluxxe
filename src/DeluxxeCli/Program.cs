@@ -34,7 +34,7 @@ public static class Program
 
     private static async Task HandleRaffleCommand(FileInfo configFile)
     {
-        var reader = configFile.OpenRead();
+        await using var reader = configFile.OpenRead();
         var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
         reader.Close();
 

@@ -7,17 +7,16 @@ using Xunit.Abstractions;
 
 namespace Deluxxe.Tests.RaceResults;
 
-public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
+public class TestRaceResultParsers(ITestOutputHelper testOutputHelper)
 {
     private static readonly ActivitySource Source = new("Deluxxe.Tests.RaceResults.TestSpeedHiveClient");
 
     [Fact]
-    public async Task TestCsvParser_IsSuccess()
+    public async Task TestJsonParser_IsSuccess()
     {
         Stream stream = new FileStream(Path.Combine("TestData", "race-results.json"), FileMode.Open);
-        var client = new SpeedHiveClient(Source, new Mock<IHttpClientFactory>().Object);
-
-        var results = (await client.ParseJsonAsync(Task.FromResult(stream))).ToList();
+        using var reader = new StreamReader(stream);
+        var results = (await SpeedHiveClient.ParseJsonAsync(reader)).ToList();
 
         Assert.True(results.Count > 0);
 
@@ -57,7 +56,7 @@ public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
         var results = (await client.GetResultsFromJsonUrl(new Uri("http://localhost"))).ToList();
         Assert.True(results.Count > 0);
     }
-
+    
     [Theory]
     [InlineData("https://speedhive.mylaps.com/sessions/8939619")]
     [InlineData("https://speedhive.mylaps.com/sessions/8939619?one=two")]
