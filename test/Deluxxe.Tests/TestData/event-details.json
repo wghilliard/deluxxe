@@ -1,0 +1,403 @@
+{
+  "id": 2609223,
+  "name": "2024 - IRDC - Spring into Summer",
+  "sport": "Car",
+  "startDate": "2024-05-11",
+  "updatedAt": "2024-05-13T18:15:25+02:00",
+  "uploadSoftware": {
+    "name": "Orbits",
+    "version": "5.9 HF2"
+  },
+  "hasChamp": true,
+  "location": {
+    "id": 323799,
+    "name": "Pacific Raceway",
+    "length": 2.25,
+    "lengthUnit": "mi",
+    "lengthLabel": "2.2500 mi",
+    "country": {
+      "id": 840,
+      "name": "United States",
+      "alpha2": "US"
+    },
+    "lon": 0.0,
+    "lat": 0.0
+  },
+  "organization": {
+    "id": 240068,
+    "name": "International Race Drivers Club",
+    "logo": null,
+    "url": "http://www.irdc-racing.com/",
+    "city": "Sammamish",
+    "country": {
+      "id": 840,
+      "name": "United States",
+      "alpha2": "US"
+    }
+  },
+  "sessions": {
+    "sessions": [],
+    "groups": [
+      {
+        "id": 2609226,
+        "name": "Group 1",
+        "date": "2024-05-11",
+        "subGroups": [],
+        "sessions": [
+          {
+            "id": 8939598,
+            "name": "Sat Qualifying",
+            "comment": null,
+            "eventId": 2609226,
+            "type": "qualify",
+            "startTime": "2024-05-11T10:27:00",
+            "groupName": "Group 1",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939604,
+            "name": "Sat Combined",
+            "comment": null,
+            "eventId": 2609226,
+            "type": "qualify",
+            "startTime": "1970-01-01T00:00:00",
+            "groupName": "Group 1",
+            "isMerge": true,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948352,
+            "name": "Sun Qualifying",
+            "comment": null,
+            "eventId": 2609226,
+            "type": "qualify",
+            "startTime": "2024-05-12T10:45:00",
+            "groupName": "Group 1",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939601,
+            "name": "Sat Points Race",
+            "comment": null,
+            "eventId": 2609226,
+            "type": "race",
+            "startTime": "2024-05-11T13:52:00",
+            "groupName": "Group 1",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948355,
+            "name": "Sun Points Race",
+            "comment": null,
+            "eventId": 2609226,
+            "type": "race",
+            "startTime": "2024-05-12T14:22:00",
+            "groupName": "Group 1",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          }
+        ]
+      },
+      {
+        "id": 2609229,
+        "name": "Group 4",
+        "date": "2024-05-11",
+        "subGroups": [],
+        "sessions": [
+          {
+            "id": 8939607,
+            "name": "Sat Qualifying",
+            "comment": null,
+            "eventId": 2609229,
+            "type": "qualify",
+            "startTime": "2024-05-11T09:15:00",
+            "groupName": "Group 4",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939613,
+            "name": "Sat Combined",
+            "comment": null,
+            "eventId": 2609229,
+            "type": "qualify",
+            "startTime": "1970-01-01T00:00:00",
+            "groupName": "Group 4",
+            "isMerge": true,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948358,
+            "name": "Sun Qualifying",
+            "comment": null,
+            "eventId": 2609229,
+            "type": "qualify",
+            "startTime": "2024-05-12T09:15:00",
+            "groupName": "Group 4",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939610,
+            "name": "Sat Points Race",
+            "comment": null,
+            "eventId": 2609229,
+            "type": "race",
+            "startTime": "2024-05-11T12:13:00",
+            "groupName": "Group 4",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948361,
+            "name": "Sun Points Race",
+            "comment": null,
+            "eventId": 2609229,
+            "type": "race",
+            "startTime": "2024-05-12T12:10:00",
+            "groupName": "Group 4",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          }
+        ]
+      },
+      {
+        "id": 2609232,
+        "name": "Group 5/2",
+        "date": "2024-05-11",
+        "subGroups": [],
+        "sessions": [
+          {
+            "id": 8939616,
+            "name": "Sat Qualifying",
+            "comment": null,
+            "eventId": 2609232,
+            "type": "qualify",
+            "startTime": "2024-05-11T09:39:00",
+            "groupName": "Group 5/2",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939622,
+            "name": "Sat Combined",
+            "comment": null,
+            "eventId": 2609232,
+            "type": "qualify",
+            "startTime": "1970-01-01T00:00:00",
+            "groupName": "Group 5/2",
+            "isMerge": true,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948364,
+            "name": "Sun Qualifying",
+            "comment": null,
+            "eventId": 2609232,
+            "type": "qualify",
+            "startTime": "2024-05-12T09:45:00",
+            "groupName": "Group 5/2",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939619,
+            "name": "Sat Points Race",
+            "comment": null,
+            "eventId": 2609232,
+            "type": "race",
+            "startTime": "2024-05-11T12:46:00",
+            "groupName": "Group 5/2",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948367,
+            "name": "Sun Points Race",
+            "comment": null,
+            "eventId": 2609232,
+            "type": "race",
+            "startTime": "2024-05-12T12:54:00",
+            "groupName": "Group 5/2",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          }
+        ]
+      },
+      {
+        "id": 2609235,
+        "name": "Group 6/3",
+        "date": "2024-05-11",
+        "subGroups": [],
+        "sessions": [
+          {
+            "id": 8939625,
+            "name": "Sat Qualifying",
+            "comment": null,
+            "eventId": 2609235,
+            "type": "qualify",
+            "startTime": "2024-05-11T10:03:00",
+            "groupName": "Group 6/3",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939631,
+            "name": "Sat Combined",
+            "comment": null,
+            "eventId": 2609235,
+            "type": "qualify",
+            "startTime": "1970-01-01T00:00:00",
+            "groupName": "Group 6/3",
+            "isMerge": true,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948370,
+            "name": "Sun Qualifying",
+            "comment": null,
+            "eventId": 2609235,
+            "type": "qualify",
+            "startTime": "2024-05-12T10:15:00",
+            "groupName": "Group 6/3",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939628,
+            "name": "Sat Points Race",
+            "comment": null,
+            "eventId": 2609235,
+            "type": "race",
+            "startTime": "2024-05-11T13:19:00",
+            "groupName": "Group 6/3",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8948373,
+            "name": "Sun Points Race",
+            "comment": null,
+            "eventId": 2609235,
+            "type": "race",
+            "startTime": "2024-05-12T13:38:00",
+            "groupName": "Group 6/3",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          }
+        ]
+      },
+      {
+        "id": 2609238,
+        "name": "Group 8",
+        "date": "2024-05-11",
+        "subGroups": [],
+        "sessions": [
+          {
+            "id": 8939634,
+            "name": "Sat Qualifying",
+            "comment": null,
+            "eventId": 2609238,
+            "type": "qualify",
+            "startTime": "2024-05-11T10:51:00",
+            "groupName": "Group 8",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939640,
+            "name": "Sat Combined",
+            "comment": null,
+            "eventId": 2609238,
+            "type": "qualify",
+            "startTime": "1970-01-01T00:00:00",
+            "groupName": "Group 8",
+            "isMerge": true,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          },
+          {
+            "id": 8939637,
+            "name": "Sat Points Race",
+            "comment": null,
+            "eventId": 2609238,
+            "type": "race",
+            "startTime": "2024-05-11T14:25:00",
+            "groupName": "Group 8",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          }
+        ]
+      },
+      {
+        "id": 2609241,
+        "name": "Test Run",
+        "date": "2024-05-11",
+        "subGroups": [],
+        "sessions": [
+          {
+            "id": 8939643,
+            "name": "New run",
+            "comment": null,
+            "eventId": 2609241,
+            "type": "race",
+            "startTime": "2024-05-10T08:57:00",
+            "groupName": "Test Run",
+            "isMerge": false,
+            "resultStatus": null,
+            "participated": 0,
+            "announcements": null
+          }
+        ]
+      }
+    ]
+  }
+}

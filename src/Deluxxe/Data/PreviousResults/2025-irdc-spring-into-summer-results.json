@@ -1,0 +1,365 @@
+{
+  "drawings": [
+    {
+      "winners": [
+        {
+          "prizeDescription": {
+            "sponsorName": "425 Motorsports",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Scott Eckert",
+            "carNumber": "121"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/425-motorsports/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Advanced Auto Fabrication",
+            "description": "$50 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Rob Johnston",
+            "carNumber": "141"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/advanced-auto-fabrication/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Advanced Auto Fabrication",
+            "description": "$50 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Madison McCulloch",
+            "carNumber": "25"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/advanced-auto-fabrication/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Bimmerworld",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Bryce Scott",
+            "carNumber": "89"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/bimmerworld/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Bimmerworld",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "David Stenner",
+            "carNumber": "172"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/bimmerworld/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Griots Garage",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Kyle Byers",
+            "carNumber": "55"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/griots-garage/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Cash",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "John Houlihan",
+            "carNumber": "287"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/red-line-oil/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Cash",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Drew Wagner",
+            "carNumber": "88"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/red-line-oil/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Cash",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Jim Cissell",
+            "carNumber": "119"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/red-line-oil/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Gift Card",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Martin Berryman",
+            "carNumber": "150"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/red-line-oil/2"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$50 Gas Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Lee Storgaard",
+            "carNumber": "84"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/racer-on-rails/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$500 Toyo Bucks",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Isaiah Dummer",
+            "carNumber": "71"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/racer-on-rails/2"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$500 Toyo Bucks",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Ronald Adrianse",
+            "carNumber": "106"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sat/8939601/round/0/prize/racer-on-rails/2"
+        }
+      ],
+      "notAwarded": [],
+      "drawingType": "Race",
+      "randomSeed": 508
+    },
+    {
+      "winners": [
+        {
+          "prizeDescription": {
+            "sponsorName": "425 Motorsports",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Guy Berry",
+            "carNumber": "191"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/425-motorsports/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Advanced Auto Fabrication",
+            "description": "$50 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Brian Bercovitz",
+            "carNumber": "96"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/advanced-auto-fabrication/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Advanced Auto Fabrication",
+            "description": "$50 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Chuck Hurley",
+            "carNumber": "95"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/advanced-auto-fabrication/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Bimmerworld",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Norman Salmon",
+            "carNumber": "105"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/bimmerworld/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Bimmerworld",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Daniele Hovington",
+            "carNumber": "91"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/bimmerworld/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Griots Garage",
+            "description": "$100 Gift Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Rob Scholl",
+            "carNumber": "122"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/griots-garage/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Cash",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Jake Borrelli",
+            "carNumber": "1"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/red-line-oil/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Cash",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Andrew Michel",
+            "carNumber": "08"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/red-line-oil/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Cash",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "John McDermott",
+            "carNumber": "75"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/red-line-oil/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Gift Card",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Grayson Hilliard",
+            "carNumber": "168"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/red-line-oil/2"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$50 Gas Card",
+            "sku": "1"
+          },
+          "driver": {
+            "name": "Corey Peters",
+            "carNumber": "244"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/racer-on-rails/1"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$500 Toyo Bucks",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Matt Lowell",
+            "carNumber": "151"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/0/prize/racer-on-rails/2"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$500 Toyo Bucks",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Corey Peters",
+            "carNumber": "244"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/race/sun/8948355/round/1/prize/racer-on-rails/2"
+        }
+      ],
+      "notAwarded": [],
+      "drawingType": "Race",
+      "randomSeed": 530
+    },
+    {
+      "winners": [
+        {
+          "prizeDescription": {
+            "sponsorName": "Red Line Oil",
+            "description": "$100 Gift Card",
+            "sku": "2"
+          },
+          "driver": {
+            "name": "Matt Lowell",
+            "carNumber": "151"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/event/round/0/prize/red-line-oil/2"
+        },
+        {
+          "prizeDescription": {
+            "sponsorName": "Racer on Rails",
+            "description": "$200 Gift Card",
+            "sku": "3"
+          },
+          "driver": {
+            "name": "Jim Cissell",
+            "carNumber": "119"
+          },
+          "resourceId": "season/2025/event/irdc-spring-into-summer/2609223/drawing/event/round/0/prize/racer-on-rails/3"
+        }
+      ],
+      "notAwarded": [],
+      "drawingType": "Event",
+      "randomSeed": 549
+    }
+  ],
+  "resourceId": "season/2025/event/irdc-spring-into-summer/2609223",
+  "name": "irdc-spring-into-summer",
+  "season": "2025",
+  "configurationName": "2025-spring-into-summer-pro3-started"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "2025-test-event-pro3",
+  "season": "2025",
+  "eventName": "test event",
+  "eventId": "2609224",
+  "stickerMapUri": "file://local/Data/car-to-sticker-mapping.csv",
+  "prizeDescriptionUri": "file://local/Data/prize-descriptions.json",
+  "raceResults": [
+    {
+      "sessionName": "sat",
+      "sessionId": "8939601",
+      "raceResultUri": "file://local/Data/sat-race-results.json"
+    },
+    {
+      "sessionName": "sun",
+      "sessionId": "8948355",
+      "raceResultUri": "file://local/Data/sun-race-results.json"
+    }
+  ],
+  "previousResultsUri": "file://local/Data/PreviousResults",
+  "conditions": {
+    "status": "!DNS",
+    "resultClass": "PRO3"
+  },
+  "jsonOptions": {
+    "outputDirectory": ".",
+    "shouldOverwrite": true
+  },
+  "raffleConfiguration": {
+    "maxRounds": 5,
+    "clearHistoryIfNoCandidates": true
+  }
+}
