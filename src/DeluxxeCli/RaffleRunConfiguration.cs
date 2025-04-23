@@ -14,11 +14,11 @@ public record RaffleRunConfiguration
     public required List<RaceResultConfiguration> raceResults { get; init; }
     public required Uri previousResultsUri { get; init; }
     public required Dictionary<string, string> conditions { get; init; }
-    public required JsonRaffleSerializerOptions jsonOptions { get; init; }
+    public required RaffleSerializerOptions serializerOptions { get; init; }
     public required RaffleConfiguration raffleConfiguration { get; init; }
 }
 
-public record RaceResultConfiguration
+public struct RaceResultConfiguration
 {
     public string sessionName { get; init; }
     public required string sessionId { get; init; }

@@ -16,7 +16,7 @@ public class RaffleCliWorker(
     RaffleRunConfiguration runConfiguration,
     RaffleService raffleService,
     RaceResultsService raceResultsService,
-    IRaffleResultWriter raffleResultWriter,
+    IEnumerable<IRaffleResultWriter> raffleResultWriters,
     PreviousWinnerLoader previousWinnerLoader)
     : BackgroundService
 {
@@ -28,7 +28,7 @@ public class RaffleCliWorker(
         // 2. get the prize descriptions
         var prizeDescriptionRecords = await FileUriParser.ParseAndDeserializeSingleAsync<PrizeDescriptionRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
 
-        if (prizeDescriptionRecords is null)
+        if (prizeDescriptionRecords.perRacePrizes.Count == 0 && prizeDescriptionRecords.perEventPrizes.Count == 0)
         {
             logger.LogError("unable to load sponsor records from URI");
         }
@@ -68,6 +68,8 @@ public class RaffleCliWorker(
         racePrizePreviousWinners.AddRange(previousWinners);
         foreach (var result in runConfiguration.raceResults)
         {
+            var raceDrawingActivity = activitySource.StartActivity("race-drawing");
+
             // 4. get the race results
             var raceResults = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
             eventRaceResults.AddRange(raceResults);
@@ -79,6 +81,8 @@ public class RaffleCliWorker(
                 DrawingType = DrawingType.Race,
                 Season = runConfiguration.season,
                 StickerMapUri = runConfiguration.stickerMapUri,
+                RandomSeed = runConfiguration.raffleConfiguration.randomSeed,
+                UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
             };
             var drawingResult = await raffleService.ExecuteRaffleAsync(raffleConfiguration,
                 perRacePrizePrizeDescriptions,
@@ -90,8 +94,9 @@ public class RaffleCliWorker(
             racePrizePreviousWinners.AddRange(drawingResult.winners);
             prizeLimitChecker.Update(drawingResult.winners);
 
-            logger.LogInformation($"sat {drawingResult.winners.Count} won");
-            logger.LogInformation($"sat {drawingResult.notAwarded.Count} not-awarded");
+            logger.LogInformation($"{drawingResult.winners.Count} won");
+            logger.LogInformation($"{drawingResult.notAwarded.Count} not-awarded");
+            raceDrawingActivity?.Dispose();
         }
 
         var perEventPrizePrizeDescriptions = new List<PrizeDescription>();
@@ -108,13 +113,17 @@ public class RaffleCliWorker(
             }
         }
 
+        using var eventDrawingActivity = activitySource.StartActivity("event-drawing");
+
         var eventRaffleConfig = new RaffleExecutionConfiguration
         {
             MaxRounds = runConfiguration.raffleConfiguration.maxRounds,
             ClearHistoryIfNoCandidates = runConfiguration.raffleConfiguration.clearHistoryIfNoCandidates,
             DrawingType = DrawingType.Event,
             Season = runConfiguration.season,
-            StickerMapUri = runConfiguration.stickerMapUri
+            StickerMapUri = runConfiguration.stickerMapUri,
+            RandomSeed = runConfiguration.raffleConfiguration.randomSeed,
+            UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
         };
         var eventDrawingResult = await raffleService.ExecuteRaffleAsync(eventRaffleConfig,
             perEventPrizePrizeDescriptions,
@@ -126,6 +135,8 @@ public class RaffleCliWorker(
         logger.LogInformation($"event {eventDrawingResult.winners.Count} won");
         logger.LogInformation($"event {eventDrawingResult.notAwarded.Count} not-awarded");
 
+        eventDrawingActivity?.Dispose();
+
         var raffleResult = new RaffleResult
         {
             drawings = drawingResults,
@@ -135,7 +146,10 @@ public class RaffleCliWorker(
             configurationName = runConfiguration.name
         };
 
-        await raffleResultWriter.WriteAsync(raffleResult, token);
+        foreach (var writer in raffleResultWriters)
+        {
+            await writer.WriteAsync(raffleResult, token);
+        }
 
         completionToken.Complete();
     }

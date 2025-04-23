@@ -1,10 +1,10 @@
 namespace Deluxxe.Sponsors;
 
-public class InMemoryStickerManager(IDictionary<string, IDictionary<string, bool>> carToStickerMap): IStickerManager
+public class InMemoryStickerManager(StickerParseResult parseResult, bool allowRentersToWin) : IStickerManager
 {
     public StickerStatus DriverHasSticker(string carNumber, string sponsorName)
     {
-        if (!carToStickerMap.TryGetValue(carNumber, out var carStickers))
+        if (!parseResult.carToStickerMapping.TryGetValue(carNumber, out var carStickers))
         {
             return StickerStatus.StickerMapMissingForCar;
         }
@@ -15,5 +15,15 @@ public class InMemoryStickerManager(IDictionary<string, IDictionary<string, bool
         }
 
         return carHasSticker ? StickerStatus.CarHasSticker : StickerStatus.CarDoesNotHaveSticker;
+    }
+
+    public string GetCandidateNameForCar(string carNumber, string driverName)
+    {
+        if (allowRentersToWin)
+        {
+            return driverName;
+        }
+
+        return parseResult.carRentalMap.TryGetValue(carNumber, out var carOwnerName) ? carOwnerName : driverName;
     }
 }

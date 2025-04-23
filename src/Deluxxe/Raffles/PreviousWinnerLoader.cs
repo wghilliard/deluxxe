@@ -11,7 +11,7 @@ public class PreviousWinnerLoader(IRaffleResultReader resultReader)
         foreach (var fileHandle in fileHandles)
         {
             var raffleResult = await resultReader.ReadAsync(new Uri(fileHandle.FullName), cancellationToken);
-            foreach (var drawing in raffleResult!.drawings)
+            foreach (var drawing in raffleResult.drawings)
             {
                 previousResults.AddRange(drawing.winners);
             }

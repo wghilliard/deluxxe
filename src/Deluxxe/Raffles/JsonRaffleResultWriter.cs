@@ -5,7 +5,7 @@ namespace Deluxxe.Raffles;
 
 using System.Text.Json;
 
-public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, JsonRaffleSerializerOptions options) : IRaffleResultWriter
+public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, RaffleSerializerOptions options) : IRaffleResultWriter
 {
     private readonly JsonSerializerOptions _options = new()
     {

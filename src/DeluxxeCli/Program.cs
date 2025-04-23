@@ -44,7 +44,7 @@ public static class Program
         }
 
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddSingleton(raffleRunConfig!.jsonOptions);
+        builder.Services.AddSingleton(raffleRunConfig!.serializerOptions);
         builder.Services.AddLogging(opts => opts.AddConsole());
 
         builder.Services.AddOpenTelemetry()
@@ -62,7 +62,8 @@ public static class Program
 
         var completionTokenSource = new CancellationTokenSource();
         builder.Services.AddSingleton(new CompletionToken(completionTokenSource));
-        builder.Services.AddSingleton(raffleRunConfig!);
+        builder.Services.AddSingleton(raffleRunConfig);
+        builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
         var host = builder.Build();
 
         await host.RunAsync(completionTokenSource.Token);

@@ -5,7 +5,7 @@ namespace Deluxxe.Raffles;
 
 public class JsonRaffleResultReader : IRaffleResultReader
 {
-    public async Task<RaffleResult?> ReadAsync(Uri uri, CancellationToken cancellationToken)
+    public async Task<RaffleResult> ReadAsync(Uri uri, CancellationToken cancellationToken)
     {
         var fileInfo = FileUriParser.Parse(uri).First();
         await using Stream stream = new FileStream(fileInfo.FullName, FileMode.OpenOrCreate);

@@ -11,11 +11,11 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
     {
         var service = new CsvStickerRecordProvider(activitySource, loggerFactory.CreateLogger<CsvStickerRecordProvider>());
 
-        await using var stream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping.csv"), FileMode.Open);
+        await using var stream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping-2025-04-22.csv"), FileMode.Open);
         using var reader = new StreamReader(stream);
         var result = await service.ParseCsvAsync(reader);
 
-        var cars = result.CarToStickerMapping.Values.ToList();
+        var cars = result.carToStickerMapping.Values.ToList();
         Assert.True(cars.Count > 0);
 
         var pairs = cars.Select(pair => pair.GetEnumerator())
@@ -43,5 +43,8 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
 
         var values = pairs.Select(pair => pair.Value).ToList().Distinct();
         Assert.Equal(2, values.Count());
+
+        var rentals = result.carRentalMap;
+        Assert.True(rentals.Count > 0);
     }
 }

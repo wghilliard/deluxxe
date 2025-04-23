@@ -20,15 +20,16 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
         logger.LogInformation("starting drawing rounds");
         using var activity = activitySource.StartActivity("starting drawing rounds");
-        var randomSeed = DateTimeOffset.UtcNow.Millisecond;
+        var randomSeed = raffleExecutionConfiguration.RandomSeed == 0 ?  DateTimeOffset.UtcNow.Millisecond : raffleExecutionConfiguration.RandomSeed;
         var random = new Random(randomSeed);
 
-        var scopedPreviousWinners = new List<PrizeWinner>(previousWinners);
+        var scopedPreviousWinners = raffleExecutionConfiguration. UseWinningHistory ? new List<PrizeWinner>(previousWinners) : new List<PrizeWinner>();
         var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptions);
         var results = new List<DrawingRoundResult>();
         for (var round = 0; round < raffleExecutionConfiguration.MaxRounds; round++)
         {
             using var roundActivity = activitySource.StartActivity("drawing-round");
+            roundActivity?.SetTag("round", round);
             if (scopedPrizeDescriptions.Count == 0)
             {
                 logger.LogInformation("awarded all prizes!");
@@ -47,8 +48,10 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
                 },
                 round);
 
-            logger.LogInformation($"sat {drawingResult.winners.Count} won");
-            logger.LogInformation($"sat {drawingResult.notAwarded.Count} not-awarded");
+            roundActivity?.SetTag("awarded prizes", drawingResult.winners.Count);
+            roundActivity?.SetTag("not-awarded prizes", drawingResult.notAwarded.Count);
+            logger.LogInformation($"{drawingResult.winners.Count} won");
+            logger.LogInformation($"{drawingResult.notAwarded.Count} not-awarded");
 
             results.Add(drawingResult);
             scopedPrizeDescriptions = [..drawingResult.notAwarded];

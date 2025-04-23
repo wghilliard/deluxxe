@@ -24,6 +24,7 @@ public static class HostExtensions
     public static IServiceCollection AddDeluxxeJson(this IServiceCollection services)
     {
         services.AddSingleton<IRaffleResultWriter, JsonRaffleResultWriter>();
+        services.AddSingleton<IRaffleResultWriter, CsvRaffleResultWriter>();
         services.AddSingleton<IRaffleResultReader, JsonRaffleResultReader>();
 
         return services;

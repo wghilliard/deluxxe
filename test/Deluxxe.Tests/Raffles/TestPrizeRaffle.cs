@@ -9,6 +9,7 @@ namespace Deluxxe.Tests.Raffles;
 
 public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(testOutputHelper)
 {
+    private static readonly string CAR_OWNER = "car-owner";
     private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
     [Fact]
@@ -20,11 +21,11 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             .WithStickers()
             .Build();
 
-        var winner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.Drivers, given.PreviousWinners, given.raceConfig);
+        var winner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.DriversAsCandidates(false), given.PreviousWinners, given.raceConfig);
         Assert.NotNull(winner);
         _testOutputHelper.WriteLine(winner.ToString());
 
-        Assert.True(given.CarToStickerMap[winner.driver.carNumber][winner.prizeDescription.sponsorName]);
+        Assert.True(given.CarToStickerMap[winner.candidate.carNumber][winner.prizeDescription.sponsorName]);
     }
 
     [Fact]
@@ -36,7 +37,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             .WithNoStickers()
             .Build();
 
-        var winner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.Drivers, given.PreviousWinners, given.raceConfig);
+        var winner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.DriversAsCandidates(false), given.PreviousWinners, given.raceConfig);
         Assert.Null(winner);
     }
 
@@ -49,7 +50,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             .WithStickers()
             .Build();
 
-        var firstWinner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.Drivers, given.PreviousWinners, given.raceConfig);
+        var firstWinner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.DriversAsCandidates(false), given.PreviousWinners, given.raceConfig);
         Assert.NotNull(firstWinner);
         _testOutputHelper.WriteLine(firstWinner.ToString());
 
@@ -57,7 +58,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         previousWinners.AddRange(given.PreviousWinners);
         previousWinners.Add(firstWinner);
 
-        var secondWinner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.Drivers, previousWinners, given.raceConfig);
+        var secondWinner = GetPrizeRaffle(given).DrawPrize(given.PrizeDescriptions[0], given.DriversAsCandidates(false), previousWinners, given.raceConfig);
         Assert.Null(secondWinner);
     }
 
@@ -74,7 +75,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         Assert.NotNull(result.winners);
         Assert.Equal(2, result.winners.Count);
 
-        Assert.NotEqual(result.winners[0].driver.name, result.winners[1].driver.name);
+        Assert.NotEqual(result.winners[0].candidate.name, result.winners[1].candidate.name);
 
         Assert.NotNull(result.notAwarded);
         Assert.Empty(result.notAwarded);
@@ -97,16 +98,54 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         Assert.Single(result.notAwarded);
     }
 
+    [Fact]
+    public void DrawPrizes_RentalsAllowedToReceivePrizes()
+    {
+        var given = Given()
+            .WithDrivers(1)
+            .WithPrizeDescriptions(2, true)
+            .WithStickers()
+            .WithRentals()
+            .Build();
+
+        var result = GetPrizeRaffle(given, allowRentals: true).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, 1);
+        Assert.NotNull(result.winners);
+        Assert.Single(result.winners);
+        Assert.False(result.winners[0].candidate.name == CAR_OWNER);
+
+        Assert.NotNull(result.notAwarded);
+        Assert.Single(result.notAwarded);
+    }
+
+    [Fact]
+    public void DrawPrizes_RentalsNotAllowedToReceivePrizes()
+    {
+        var given = Given()
+            .WithDrivers(1)
+            .WithPrizeDescriptions(2, true)
+            .WithStickers()
+            .WithRentals()
+            .Build();
+
+        var result = GetPrizeRaffle(given, allowRentals: false).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, 1);
+        Assert.NotNull(result.winners);
+        Assert.Single(result.winners);
+        Assert.True(result.winners[0].candidate.name == CAR_OWNER);
+
+        Assert.NotNull(result.notAwarded);
+        Assert.Single(result.notAwarded);
+    }
+
     private static TestHarnessBuilder Given()
     {
         return new TestHarnessBuilder();
     }
 
-    private PrizeRaffle GetPrizeRaffle(TestHarness testHarness)
+    private PrizeRaffle GetPrizeRaffle(TestHarness testHarness, bool allowRentals = false)
     {
-        return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(), 
-            activitySource, 
-            testHarness.GetStickerManager(), 
+        return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(),
+            activitySource,
+            testHarness.GetStickerManager(allowRentals),
             testHarness.GetPrizeLimitChecker(),
             new Random(1337));
     }
@@ -117,6 +156,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         private List<Driver> _drivers = [];
         private IDictionary<string, string> _driverToCarMap = new Dictionary<string, string>();
         private readonly Dictionary<string, IDictionary<string, bool>> _carToStickerMap = new();
+        private readonly Dictionary<string, string> _carRentalMap = new();
 
         private readonly IList<PrizeWinner> _previousWinners = new List<PrizeWinner>();
 
@@ -212,7 +252,11 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             {
                 _previousWinners.Add(new PrizeWinner
                 {
-                    driver = _drivers.First(),
+                    candidate = new DrawingCandidate
+                    {
+                        carNumber = _drivers.First().carNumber,
+                        name = _drivers.First().name,
+                    },
                     prizeDescription = ToyoPrize,
                     resourceId = "nyan-counting"
                 });
@@ -226,9 +270,14 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
             for (var i = 0; i < count; i++)
             {
+                var candidate = _drivers[_random.Next(_drivers.Count)];
                 _previousWinners.Add(new PrizeWinner
                 {
-                    driver = _drivers[_random.Next(_drivers.Count)],
+                    candidate = new DrawingCandidate
+                    {
+                        name = candidate.name,
+                        carNumber = candidate.carNumber,
+                    },
                     prizeDescription = _prizeDescriptions[_random.Next(_prizeDescriptions.Count)],
                     resourceId = "nyan-counting"
                 });
@@ -269,6 +318,16 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             return this;
         }
 
+        public TestHarnessBuilder WithRentals()
+        {
+            foreach (var car in _driverToCarMap.Values)
+            {
+                _carRentalMap[car] = CAR_OWNER;
+            }
+
+            return this;
+        }
+
         public TestHarness Build()
         {
             return new TestHarness
@@ -276,7 +335,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
                 PrizeDescriptions = _prizeDescriptions,
                 Drivers = _drivers,
                 PreviousWinners = _previousWinners,
-                CarToStickerMap = _carToStickerMap
+                CarToStickerMap = _carToStickerMap,
+                CarRentalMap = _carRentalMap,
             };
         }
     }
@@ -287,6 +347,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         public required IList<Driver> Drivers;
         public required IList<PrizeWinner> PreviousWinners;
         public required IDictionary<string, IDictionary<string, bool>> CarToStickerMap;
+        public required IDictionary<string, string> CarRentalMap;
 
         public DrawingConfiguration eventConfig = new()
         {
@@ -308,9 +369,23 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
                 .WithRaceDrawingRound("saturday-race", "1234", "1")
         };
 
-        public IStickerManager GetStickerManager()
+        public IList<DrawingCandidate> DriversAsCandidates(bool allowRentalsToWin)
         {
-            return new InMemoryStickerManager(CarToStickerMap);
+            var stickerManager = GetStickerManager(allowRentalsToWin);
+            return Drivers.Select(driver => new DrawingCandidate
+            {
+                name = stickerManager.GetCandidateNameForCar(driver.carNumber, driver.name),
+                carNumber = driver.carNumber,
+            }).ToList();
+        }
+
+        public IStickerManager GetStickerManager(bool allowRentalsToWin)
+        {
+            return new InMemoryStickerManager(new StickerParseResult
+            {
+                carToStickerMapping = CarToStickerMap,
+                carRentalMap = CarRentalMap
+            }, allowRentalsToWin);
         }
 
         public PrizeLimitChecker GetPrizeLimitChecker()

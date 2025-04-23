@@ -1,6 +1,13 @@
 namespace Deluxxe.Sponsors;
 
-public record StickerParseResult
+public readonly struct StickerParseResult
 {
-    public required IDictionary<string, IDictionary<string, bool>> CarToStickerMapping { get; init; }
+    public required IDictionary<string, IDictionary<string, bool>> carToStickerMapping { get; init; }
+    public required IDictionary<string, string> carRentalMap { get; init; }
+
+    public bool IsEmpty()
+    {
+        return carToStickerMapping.Count == 0
+            && carRentalMap.Count == 0;
+    }
 }

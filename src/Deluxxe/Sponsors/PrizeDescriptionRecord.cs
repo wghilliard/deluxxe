@@ -1,6 +1,6 @@
 namespace Deluxxe.Sponsors;
 
-public record PrizeDescriptionRecord
+public readonly struct PrizeDescriptionRecord
 {
     public required string name { get; init; }
     public required string description { get; init; }
@@ -48,7 +48,7 @@ public class PrizeDescriptionRecordAggregateException(PrizeDescriptionRecord pri
 
 public class PrizeDescriptionRecordException(PrizeDescriptionRecord prizeDescriptionRecord, string message) : Exception(message);
 
-public record PrizeDescriptionRecords
+public struct PrizeDescriptionRecords
 {
     public required List<PrizeDescriptionRecord> perRacePrizes { get; init; }
     public required List<PrizeDescriptionRecord> perEventPrizes { get; init; }

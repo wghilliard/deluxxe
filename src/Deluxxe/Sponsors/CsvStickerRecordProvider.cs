@@ -6,11 +6,11 @@ namespace Deluxxe.Sponsors;
 
 public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<CsvStickerRecordProvider> logger) : IStickerRecordProvider
 {
-    public async Task<StickerParseResult?> Get(Uri uri)
+    public async Task<StickerParseResult> Get(Uri uri)
     {
         if (!uri.IsFile || !uri.LocalPath.EndsWith("csv"))
         {
-            return null;
+            return default;
         }
 
         var fileHandle = FileUriParser.Parse(uri).First();
@@ -25,6 +25,7 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
         using var activity = activitySource.StartActivity("parse-cars-csv");
 
         var carToStickerMap = new Dictionary<string, IDictionary<string, bool>>();
+        var carRentalMap = new Dictionary<string, string>();
 
         var index = 0;
 
@@ -54,9 +55,11 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
             }
 
             var values = row.Split(',');
-            // Number,Driver,All?,_425,AAF,Alpinestars,Bimmerworld,Griots,Proformance,RoR,Redline,Toyo,Comment
+            // Number,Driver,IsRental,_425,AAF,Alpinestars,Bimmerworld,Griots,Proformance,RoR,Redline,Toyo,Comment
             // 0.     1.     2.   3.   4.  5.          6.          7.     8.          9.  10.     11.  12.
 
+            // Number,Driver,IsRental,_425,AAF,Alpinestars,Bimmerworld,Griots,Proformance,RoR,Redline,Toyo,Comment
+            // 
             if (values.Length != 13)
             {
                 rowActivity?.SetStatus(ActivityStatusCode.Error);
@@ -65,6 +68,27 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
             }
 
             var carNumber = values[0].Trim();
+            var isRental = ToBool(values[2].Trim());
+            var owner =  values[1].Trim();
+
+            if (string.IsNullOrEmpty(carNumber))
+            {
+                rowActivity?.SetStatus(ActivityStatusCode.Error);
+                rowActivity?.AddTag("error", "carNumber missing");
+                continue;
+            }
+            
+            if (isRental)
+            {
+                if (string.IsNullOrWhiteSpace(owner))
+                {
+                    rowActivity?.SetStatus(ActivityStatusCode.Error);
+                    rowActivity?.AddTag("error", "owner missing");
+                    rowActivity?.AddTag("carNumber", carNumber);
+                    continue;
+                }
+                carRentalMap[carNumber] = owner;
+            }
 
             if (!carToStickerMap.TryGetValue(carNumber, out var value))
             {
@@ -85,7 +109,8 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
 
         return new StickerParseResult()
         {
-            CarToStickerMapping = carToStickerMap
+            carToStickerMapping = carToStickerMap,
+            carRentalMap = carRentalMap
         };
     }
 
