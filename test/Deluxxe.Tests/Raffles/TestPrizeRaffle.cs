@@ -315,7 +315,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         public PrizeLimitChecker GetPrizeLimitChecker()
         {
-            return new PrizeLimitChecker(this.PrizeDescriptions.Select(record => new SponsorRecord
+            return new PrizeLimitChecker(this.PrizeDescriptions.Select(record => new PrizeDescriptionRecord
             {
                 name = record.sponsorName,
                 description = record.description,

@@ -8,7 +8,7 @@ public class PrizeLimitChecker
     private readonly Dictionary<string, Dictionary<string, int>> _prizeCounts;
     private readonly Dictionary<string, int> _prizeLimits;
 
-    public PrizeLimitChecker(IList<SponsorRecord> sponsorRecords)
+    public PrizeLimitChecker(IList<PrizeDescriptionRecord> sponsorRecords)
     {
         _prizeLimits = sponsorRecords.ToDictionary(GetPrizeKey, record => record.seasonalLimit);
         _prizeCounts = new Dictionary<string, Dictionary<string, int>>();
@@ -52,9 +52,9 @@ public class PrizeLimitChecker
         return prizeCount < seasonLimit;
     }
 
-    private static string GetPrizeKey(SponsorRecord sponsor)
+    private static string GetPrizeKey(PrizeDescriptionRecord prizeDescription)
     {
-        return GetPrizeKey(sponsor.name, sponsor.sku);
+        return GetPrizeKey(prizeDescription.name, prizeDescription.sku);
     }
 
     private static string GetPrizeKey(PrizeDescription prize)

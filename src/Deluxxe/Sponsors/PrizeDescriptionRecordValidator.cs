@@ -2,9 +2,9 @@ using Deluxxe.Extensions;
 
 namespace Deluxxe.Sponsors;
 
-public static class SponsorRecordValidator
+public static class PrizeDescriptionRecordValidator
 {
-    public static IList<Exception> Validate(SponsorRecords records)
+    public static IList<Exception> Validate(PrizeDescriptionRecords records)
     {
         var exceptions = new List<Exception>();
         exceptions.AddRange(Validate(records.perRacePrizes));
@@ -13,7 +13,7 @@ public static class SponsorRecordValidator
         return exceptions;
     }
 
-    private static IList<Exception> Validate(IList<SponsorRecord> sponsorRecords)
+    private static IList<Exception> Validate(IList<PrizeDescriptionRecord> sponsorRecords)
     {
         var exceptions = new List<Exception>();
 
@@ -22,7 +22,7 @@ public static class SponsorRecordValidator
         foreach (var sponsorRecord in sponsorRecords)
         {
             var aggregateException = sponsorRecord.Validate();
-            if (!aggregateException.IsRecordValid)
+            if (!aggregateException.isRecordValid)
             {
                 exceptions.Add(aggregateException);
             }
@@ -38,7 +38,7 @@ public static class SponsorRecordValidator
 
             if (!skuSet.Add(uniqueSku))
             {
-                exceptions.Add(new SponsorRecordException(sponsorRecord, $"duplicate sku found sku={uniqueSku}"));
+                exceptions.Add(new PrizeDescriptionRecordException(sponsorRecord, $"duplicate sku found sku={uniqueSku}"));
             }
         }
 

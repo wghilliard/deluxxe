@@ -1,6 +1,6 @@
 namespace Deluxxe.Sponsors;
 
-public record SponsorRecord
+public record PrizeDescriptionRecord
 {
     public required string name { get; init; }
     public required string description { get; init; }
@@ -8,7 +8,7 @@ public record SponsorRecord
     public required string sku { get; init; }
     public int seasonalLimit { get; init; }
 
-    public SponsorRecordAggregateException Validate()
+    public PrizeDescriptionRecordAggregateException Validate()
     {
         var exceptions = new List<Exception>();
 
@@ -32,24 +32,24 @@ public record SponsorRecord
             exceptions.Add(new ArgumentException("seasonal limit must be equal to or greater than zero"));
         }
 
-        return new SponsorRecordAggregateException(this, exceptions);
+        return new PrizeDescriptionRecordAggregateException(this, exceptions);
     }
 }
 
-public class SponsorRecordAggregateException(SponsorRecord sponsorRecord, IList<Exception> exceptions) : AggregateException(exceptions)
+public class PrizeDescriptionRecordAggregateException(PrizeDescriptionRecord prizeDescriptionRecord, IList<Exception> exceptions) : AggregateException(exceptions)
 {
-    public bool IsRecordValid => InnerExceptions.Count == 0;
+    public bool isRecordValid => InnerExceptions.Count == 0;
 
     public override string ToString()
     {
-        return $"[sponsorRecord={sponsorRecord}][isRecordValid={IsRecordValid}][exceptions={base.ToString()}]";
+        return $"[sponsorRecord={prizeDescriptionRecord}][isRecordValid={isRecordValid}][exceptions={base.ToString()}]";
     }
 }
 
-public class SponsorRecordException(SponsorRecord SponsorRecord, string message) : Exception(message);
+public class PrizeDescriptionRecordException(PrizeDescriptionRecord prizeDescriptionRecord, string message) : Exception(message);
 
-public record SponsorRecords
+public record PrizeDescriptionRecords
 {
-    public required List<SponsorRecord> perRacePrizes { get; init; }
-    public required List<SponsorRecord> perEventPrizes { get; init; }
+    public required List<PrizeDescriptionRecord> perRacePrizes { get; init; }
+    public required List<PrizeDescriptionRecord> perEventPrizes { get; init; }
 }

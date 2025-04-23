@@ -26,14 +26,14 @@ public class RaffleCliWorker(
         var eventResourceIdBuilder = new ResourceIdBuilder().WithSeason(runConfiguration.season).WithEvent(runConfiguration.eventName, runConfiguration.eventId);
 
         // 2. get the prize descriptions
-        var sponsorRecords = await FileUriParser.ParseAndDeserializeSingleAsync<SponsorRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
+        var prizeDescriptionRecords = await FileUriParser.ParseAndDeserializeSingleAsync<PrizeDescriptionRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
 
-        if (sponsorRecords is null)
+        if (prizeDescriptionRecords is null)
         {
             logger.LogError("unable to load sponsor records from URI");
         }
 
-        var exceptions = SponsorRecordValidator.Validate(sponsorRecords!);
+        var exceptions = PrizeDescriptionRecordValidator.Validate(prizeDescriptionRecords!);
 
         foreach (var exception in exceptions)
         {
@@ -44,7 +44,7 @@ public class RaffleCliWorker(
         logger.LogInformation("sponsor records validated");
 
         var perRacePrizePrizeDescriptions = new List<PrizeDescription>();
-        foreach (var record in sponsorRecords!.perRacePrizes)
+        foreach (var record in prizeDescriptionRecords!.perRacePrizes)
         {
             for (var count = 0; count < record.count; count++)
             {
@@ -57,7 +57,7 @@ public class RaffleCliWorker(
             }
         }
 
-        var prizeLimitChecker = new PrizeLimitChecker([..sponsorRecords.perEventPrizes, ..sponsorRecords.perRacePrizes]);
+        var prizeLimitChecker = new PrizeLimitChecker([..prizeDescriptionRecords.perEventPrizes, ..prizeDescriptionRecords.perRacePrizes]);
 
         var previousWinners = await previousWinnerLoader.LoadAsync(runConfiguration.previousResultsUri, token);
         prizeLimitChecker.Update(previousWinners);
@@ -95,7 +95,7 @@ public class RaffleCliWorker(
         }
 
         var perEventPrizePrizeDescriptions = new List<PrizeDescription>();
-        foreach (var record in sponsorRecords.perEventPrizes)
+        foreach (var record in prizeDescriptionRecords.perEventPrizes)
         {
             for (var count = 0; count < record.count; count++)
             {
