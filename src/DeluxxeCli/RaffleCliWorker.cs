@@ -81,6 +81,7 @@ public class RaffleCliWorker(
                 DrawingType = DrawingType.Race,
                 Season = runConfiguration.season,
                 StickerMapUri = runConfiguration.stickerMapUri,
+                StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
                 RandomSeed = runConfiguration.raffleConfiguration.randomSeed,
                 UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
             };
@@ -122,6 +123,7 @@ public class RaffleCliWorker(
             DrawingType = DrawingType.Event,
             Season = runConfiguration.season,
             StickerMapUri = runConfiguration.stickerMapUri,
+            StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
             RandomSeed = runConfiguration.raffleConfiguration.randomSeed,
             UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
         };

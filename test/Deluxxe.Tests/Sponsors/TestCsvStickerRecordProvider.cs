@@ -13,7 +13,7 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
 
         await using var stream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping-2025-04-22.csv"), FileMode.Open);
         using var reader = new StreamReader(stream);
-        var result = await service.ParseCsvAsync(reader);
+        var result = await service.ParseCsvAsync(reader, "1.0");
 
         var cars = result.carToStickerMapping.Values.ToList();
         Assert.True(cars.Count > 0);

@@ -2,6 +2,7 @@ namespace Deluxxe.Sponsors;
 
 public readonly struct StickerParseResult
 {
+    public required string schemaVersion { get; init; }
     public required IDictionary<string, IDictionary<string, bool>> carToStickerMapping { get; init; }
     public required IDictionary<string, string> carRentalMap { get; init; }
 

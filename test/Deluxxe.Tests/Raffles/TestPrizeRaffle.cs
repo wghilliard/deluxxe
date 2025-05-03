@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using System.Security.Cryptography;
+using Bogus;
 using Deluxxe.Raffles;
 using Deluxxe.Resources;
 using Deluxxe.Sponsors;
@@ -136,18 +137,78 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         Assert.Single(result.notAwarded);
     }
 
+    [Fact]
+    public void DrawPrizes_ResultsAreRandom()
+    {
+        const int nDrivers = 30;
+        const int nDrawings = 100000;
+        const int nPrizesPerDrawing = 10;
+
+        var given = Given()
+            .WithDrivers(nDrivers, allCarsMapped: true)
+            .WithPrizeDescriptions(nPrizesPerDrawing, withToyo: false)
+            .WithStickers(allCarsMapped: true, allStickersMapped: true)
+            .Build();
+
+        var aggregatedResults = new Dictionary<string, int>();
+
+
+        for (var round = 0; round < nDrawings; round++)
+        {
+            var randomDrawingSeed = RandomNumberGenerator.GetInt32(int.MaxValue);
+
+            if (round % 100 == 0)
+            {
+                _testOutputHelper.WriteLine($"test round {round} w/ seed {randomDrawingSeed}");
+            }
+
+            var result = GetPrizeRaffle(given, randomSeed: randomDrawingSeed).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, round);
+            foreach (var winner in result.winners)
+            {
+                if (!aggregatedResults.TryAdd(winner.candidate.name, 1))
+                {
+                    aggregatedResults[winner.candidate.name] += 1;
+                }
+            }
+        }
+
+        Assert.Equal(nDrivers, aggregatedResults.Count);
+        Assert.Equal(nDrawings * nPrizesPerDrawing, aggregatedResults.Select(x => x.Value).Sum());
+
+        double mean = 0;
+        foreach (var (name, wins) in aggregatedResults)
+        {
+            mean += wins;
+        }
+
+        mean /= nDrivers;
+        double variance = 0;
+        foreach (var (name, wins) in aggregatedResults)
+        {
+            variance += Math.Pow(wins - mean, 2);
+        }
+
+        variance /= nDrivers - 1;
+
+        _testOutputHelper.WriteLine($"mean: {mean}, variance: {variance}, standard deviation: {Math.Sqrt(variance)}");
+        foreach (var (name, wins) in aggregatedResults)
+        {
+            _testOutputHelper.WriteLine($"{name}: {wins}");
+        }
+    }
+
     private static TestHarnessBuilder Given()
     {
         return new TestHarnessBuilder();
     }
 
-    private PrizeRaffle GetPrizeRaffle(TestHarness testHarness, bool allowRentals = false)
+    private PrizeRaffle GetPrizeRaffle(TestHarness testHarness, bool allowRentals = false, int randomSeed = 1337)
     {
         return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(),
             activitySource,
             testHarness.GetStickerManager(allowRentals),
             testHarness.GetPrizeLimitChecker(),
-            new Random(1337));
+            new Random(randomSeed));
     }
 
     public class TestHarnessBuilder
@@ -177,8 +238,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         private readonly Faker<PrizeDescription> _prizeFaker = new Faker<PrizeDescription>()
             .RuleFor(a => a.sponsorName, f => f.PickRandom(MostSponsorNames))
-            .RuleFor(a => a.description, f => f.Lorem.Sentence())
-            .RuleFor(a => a.sku, f => f.Lorem.Word());
+            .RuleFor(a => a.description, f => f.Lorem.Word())
+            .RuleFor(a => a.sku, f => f.Random.Number(1, 100).ToString());
 
         public TestHarnessBuilder WithDrivers(int count, bool allDriversStarted = true, bool allCarsMapped = true)
         {
@@ -286,6 +347,20 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             return this;
         }
 
+        // public TestHarnessBuilder WithStickersAllStickers()
+        // {
+        //     foreach (var car in _driverToCarMap.Values)
+        //     {
+        //         _carToStickerMap[car] = new Dictionary<string, bool>();
+        //         foreach (var sponsor in MostSponsorNames)
+        //         {
+        //             _carToStickerMap[car][sponsor] = allStickersMapped || _random.Next(1) != 1;
+        //         }
+        //         
+        //         _carToStickerMap[car][ToyoPrize.sponsorName] = allStickersMapped || _random.Next(1) != 1;
+        //
+        //     }
+        // }
         public TestHarnessBuilder WithStickers(bool allCarsMapped = true, bool allStickersMapped = true)
         {
             foreach (var car in _driverToCarMap.Values)
@@ -293,10 +368,10 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
                 _carToStickerMap[car] = new Dictionary<string, bool>();
                 foreach (var sponsor in MostSponsorNames)
                 {
-                    _carToStickerMap[car][sponsor] = allStickersMapped || _random.Next(1) != 1;
+                    _carToStickerMap[car][sponsor.ToLower()] = allStickersMapped || _random.Next(1) != 1;
                 }
 
-                _carToStickerMap[car][ToyoPrize.sponsorName] = allStickersMapped || _random.Next(1) != 1;
+                _carToStickerMap[car][ToyoPrize.sponsorName.ToLower()] = allStickersMapped || _random.Next(1) != 1;
             }
 
             return this;
@@ -384,7 +459,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             return new InMemoryStickerManager(new StickerParseResult
             {
                 carToStickerMapping = CarToStickerMap,
-                carRentalMap = CarRentalMap
+                carRentalMap = CarRentalMap,
+                schemaVersion = "1.0"
             }, allowRentalsToWin);
         }
 

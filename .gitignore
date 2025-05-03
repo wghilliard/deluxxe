@@ -272,3 +272,9 @@ __pycache__/
 
 # macos
 .DS_Store
+
+# dotnet
+nupkg
+
+# Deluxxe Outputs
+output

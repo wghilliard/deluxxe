@@ -10,6 +10,7 @@ public record RaffleRunConfiguration
     public required string eventName { get; init; }
     public required string eventId { get; init; }
     public required Uri stickerMapUri { get; init; }
+    public required string stickerMapSchemaVersion { get; init; }
     public required Uri prizeDescriptionUri { get; init; }
     public required List<RaceResultConfiguration> raceResults { get; init; }
     public required Uri previousResultsUri { get; init; }

@@ -5,19 +5,24 @@ using System.Text.Json;
 
 namespace Deluxxe.RaceResults
 {
-    public class SpeedHiveClient(ActivitySource activitySource, IHttpClientFactory httpClientFactory)
+    public class SpeedHiveClient
     {
         private const string JsonBaseUrl = "https://eventresults-api.speedhive.com/api/{0}/eventresults/sessions/{1}/classification";
 
         private const string ApiVersion = "v0.2.3";
 
-        private readonly HttpClient _client = httpClientFactory.CreateClient("SpeedHiveClient");
+        private readonly HttpClient _client;
 
-        public async Task<IEnumerable<RaceResultRecord>> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)
+        public SpeedHiveClient(ActivitySource activitySource, IHttpClientFactory httpClientFactory)
         {
+            _client = httpClientFactory.CreateClient("SpeedHiveClient");
             _client.DefaultRequestHeaders.Add("Origin", "https://speedhive.mylaps.com");
             _client.DefaultRequestHeaders.Add("Referer", "https://speedhive.mylaps.com/");
             _client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0)");
+        }
+        
+        public async Task<IEnumerable<RaceResultRecord>> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)
+        {
             using var response = await _client.GetAsync(url, token);
 
             if (response.IsSuccessStatusCode)

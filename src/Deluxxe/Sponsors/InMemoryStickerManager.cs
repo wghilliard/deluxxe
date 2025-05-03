@@ -9,7 +9,7 @@ public class InMemoryStickerManager(StickerParseResult parseResult, bool allowRe
             return StickerStatus.StickerMapMissingForCar;
         }
 
-        if (!carStickers.TryGetValue(sponsorName, out var carHasSticker))
+        if (!carStickers.TryGetValue(sponsorName.ToLower(), out var carHasSticker))
         {
             return StickerStatus.StickerValueMissingForCar;
         }

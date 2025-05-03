@@ -6,7 +6,7 @@ namespace Deluxxe.Sponsors;
 
 public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<CsvStickerRecordProvider> logger) : IStickerRecordProvider
 {
-    public async Task<StickerParseResult> Get(Uri uri)
+    public async Task<StickerParseResult> Get(Uri uri, string schemaVersion)
     {
         if (!uri.IsFile || !uri.LocalPath.EndsWith("csv"))
         {
@@ -17,10 +17,10 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
 
         await using Stream stickerStream = new FileStream(fileHandle!.FullName, FileMode.Open);
         using var reader = new StreamReader(stickerStream);
-        return await ParseCsvAsync(reader);
+        return await ParseCsvAsync(reader, schemaVersion);
     }
 
-    public async Task<StickerParseResult> ParseCsvAsync(StreamReader reader)
+    public async Task<StickerParseResult> ParseCsvAsync(StreamReader reader, string schemaVersion)
     {
         using var activity = activitySource.StartActivity("parse-cars-csv");
 
@@ -28,6 +28,14 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
         var carRentalMap = new Dictionary<string, string>();
 
         var index = 0;
+
+
+        IStickerRecordParser recordParser = schemaVersion switch
+        {
+            "1.2" => new StickerRecordParserV1_2(),
+            "1.0" => new StickerRecordParserV1_0(),
+            _ => new StickerRecordParserV1_0()
+        };
 
         while (!reader.EndOfStream)
         {
@@ -54,68 +62,14 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
                 continue;
             }
 
-            var values = row.Split(',');
-            // Number,Driver,IsRental,_425,AAF,Alpinestars,Bimmerworld,Griots,Proformance,RoR,Redline,Toyo,Comment
-            // 0.     1.     2.   3.   4.  5.          6.          7.     8.          9.  10.     11.  12.
-
-            // Number,Driver,IsRental,_425,AAF,Alpinestars,Bimmerworld,Griots,Proformance,RoR,Redline,Toyo,Comment
-            // 
-            if (values.Length != 13)
-            {
-                rowActivity?.SetStatus(ActivityStatusCode.Error);
-                rowActivity?.AddTag("error", $"values length too short, length={values.Length}");
-                continue;
-            }
-
-            var carNumber = values[0].Trim();
-            var isRental = ToBool(values[2].Trim());
-            var owner =  values[1].Trim();
-
-            if (string.IsNullOrEmpty(carNumber))
-            {
-                rowActivity?.SetStatus(ActivityStatusCode.Error);
-                rowActivity?.AddTag("error", "carNumber missing");
-                continue;
-            }
-            
-            if (isRental)
-            {
-                if (string.IsNullOrWhiteSpace(owner))
-                {
-                    rowActivity?.SetStatus(ActivityStatusCode.Error);
-                    rowActivity?.AddTag("error", "owner missing");
-                    rowActivity?.AddTag("carNumber", carNumber);
-                    continue;
-                }
-                carRentalMap[carNumber] = owner;
-            }
-
-            if (!carToStickerMap.TryGetValue(carNumber, out var value))
-            {
-                value = new Dictionary<string, bool>();
-                carToStickerMap.Add(carNumber, value);
-            }
-
-            value[SponsorConstants._425] = ToBool(values[3]);
-            value[SponsorConstants.AAF] = ToBool(values[4]);
-            value[SponsorConstants.Alpinestars] = ToBool(values[5]);
-            value[SponsorConstants.Bimmerworld] = ToBool(values[6]);
-            value[SponsorConstants.Griots] = ToBool(values[7]);
-            value[SponsorConstants.Proformance] = ToBool(values[8]);
-            value[SponsorConstants.RoR] = ToBool(values[9]);
-            value[SponsorConstants.Redline] = ToBool(values[10]);
-            value[SponsorConstants.ToyoTires] = ToBool(values[11]);
+            recordParser.Parse(rowActivity, row, carToStickerMap, carRentalMap);
         }
 
         return new StickerParseResult()
         {
             carToStickerMapping = carToStickerMap,
-            carRentalMap = carRentalMap
+            carRentalMap = carRentalMap,
+            schemaVersion = schemaVersion
         };
-    }
-
-    private static bool ToBool(string? value)
-    {
-        return value is "y";
     }
 }

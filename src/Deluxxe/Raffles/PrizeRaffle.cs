@@ -58,6 +58,9 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
     {
         using var activity = activitySource.StartActivity("processing-candidates");
 
+        activity?.AddTag("sponsor", description.sponsorName);
+        activity?.AddTag("sku", description.sku);
+        
         var eligibleCandidates = candidates
             .Where(raceResult =>
                 {
