@@ -26,7 +26,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         Assert.NotNull(winner);
         _testOutputHelper.WriteLine(winner.ToString());
 
-        Assert.True(given.CarToStickerMap[winner.candidate.carNumber][winner.prizeDescription.sponsorName]);
+        Assert.True(given.CarToStickerMap[winner.candidate.carNumber][winner.prizeDescription.sponsorName.ToLower()]);
     }
 
     [Fact]
