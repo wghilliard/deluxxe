@@ -151,24 +151,35 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             .Build();
 
         var aggregatedResults = new Dictionary<string, int>();
+        var candidateMapping = new Dictionary<string, int>();
 
+        var samples = new List<int>();
+
+        int candidateCounter = 0;
+
+        foreach (var driver in given.Drivers)
+        {
+            candidateMapping[driver.name] = candidateCounter;
+            candidateCounter++;
+        }
 
         for (var round = 0; round < nDrawings; round++)
         {
-            var randomDrawingSeed = RandomNumberGenerator.GetInt32(int.MaxValue);
 
             if (round % 100 == 0)
             {
-                _testOutputHelper.WriteLine($"test round {round} w/ seed {randomDrawingSeed}");
+                _testOutputHelper.WriteLine($"test round {round}");
             }
 
-            var result = GetPrizeRaffle(given, randomSeed: randomDrawingSeed).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, round);
+            var result = GetPrizeRaffle(given).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, round);
             foreach (var winner in result.winners)
             {
                 if (!aggregatedResults.TryAdd(winner.candidate.name, 1))
                 {
                     aggregatedResults[winner.candidate.name] += 1;
                 }
+
+                samples.Add(candidateMapping[winner.candidate.name]);
             }
         }
 
@@ -195,6 +206,29 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         {
             _testOutputHelper.WriteLine($"{name}: {wins}");
         }
+
+
+        int max = candidateCounter - 1;
+        int min = 0;
+        int range = max + 1;
+        int[] observed = new int[range];
+        
+        foreach (var driverIndex in samples)
+        {
+            observed[driverIndex - min]++;
+        }
+        
+        double expected = samples.Count / (double)range;
+        double chiSquare = 0.0;
+
+        // Calculate Chi-Square statistic
+        for (int i = 0; i < range; i++)
+        {
+            double diff = observed[i] - expected;
+            chiSquare += (diff * diff) / expected;
+        }
+        
+        _testOutputHelper.WriteLine($"chi square: {chiSquare}, range: {range}");
     }
 
     private static TestHarnessBuilder Given()
@@ -202,13 +236,12 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         return new TestHarnessBuilder();
     }
 
-    private PrizeRaffle GetPrizeRaffle(TestHarness testHarness, bool allowRentals = false, int randomSeed = 1337)
+    private PrizeRaffle GetPrizeRaffle(TestHarness testHarness, bool allowRentals = false)
     {
         return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(),
             activitySource,
             testHarness.GetStickerManager(allowRentals),
-            testHarness.GetPrizeLimitChecker(),
-            new Random(randomSeed));
+            testHarness.GetPrizeLimitChecker());
     }
 
     public class TestHarnessBuilder

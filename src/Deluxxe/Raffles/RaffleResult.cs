@@ -14,8 +14,6 @@ public struct DrawingResult
     public required IList<PrizeWinner> winners { get; init; }
     public required IList<PrizeDescription> notAwarded { get; init; }
     public required DrawingType drawingType { get; init; }
-    public required int randomShuffleSeed { get; init; }
-    public required int randomDrawingSeed { get; init; }
 }
 
 public struct DrawingRoundResult

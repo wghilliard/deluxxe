@@ -21,16 +21,16 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
         logger.LogInformation("starting drawing rounds");
         using var activity = activitySource.StartActivity("starting drawing rounds");
-        var randomShuffleSeed = raffleExecutionConfiguration.RandomSeed == 0 ? RandomNumberGenerator.GetInt32(int.MaxValue) : raffleExecutionConfiguration.RandomSeed;
-        activity?.AddTag("randomShuffleSeed", randomShuffleSeed.ToString());
-        var randomShuffle = new Random(randomShuffleSeed);
+        // var randomShuffleSeed = raffleExecutionConfiguration.RandomSeed == 0 ? RandomNumberGenerator.GetInt32(int.MaxValue) : raffleExecutionConfiguration.RandomSeed;
+        // activity?.AddTag("randomShuffleSeed", randomShuffleSeed.ToString());
+        // var randomShuffle = new Random(randomShuffleSeed);
 
         var prizeDescriptionsArray = prizeDescriptions.ToArray();
-        randomShuffle.Shuffle(prizeDescriptionsArray);
+        RandomNumberGenerator.Shuffle<PrizeDescription>(prizeDescriptionsArray);
 
-        var randomDrawingSeed = raffleExecutionConfiguration.RandomSeed == 0 ? RandomNumberGenerator.GetInt32(int.MaxValue) : raffleExecutionConfiguration.RandomSeed;
-        activity?.AddTag("randomDrawingSeed", randomDrawingSeed.ToString());
-        var randomDrawing = new Random(randomDrawingSeed);
+        // var randomDrawingSeed = raffleExecutionConfiguration.RandomSeed == 0 ? RandomNumberGenerator.GetInt32(int.MaxValue) : raffleExecutionConfiguration.RandomSeed;
+        // activity?.AddTag("randomDrawingSeed", randomDrawingSeed.ToString());
+        // var randomDrawing = new Random(randomDrawingSeed);
 
         var scopedPreviousWinners = raffleExecutionConfiguration.UseWinningHistory ? new List<PrizeWinner>(previousWinners) : new List<PrizeWinner>();
         var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptionsArray);
@@ -45,7 +45,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
                 break;
             }
 
-            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker, randomDrawing);
+            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker);
 
             var scopedResourceIdBuilder = resourceIdBuilder(round);
 
@@ -76,8 +76,6 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         return new DrawingResult
         {
             drawingType = raffleExecutionConfiguration.DrawingType,
-            randomShuffleSeed = randomShuffleSeed,
-            randomDrawingSeed = randomDrawingSeed,
             winners = results.SelectMany(result => result.winners).ToList(),
             notAwarded = scopedPrizeDescriptions
         };

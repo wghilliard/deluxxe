@@ -1,10 +1,11 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, PrizeLimitChecker prizeLimitChecker, Random random)
+public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, PrizeLimitChecker prizeLimitChecker)
 {
     public DrawingRoundResult DrawPrizes(
         IList<PrizeDescription> descriptions,
@@ -114,7 +115,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
             return null;
         }
 
-        var winnerIndex = random.Next(eligibleCandidates.Count);
+        var winnerIndex = RandomNumberGenerator.GetInt32(eligibleCandidates.Count);
         var winner = eligibleCandidates[winnerIndex];
 
         logger.LogTrace("winner found [name={}]", winner.name);
