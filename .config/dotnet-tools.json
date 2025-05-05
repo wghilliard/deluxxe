@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "deluxxecli": {
-      "version": "1.0.14",
+      "version": "1.0.26",
       "commands": [
         "vexxed.deluxxe"
       ],

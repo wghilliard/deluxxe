@@ -36,7 +36,8 @@ namespace Deluxxe.RaceResults
 
         public static async Task<IEnumerable<RaceResultRecord>> ParseJsonAsync(StreamReader reader, CancellationToken token = default)
         {
-            var results = JsonSerializer.Deserialize<RaceResultResponse>(await reader.ReadToEndAsync(token));
+            var content = await reader.ReadToEndAsync(token);
+            var results = JsonSerializer.Deserialize<RaceResultResponse>(content);
 
             if (results == null)
             {

@@ -1,11 +1,10 @@
 using System.Diagnostics;
-using System.Security.Cryptography;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, PrizeLimitChecker prizeLimitChecker)
+public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySource, IStickerManager stickerManager, PrizeLimitChecker prizeLimitChecker, Func<int, int> getNextRandomInt)
 {
     public DrawingRoundResult DrawPrizes(
         IList<PrizeDescription> descriptions,
@@ -70,13 +69,14 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
                     var candidateName = stickerManager.GetCandidateNameForCar(raceResult.carNumber, raceResult.name);
                     candidateActivity?.AddTag("sponsor", description.sponsorName);
                     candidateActivity?.AddTag("candidateName", candidateName);
+                    candidateActivity?.AddTag("carNumber", raceResult.carNumber);
 
                     var stickerStatus = stickerManager.DriverHasSticker(raceResult.carNumber, description.sponsorName);
                     candidateActivity?.AddTag("stickerStatus", stickerStatus);
 
                     if (stickerStatus != StickerStatus.CarHasSticker)
                     {
-                        logger.LogTrace("no sticker for this sponsor [candidateName={}] [description={}]", candidateName, description);
+                        logger.LogTrace("no sticker for this sponsor [candidateName={}] [carNumber={}] [description={}]", candidateName, raceResult.carNumber, description);
 
                         candidateActivity?.AddTag("ineligibility-reason", IneligibilityReason.StickerNotPresent);
                         return false;
@@ -115,7 +115,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
             return null;
         }
 
-        var winnerIndex = RandomNumberGenerator.GetInt32(eligibleCandidates.Count);
+        var winnerIndex = getNextRandomInt(eligibleCandidates.Count);
         var winner = eligibleCandidates[winnerIndex];
 
         logger.LogTrace("winner found [name={}]", winner.name);

@@ -14,6 +14,10 @@ public class Condition(string field, string expression)
             _ => throw new InvalidOperationException($"Unknown field {field}")
         };
 
-        return (_mustBeEqual && recordsValue == _conditionsValue) || recordsValue != _conditionsValue;
+        if (_mustBeEqual)
+        {
+            return recordsValue == _conditionsValue;
+        }
+        return recordsValue != _conditionsValue;
     }
 }

@@ -47,7 +47,7 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
                 continue;
             }
 
-            if (index == 0)
+            if (index == 0 && row.Trim() == recordParser.GetHeader())
             {
                 index++;
                 continue;

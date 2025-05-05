@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using Deluxxe.Raffles;
+using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Sponsors;
 
-public class StickerProviderUriResolver(ActivitySource activitySource, IEnumerable<IStickerRecordProvider> recordProviders, RaffleConfiguration raffleConfiguration)
+public class StickerProviderUriResolver(ActivitySource activitySource, IEnumerable<IStickerRecordProvider> recordProviders, RaffleConfiguration raffleConfiguration, ILogger<InMemoryStickerManager> logger)
 {
     private async Task<StickerParseResult> Get(Uri uri, string schemaVersion)
     {
@@ -28,6 +29,6 @@ public class StickerProviderUriResolver(ActivitySource activitySource, IEnumerab
             throw new Exception("Unable to resolve sticker map uri");
         }
 
-        return new InMemoryStickerManager(parseResult, raffleConfiguration.allowRentersToWin);
+        return new InMemoryStickerManager(logger, parseResult, raffleConfiguration.allowRentersToWin);
     }
 }

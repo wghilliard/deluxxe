@@ -20,24 +20,19 @@ public class CsvRaffleResultWriter(ILogger<CsvRaffleResultWriter> logger, Raffle
         logger.LogInformation($"writing to {file.FullName}");
         await using var stream = new FileStream(file.FullName, FileMode.OpenOrCreate);
         var writer = new StreamWriter(stream, Encoding.UTF8);
-        await writer.WriteLineAsync("event name, drawing type, name, prize description, resource id");
+        await writer.WriteLineAsync("event name, drawing type, name, sponsor, prize description, prize unique id");
 
         foreach (var drawing in result.drawings)
         {
             var sortedPrizes = drawing.winners.ToArray();
-            Array.Sort(sortedPrizes, (a ,b )=> String.Compare(ToPrettyPrizeString(a.prizeDescription), ToPrettyPrizeString(b.prizeDescription), StringComparison.Ordinal));
+            Array.Sort(sortedPrizes, (a ,b )=> string.Compare(a.candidate.name, b.candidate.name, StringComparison.Ordinal));
             foreach (var winner in sortedPrizes)
             {
-                await writer.WriteLineAsync($"{result.configurationName}, {drawing.drawingType}, {winner.candidate.name}, {ToPrettyPrizeString(winner.prizeDescription)} , {winner.resourceId}");
+                await writer.WriteLineAsync($"{result.configurationName}, {drawing.drawingType}, {winner.candidate.name}, {winner.prizeDescription.sponsorName}, {winner.prizeDescription.description}, {winner.resourceId}");
             }
         }
         
         await writer.FlushAsync(cancellationToken);
         return FileUriParser.Generate(options.outputDirectory, fileName);
-    }
-
-    private static string ToPrettyPrizeString(PrizeDescription prizeDescription)
-    {
-        return $"[{prizeDescription.sponsorName}][{prizeDescription.description}]";
     }
 }

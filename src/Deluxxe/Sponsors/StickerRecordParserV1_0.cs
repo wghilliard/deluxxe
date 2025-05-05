@@ -5,6 +5,9 @@ namespace Deluxxe.Sponsors;
 public class StickerRecordParserV1_0 : IStickerRecordParser
 {
     private const int ExpectedRowLength = 13;
+
+    public string GetHeader() => "Number,Driver,IsRental,_425,AAF,Alpinestars,Bimmerworld,Griots,Proformance,RoR,Redline,Toyo,Comment";
+
     public void Parse(Activity? rowActivity, string row, Dictionary<string, IDictionary<string, bool>> carToStickerMap, Dictionary<string, string> carRentalMap)
     {
         rowActivity?.SetTag("StickerParserVersion", "1.0");

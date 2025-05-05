@@ -82,7 +82,8 @@ public class RaffleCliWorker(
                 Season = runConfiguration.season,
                 StickerMapUri = runConfiguration.stickerMapUri,
                 StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
-                RandomSeed = runConfiguration.raffleConfiguration.randomSeed,
+                RandomShuffleSeed = runConfiguration.raffleConfiguration.randomShuffleSeed,
+                RandomDrawingSeed = runConfiguration.raffleConfiguration.randomDrawingSeed,
                 UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
             };
             var drawingResult = await raffleService.ExecuteRaffleAsync(raffleConfiguration,
@@ -124,7 +125,8 @@ public class RaffleCliWorker(
             Season = runConfiguration.season,
             StickerMapUri = runConfiguration.stickerMapUri,
             StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
-            RandomSeed = runConfiguration.raffleConfiguration.randomSeed,
+            RandomShuffleSeed = runConfiguration.raffleConfiguration.randomShuffleSeed,
+            RandomDrawingSeed = runConfiguration.raffleConfiguration.randomDrawingSeed,
             UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
         };
         var eventDrawingResult = await raffleService.ExecuteRaffleAsync(eventRaffleConfig,

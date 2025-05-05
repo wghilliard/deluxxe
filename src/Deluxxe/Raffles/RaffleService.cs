@@ -21,16 +21,31 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
         logger.LogInformation("starting drawing rounds");
         using var activity = activitySource.StartActivity("starting drawing rounds");
-        // var randomShuffleSeed = raffleExecutionConfiguration.RandomSeed == 0 ? RandomNumberGenerator.GetInt32(int.MaxValue) : raffleExecutionConfiguration.RandomSeed;
-        // activity?.AddTag("randomShuffleSeed", randomShuffleSeed.ToString());
-        // var randomShuffle = new Random(randomShuffleSeed);
+
+        Action<PrizeDescription[]> shuffle;
+        if (raffleExecutionConfiguration.RandomShuffleSeed == 0)
+        {
+            shuffle = prizes => RandomNumberGenerator.Shuffle<PrizeDescription>(prizes);
+        }
+        else
+        {
+            activity?.AddTag("randomShuffleSeed", raffleExecutionConfiguration.RandomShuffleSeed);
+            shuffle = prizes => new Random(raffleExecutionConfiguration.RandomShuffleSeed).Shuffle(prizes);
+        }
 
         var prizeDescriptionsArray = prizeDescriptions.ToArray();
-        RandomNumberGenerator.Shuffle<PrizeDescription>(prizeDescriptionsArray);
+        shuffle(prizeDescriptionsArray);
 
-        // var randomDrawingSeed = raffleExecutionConfiguration.RandomSeed == 0 ? RandomNumberGenerator.GetInt32(int.MaxValue) : raffleExecutionConfiguration.RandomSeed;
-        // activity?.AddTag("randomDrawingSeed", randomDrawingSeed.ToString());
-        // var randomDrawing = new Random(randomDrawingSeed);
+        Func<int, int> getNextRandomInt;
+        if (raffleExecutionConfiguration.RandomDrawingSeed == 0)
+        {
+            getNextRandomInt = RandomNumberGenerator.GetInt32;
+        }
+        else
+        {
+            activity?.AddTag("randomDrawingSeed", raffleExecutionConfiguration.RandomDrawingSeed);
+            getNextRandomInt = new Random(raffleExecutionConfiguration.RandomDrawingSeed).Next;
+        }
 
         var scopedPreviousWinners = raffleExecutionConfiguration.UseWinningHistory ? new List<PrizeWinner>(previousWinners) : new List<PrizeWinner>();
         var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptionsArray);
@@ -45,7 +60,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
                 break;
             }
 
-            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker);
+            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker, getNextRandomInt);
 
             var scopedResourceIdBuilder = resourceIdBuilder(round);
 
@@ -59,8 +74,8 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
             roundActivity?.SetTag("awarded prizes", drawingResult.winners.Count);
             roundActivity?.SetTag("not-awarded prizes", drawingResult.notAwarded.Count);
-            logger.LogInformation($"{drawingResult.winners.Count} won");
-            logger.LogInformation($"{drawingResult.notAwarded.Count} not-awarded");
+            logger.LogInformation("{winnersCount} won", drawingResult.winners.Count);
+            logger.LogInformation("{notAwardedCount} not-awarded", drawingResult.notAwarded.Count);
 
             results.Add(drawingResult);
             scopedPrizeDescriptions = [..drawingResult.notAwarded];

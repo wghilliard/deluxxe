@@ -165,7 +165,6 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         for (var round = 0; round < nDrawings; round++)
         {
-
             if (round % 100 == 0)
             {
                 _testOutputHelper.WriteLine($"test round {round}");
@@ -212,12 +211,12 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         int min = 0;
         int range = max + 1;
         int[] observed = new int[range];
-        
+
         foreach (var driverIndex in samples)
         {
             observed[driverIndex - min]++;
         }
-        
+
         double expected = samples.Count / (double)range;
         double chiSquare = 0.0;
 
@@ -227,7 +226,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             double diff = observed[i] - expected;
             chiSquare += (diff * diff) / expected;
         }
-        
+
         _testOutputHelper.WriteLine($"chi square: {chiSquare}, range: {range}");
     }
 
@@ -241,7 +240,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         return new PrizeRaffle(loggerFactory.CreateLogger<PrizeRaffle>(),
             activitySource,
             testHarness.GetStickerManager(allowRentals),
-            testHarness.GetPrizeLimitChecker());
+            testHarness.GetPrizeLimitChecker(),
+            RandomNumberGenerator.GetInt32);
     }
 
     public class TestHarnessBuilder
@@ -489,12 +489,14 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         public IStickerManager GetStickerManager(bool allowRentalsToWin)
         {
-            return new InMemoryStickerManager(new StickerParseResult
-            {
-                carToStickerMapping = CarToStickerMap,
-                carRentalMap = CarRentalMap,
-                schemaVersion = "1.0"
-            }, allowRentalsToWin);
+            return new InMemoryStickerManager(
+                new LoggerFactory().CreateLogger<InMemoryStickerManager>(),
+                new StickerParseResult
+                {
+                    carToStickerMapping = CarToStickerMap,
+                    carRentalMap = CarRentalMap,
+                    schemaVersion = "1.0"
+                }, allowRentalsToWin);
         }
 
         public PrizeLimitChecker GetPrizeLimitChecker()

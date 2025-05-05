@@ -6,6 +6,8 @@ public class StickerRecordParserV1_2 : IStickerRecordParser
 {
     private const int ExpectedRowLength = 15;
 
+    public string GetHeader() => "Number,Owner,Listed Color,Email 1,Email 2,Is A Rental,_425,AAF,Bimmerworld,Griots,Redline,RoR,Toyo,Proformance,Alpinestars";
+
     public void Parse(Activity? rowActivity, string row, Dictionary<string, IDictionary<string, bool>> carToStickerMap, Dictionary<string, string> carRentalMap)
     {
         rowActivity?.SetTag("StickerParserVersion", "1.2");

@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Logging;
+
 namespace Deluxxe.Sponsors;
 
-public class InMemoryStickerManager(StickerParseResult parseResult, bool allowRentersToWin) : IStickerManager
+public class InMemoryStickerManager(ILogger<InMemoryStickerManager> logger, StickerParseResult parseResult, bool allowRentersToWin) : IStickerManager
 {
     public StickerStatus DriverHasSticker(string carNumber, string sponsorName)
     {
@@ -24,6 +26,13 @@ public class InMemoryStickerManager(StickerParseResult parseResult, bool allowRe
             return driverName;
         }
 
-        return parseResult.carRentalMap.TryGetValue(carNumber, out var carOwnerName) ? carOwnerName : driverName;
+        if (parseResult.carRentalMap.TryGetValue(carNumber, out var carOwnerName))
+        {
+            return carOwnerName;
+        }
+
+        return driverName;
     }
+
+    public StickerParseResult GetParseResult() => parseResult;
 }
