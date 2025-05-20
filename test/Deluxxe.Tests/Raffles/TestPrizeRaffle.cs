@@ -262,7 +262,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         {
             sponsorName = SponsorConstants.ToyoTires,
             description = "4 toyo tires",
-            sku = "1"
+            sku = "1",
+            serial = "0"
         };
 
         private readonly Faker<Driver> _driverFaker = new Faker<Driver>()
@@ -272,7 +273,8 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         private readonly Faker<PrizeDescription> _prizeFaker = new Faker<PrizeDescription>()
             .RuleFor(a => a.sponsorName, f => f.PickRandom(MostSponsorNames))
             .RuleFor(a => a.description, f => f.Lorem.Word())
-            .RuleFor(a => a.sku, f => f.Random.Number(1, 100).ToString());
+            .RuleFor(a => a.sku, f => f.Random.Number(1, 100).ToString())
+            .RuleFor(a => a.serial, f => f.Random.Number(1, 100).ToString());
 
         public TestHarnessBuilder WithDrivers(int count, bool allDriversStarted = true, bool allCarsMapped = true)
         {

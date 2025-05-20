@@ -126,7 +126,7 @@ public class PrizeRaffle(ILogger<PrizeRaffle> logger, ActivitySource activitySou
         {
             candidate = winner,
             prizeDescription = description,
-            resourceId = drawingConfig.ResourceIdBuilder.Copy().WithPrize(description.sponsorName, description.sku).Build(),
+            resourceId = drawingConfig.ResourceIdBuilder.Copy().WithPrize(description.sponsorName, description.sku).WithSerial(description.serial).Build(),
         };
     }
 }

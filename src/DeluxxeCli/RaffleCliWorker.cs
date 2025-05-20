@@ -52,7 +52,8 @@ public class RaffleCliWorker(
                 {
                     description = record.description,
                     sponsorName = record.name,
-                    sku = record.sku
+                    sku = record.sku,
+                    serial = (count + 1).ToString()
                 });
             }
         }
@@ -110,7 +111,8 @@ public class RaffleCliWorker(
                 {
                     description = record.description,
                     sponsorName = record.name,
-                    sku = record.sku
+                    sku = record.sku,
+                    serial = (count + 1).ToString(),
                 });
             }
         }
