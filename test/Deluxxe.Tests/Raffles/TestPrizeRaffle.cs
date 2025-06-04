@@ -10,7 +10,7 @@ namespace Deluxxe.Tests.Raffles;
 
 public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(testOutputHelper)
 {
-    private static readonly string CAR_OWNER = "car-owner";
+    private const string CarOwner = "car-owner";
     private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
     [Fact]
@@ -112,7 +112,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         var result = GetPrizeRaffle(given, allowRentals: true).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, 1);
         Assert.NotNull(result.winners);
         Assert.Single(result.winners);
-        Assert.False(result.winners[0].candidate.name == CAR_OWNER);
+        Assert.False(result.winners[0].candidate.name == CarOwner);
 
         Assert.NotNull(result.notAwarded);
         Assert.Single(result.notAwarded);
@@ -131,19 +131,19 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         var result = GetPrizeRaffle(given, allowRentals: false).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, 1);
         Assert.NotNull(result.winners);
         Assert.Single(result.winners);
-        Assert.True(result.winners[0].candidate.name == CAR_OWNER);
+        Assert.True(result.winners[0].candidate.name == CarOwner);
 
         Assert.NotNull(result.notAwarded);
         Assert.Single(result.notAwarded);
     }
 
-    [Fact]
-    public void DrawPrizes_ResultsAreRandom()
+    [Theory]
+    [InlineData(24, 14, 8, 36.415)]
+    [InlineData(30, 14, 8, 42.56)]
+    [InlineData(30, 10000, 8, 42.56)]
+    // https://math.arizona.edu/~jwatkins/chi-square-table.pdf
+    public void DrawPrizes_ResultsAreRandom(int nDrivers, int nDrawings, int nPrizesPerDrawing, double criticalValue)
     {
-        const int nDrivers = 30;
-        const int nDrawings = 100000;
-        const int nPrizesPerDrawing = 10;
-
         var given = Given()
             .WithDrivers(nDrivers, allCarsMapped: true)
             .WithPrizeDescriptions(nPrizesPerDrawing, withToyo: false)
@@ -165,11 +165,6 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         for (var round = 0; round < nDrawings; round++)
         {
-            if (round % 100 == 0)
-            {
-                _testOutputHelper.WriteLine($"test round {round}");
-            }
-
             var result = GetPrizeRaffle(given).DrawPrizes(given.PrizeDescriptions, given.Drivers, given.PreviousWinners, given.raceConfig, round);
             foreach (var winner in result.winners)
             {
@@ -182,52 +177,28 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
             }
         }
 
-        Assert.Equal(nDrivers, aggregatedResults.Count);
         Assert.Equal(nDrawings * nPrizesPerDrawing, aggregatedResults.Select(x => x.Value).Sum());
 
-        double mean = 0;
-        foreach (var (name, wins) in aggregatedResults)
-        {
-            mean += wins;
-        }
-
-        mean /= nDrivers;
-        double variance = 0;
-        foreach (var (name, wins) in aggregatedResults)
-        {
-            variance += Math.Pow(wins - mean, 2);
-        }
-
-        variance /= nDrivers - 1;
-
-        _testOutputHelper.WriteLine($"mean: {mean}, variance: {variance}, standard deviation: {Math.Sqrt(variance)}");
-        foreach (var (name, wins) in aggregatedResults)
-        {
-            _testOutputHelper.WriteLine($"{name}: {wins}");
-        }
-
-
-        int max = candidateCounter - 1;
-        int min = 0;
-        int range = max + 1;
-        int[] observed = new int[range];
+        const int min = 0;
+        int[] observed = new int[nDrivers];
 
         foreach (var driverIndex in samples)
         {
             observed[driverIndex - min]++;
         }
 
-        double expected = samples.Count / (double)range;
+        double expected = samples.Count / (double)nDrivers;
         double chiSquare = 0.0;
 
         // Calculate Chi-Square statistic
-        for (int i = 0; i < range; i++)
+        for (int i = 0; i < nDrivers; i++)
         {
             double diff = observed[i] - expected;
-            chiSquare += (diff * diff) / expected;
+            chiSquare += diff * diff / expected;
         }
 
-        _testOutputHelper.WriteLine($"chi square: {chiSquare}, range: {range}");
+        _testOutputHelper.WriteLine($"degrees of freedom: {nDrivers - 1}, chi square: {chiSquare}, criticalValue: {criticalValue}, expectedValue:{expected}");
+        Assert.True(chiSquare < criticalValue);
     }
 
     private static TestHarnessBuilder Given()
@@ -432,7 +403,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         {
             foreach (var car in _driverToCarMap.Values)
             {
-                _carRentalMap[car] = CAR_OWNER;
+                _carRentalMap[car] = CarOwner;
             }
 
             return this;

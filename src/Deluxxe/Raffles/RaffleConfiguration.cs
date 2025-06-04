@@ -8,5 +8,5 @@ public record RaffleConfiguration
     public int randomShuffleSeed { get; init; }
     public int randomDrawingSeed { get; init; }
 
-    public bool useWinningHistory { get; init; }
+    public bool filterDriversWithWinningHistory { get; init; }
 }

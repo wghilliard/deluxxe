@@ -11,4 +11,17 @@ public static class SponsorConstants
     public const string RoR = "Racer On Rails";
     public const string Redline = "Red Line Oil";
     public const string ToyoTires = "Toyo Tires";
+
+    public static List<string> Sponsors =
+    [
+        _425,
+        AAF,
+        Alpinestars,
+        Bimmerworld,
+        Griots,
+        Proformance,
+        RoR,
+        Redline,
+        ToyoTires
+    ];
 }

@@ -72,8 +72,8 @@ public class RaffleCliWorker(
             var raceDrawingActivity = activitySource.StartActivity("race-drawing");
 
             // 4. get the race results
-            var raceResults = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
-            eventRaceResults.AddRange(raceResults);
+            var eligibleDrivers = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
+            eventRaceResults.AddRange(eligibleDrivers);
 
             var raffleConfiguration = new RaffleExecutionConfiguration
             {
@@ -85,14 +85,15 @@ public class RaffleCliWorker(
                 StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
                 RandomShuffleSeed = runConfiguration.raffleConfiguration.randomShuffleSeed,
                 RandomDrawingSeed = runConfiguration.raffleConfiguration.randomDrawingSeed,
-                UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
+                FilterDriversWithWinningHistory = runConfiguration.raffleConfiguration.filterDriversWithWinningHistory,
             };
             var drawingResult = await raffleService.ExecuteRaffleAsync(raffleConfiguration,
                 perRacePrizePrizeDescriptions,
-                raceResults,
+                eligibleDrivers,
                 racePrizePreviousWinners,
                 prizeLimitChecker,
                 round => eventResourceIdBuilder.Copy().WithRaceDrawingRound(result.sessionName, result.sessionId, round.ToString()));
+
             drawingResults.Add(drawingResult);
             racePrizePreviousWinners.AddRange(drawingResult.winners);
             prizeLimitChecker.Update(drawingResult.winners);
@@ -129,7 +130,7 @@ public class RaffleCliWorker(
             StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
             RandomShuffleSeed = runConfiguration.raffleConfiguration.randomShuffleSeed,
             RandomDrawingSeed = runConfiguration.raffleConfiguration.randomDrawingSeed,
-            UseWinningHistory = runConfiguration.raffleConfiguration.useWinningHistory,
+            FilterDriversWithWinningHistory = runConfiguration.raffleConfiguration.filterDriversWithWinningHistory,
         };
         var eventDrawingResult = await raffleService.ExecuteRaffleAsync(eventRaffleConfig,
             perEventPrizePrizeDescriptions,

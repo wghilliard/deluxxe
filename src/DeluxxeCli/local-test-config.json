@@ -31,6 +31,6 @@
     "clearHistoryIfNoCandidates": true,
     "allowRentersToWin": false,
     "randomSeed": 0,
-    "useWinningHistory": false
+    "filterDriversWithWinningHistory": false
   }
 }

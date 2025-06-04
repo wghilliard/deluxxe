@@ -10,5 +10,5 @@ public struct RaffleExecutionConfiguration
     public required string StickerMapSchemaVersion { get; init; }
     public required int RandomShuffleSeed { get; init; }
     public required int RandomDrawingSeed { get; init; }
-    public required bool UseWinningHistory { get; init; }
+    public required bool FilterDriversWithWinningHistory { get; init; }
 }

@@ -39,6 +39,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         Func<int, int> getNextRandomInt;
         if (raffleExecutionConfiguration.RandomDrawingSeed == 0)
         {
+            activity?.AddTag("randomDrawingSeed", "none");
             getNextRandomInt = RandomNumberGenerator.GetInt32;
         }
         else
@@ -47,7 +48,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
             getNextRandomInt = new Random(raffleExecutionConfiguration.RandomDrawingSeed).Next;
         }
 
-        var scopedPreviousWinners = raffleExecutionConfiguration.UseWinningHistory ? new List<PrizeWinner>(previousWinners) : new List<PrizeWinner>();
+        var scopedPreviousWinners = raffleExecutionConfiguration.FilterDriversWithWinningHistory ? new List<PrizeWinner>(previousWinners) : new List<PrizeWinner>();
         var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptionsArray);
         var results = new List<DrawingRoundResult>();
         for (var round = 0; round < raffleExecutionConfiguration.MaxRounds; round++)

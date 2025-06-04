@@ -8,7 +8,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>vexxed.deluxxe</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
-        <Version>1.0.28</Version>
+        <Version>1.0.41</Version>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Deluxxe/Deluxxe.csproj"/>
