@@ -1,6 +1,6 @@
 # Car-to-Sticker Mapping Download
 
-This script automatically downloads car-to-sticker mapping data from a private Google Sheet and formats it as a CSV file.
+The `download-car-mapping.py` script automatically downloads car-to-sticker mapping data from a private Google Sheet and formats it as a CSV file with proper column mapping and data validation.
 
 ## Setup
 

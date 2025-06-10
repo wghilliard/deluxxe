@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Download car-to-sticker mapping from Google Sheets.
-Processes the data and saves it in the expected CSV format.
+
+This script authenticates with Google Sheets API, downloads car mapping data,
+processes it according to configuration, and saves it in the expected CSV format.
 """
 
 import os
@@ -9,11 +11,12 @@ import sys
 import json
 import csv
 from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from googleapiclient.discovery import Resource
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -29,8 +32,19 @@ def load_config() -> Dict[str, Any]:
     with open(config_path, 'r') as f:
         return json.load(f)
 
-def authenticate_google_sheets(credentials_file: str) -> Any:
-    """Authenticate with Google Sheets API"""
+def authenticate_google_sheets(credentials_file: str) -> Resource:
+    """
+    Authenticate with Google Sheets API.
+    
+    Args:
+        credentials_file: Path to Google API credentials file
+        
+    Returns:
+        Google Sheets service resource
+        
+    Raises:
+        SystemExit: If authentication fails or credentials file is missing
+    """
     creds = None
     token_file = os.path.join(os.path.dirname(__file__), 'token.json')
     
@@ -58,8 +72,17 @@ def authenticate_google_sheets(credentials_file: str) -> Any:
     
     return build('sheets', 'v4', credentials=creds)
 
-def get_sheet_names(service: Any, spreadsheet_id: str) -> List[str]:
-    """Get all sheet names in the spreadsheet"""
+def get_sheet_names(service: Resource, spreadsheet_id: str) -> List[str]:
+    """
+    Get all sheet names in the spreadsheet.
+    
+    Args:
+        service: Google Sheets service resource
+        spreadsheet_id: Google Sheets spreadsheet ID
+        
+    Returns:
+        List of sheet names
+    """
     try:
         sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
         sheets = sheet_metadata.get('sheets', [])
@@ -69,8 +92,21 @@ def get_sheet_names(service: Any, spreadsheet_id: str) -> List[str]:
         print(f"Error getting sheet names: {e}")
         return []
 
-def download_sheet_data(service: Any, spreadsheet_id: str, range_name: str) -> List[List[str]]:
-    """Download data from Google Sheets"""
+def download_sheet_data(service: Resource, spreadsheet_id: str, range_name: str) -> List[List[str]]:
+    """
+    Download data from Google Sheets.
+    
+    Args:
+        service: Google Sheets service resource
+        spreadsheet_id: Google Sheets spreadsheet ID
+        range_name: Sheet range to download (e.g., 'Sheet1!A:Z')
+        
+    Returns:
+        List of rows, where each row is a list of cell values
+        
+    Raises:
+        SystemExit: If download fails
+    """
     try:
         sheet = service.spreadsheets()
         result = sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
@@ -88,7 +124,16 @@ def download_sheet_data(service: Any, spreadsheet_id: str, range_name: str) -> L
         sys.exit(1)
 
 def process_data(raw_data: List[List[str]], column_mapping: Dict[str, str]) -> List[Dict[str, str]]:
-    """Process raw sheet data into the expected format"""
+    """
+    Process raw sheet data into the expected format.
+    
+    Args:
+        raw_data: Raw data from Google Sheets (list of rows)
+        column_mapping: Mapping from output columns to sheet columns
+        
+    Returns:
+        List of processed data rows as dictionaries
+    """
     if not raw_data:
         return []
     
@@ -123,8 +168,15 @@ def process_data(raw_data: List[List[str]], column_mapping: Dict[str, str]) -> L
     print(f"Processed {len(processed_data)} data rows")
     return processed_data
 
-def save_csv(data: List[Dict[str, str]], output_file: str, column_order: List[str]):
-    """Save processed data to CSV file"""
+def save_csv(data: List[Dict[str, str]], output_file: str, column_order: List[str]) -> None:
+    """
+    Save processed data to CSV file.
+    
+    Args:
+        data: Processed data rows
+        output_file: Output file path
+        column_order: Order of columns in output file
+    """
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     
     with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
@@ -134,8 +186,13 @@ def save_csv(data: List[Dict[str, str]], output_file: str, column_order: List[st
     
     print(f"Saved {len(data)} rows to {output_file}")
 
-def main():
-    """Main function"""
+def main() -> None:
+    """
+    Main function to download and process car mapping data.
+    
+    Loads configuration, authenticates with Google Sheets API,
+    downloads data, processes it, and saves to CSV file.
+    """
     # Load configuration
     config = load_config()
     

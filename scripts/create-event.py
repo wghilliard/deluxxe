@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+Enhanced create event script with SpeedHive integration.
+
+This script creates event directory structures and configuration files
+for Deluxxe raffle management, with automatic integration to SpeedHive
+for race event data retrieval.
+"""
+
 import os
 import json
 import re
@@ -6,10 +14,10 @@ import requests
 from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 
-def query_speedhive_events(mylaps_account_id: str) -> List[Dict]:
+def query_speedhive_events(mylaps_account_id: str) -> List[Dict[str, Any]]:
     """Query SpeedHive API for user's events."""
     url = f"https://eventresults-api.speedhive.com/api/v0.2.3/eventresults/accounts/{mylaps_account_id}/events"
     params = {
@@ -32,7 +40,7 @@ def query_speedhive_events(mylaps_account_id: str) -> List[Dict]:
         return []
 
 
-def query_speedhive_event_details(event_id: int) -> Optional[Dict]:
+def query_speedhive_event_details(event_id: int) -> Optional[Dict[str, Any]]:
     """Query SpeedHive API for event details including sessions."""
     url = f"https://eventresults-api.speedhive.com/api/v0.2.3/eventresults/events/{event_id}"
     params = {"sessions": "true"}
@@ -52,7 +60,10 @@ def query_speedhive_event_details(event_id: int) -> Optional[Dict]:
         return None
 
 
-def find_latest_event_by_organization(events: List[Dict], organizations: List[str]) -> Optional[Dict]:
+def find_latest_event_by_organization(
+    events: List[Dict[str, Any]], 
+    organizations: List[str]
+) -> Optional[Dict[str, Any]]:
     """Find the latest event by specified organizations."""
     filtered_events = [
         event for event in events 
@@ -67,7 +78,7 @@ def find_latest_event_by_organization(events: List[Dict], organizations: List[st
     return filtered_events[0]
 
 
-def extract_group1_race_sessions(event_details: Dict) -> List[Dict]:
+def extract_group1_race_sessions(event_details: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Extract Group 1 race sessions from event details."""
     group1_races = []
     
@@ -107,9 +118,9 @@ def create_deluxxe_config(
     output_path: Path,
     event_name: str,
     event_id: int,
-    race_sessions: List[Dict],
-    car_mapping_file: str,
-    prize_file: str
+    race_sessions: List[Dict[str, Any]],
+    car_mapping_file: Optional[str],
+    prize_file: Optional[str]
 ) -> None:
     """Create deluxxe.json config from template with substitutions."""
     with open(template_path, 'r') as f:
@@ -188,8 +199,21 @@ def create_deluxxe_config(
         f.write(template_content)
 
 
-def main(event_name: str, output_dir: Path, mylaps_account_id: Optional[str] = None, 
-         event_id: Optional[int] = None) -> None:
+def main(
+    event_name: str, 
+    output_dir: Path, 
+    mylaps_account_id: Optional[str] = None, 
+    event_id: Optional[int] = None
+) -> None:
+    """
+    Main function to create event structure and configuration.
+    
+    Args:
+        event_name: Name of the event to create
+        output_dir: Base output directory
+        mylaps_account_id: Optional MYLAPS account ID for SpeedHive integration
+        event_id: Optional specific event ID to use
+    """
     event_path = output_dir.joinpath(event_name)
     collateral_path = event_path.joinpath("collateral")
     deluxxe_path = event_path.joinpath("deluxxe")
