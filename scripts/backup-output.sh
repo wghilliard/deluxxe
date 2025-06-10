@@ -1,0 +1,1 @@
+cp -Rp ./output/ /Volumes/data/m365/pro3/deluxxe-outputs

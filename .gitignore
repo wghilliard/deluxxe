@@ -4,6 +4,11 @@
 # Azure Functions localsettings file
 local.settings.json
 
+# Car mapping configuration (contains sensitive URLs)
+scripts/client_secret_*.json
+scripts/token.json
+scripts/car-mapping-config.json
+
 # User-specific files
 *.suo
 *.user
