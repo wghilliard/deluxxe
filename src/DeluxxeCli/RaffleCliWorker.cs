@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Deluxxe.IO;
 using Deluxxe.RaceResults;
 using Deluxxe.Raffles;
@@ -23,6 +24,8 @@ public class RaffleCliWorker(
     protected override async Task ExecuteAsync(CancellationToken token)
     {
         using var activity = activitySource.StartActivity("deluxxe-cli");
+        activity?.AddTag("raffleConfiguration", JsonSerializer.Serialize(runConfiguration.raffleConfiguration));
+
         var eventResourceIdBuilder = new ResourceIdBuilder().WithSeason(runConfiguration.season).WithEvent(runConfiguration.eventName, runConfiguration.eventId);
 
         // 2. get the prize descriptions
@@ -44,7 +47,7 @@ public class RaffleCliWorker(
         logger.LogInformation("sponsor records validated");
 
         var perRacePrizePrizeDescriptions = new List<PrizeDescription>();
-        foreach (var record in prizeDescriptionRecords!.perRacePrizes)
+        foreach (var record in prizeDescriptionRecords.perRacePrizes)
         {
             for (var count = 0; count < record.count; count++)
             {
@@ -66,7 +69,11 @@ public class RaffleCliWorker(
         var eventRaceResults = new List<Driver>();
         var drawingResults = new List<DrawingResult>();
         var racePrizePreviousWinners = new List<PrizeWinner>();
-        racePrizePreviousWinners.AddRange(previousWinners);
+        if (runConfiguration.raffleConfiguration.filterDriversWithWinningHistory)
+        {
+            racePrizePreviousWinners.AddRange(previousWinners);
+        }
+
         foreach (var result in runConfiguration.raceResults)
         {
             var raceDrawingActivity = activitySource.StartActivity("race-drawing");
@@ -85,7 +92,7 @@ public class RaffleCliWorker(
                 StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
                 RandomShuffleSeed = runConfiguration.raffleConfiguration.randomShuffleSeed,
                 RandomDrawingSeed = runConfiguration.raffleConfiguration.randomDrawingSeed,
-                FilterDriversWithWinningHistory = runConfiguration.raffleConfiguration.filterDriversWithWinningHistory,
+                LimitOnePrizePerDriverPerWeekend = runConfiguration.raffleConfiguration.limitOnePrizePerDriverPerWeekend
             };
             var drawingResult = await raffleService.ExecuteRaffleAsync(raffleConfiguration,
                 perRacePrizePrizeDescriptions,
@@ -95,7 +102,11 @@ public class RaffleCliWorker(
                 round => eventResourceIdBuilder.Copy().WithRaceDrawingRound(result.sessionName, result.sessionId, round.ToString()));
 
             drawingResults.Add(drawingResult);
-            racePrizePreviousWinners.AddRange(drawingResult.winners);
+            if (runConfiguration.raffleConfiguration.limitOnePrizePerDriverPerWeekend)
+            {
+                racePrizePreviousWinners.AddRange(drawingResult.winners);
+            }
+
             prizeLimitChecker.Update(drawingResult.winners);
 
             logger.LogInformation($"{drawingResult.winners.Count} won");
@@ -120,6 +131,17 @@ public class RaffleCliWorker(
 
         using var eventDrawingActivity = activitySource.StartActivity("event-drawing");
 
+        var eventPrizePreviousWinners = new List<PrizeWinner>();
+        if (runConfiguration.raffleConfiguration.filterDriversWithWinningHistory)
+        {
+            eventPrizePreviousWinners.AddRange(previousWinners);
+        }
+
+        if (runConfiguration.raffleConfiguration.limitOnePrizePerDriverPerWeekend)
+        {
+            eventPrizePreviousWinners.AddRange(racePrizePreviousWinners);
+        }
+
         var eventRaffleConfig = new RaffleExecutionConfiguration
         {
             MaxRounds = runConfiguration.raffleConfiguration.maxRounds,
@@ -130,12 +152,12 @@ public class RaffleCliWorker(
             StickerMapSchemaVersion = runConfiguration.stickerMapSchemaVersion,
             RandomShuffleSeed = runConfiguration.raffleConfiguration.randomShuffleSeed,
             RandomDrawingSeed = runConfiguration.raffleConfiguration.randomDrawingSeed,
-            FilterDriversWithWinningHistory = runConfiguration.raffleConfiguration.filterDriversWithWinningHistory,
+            LimitOnePrizePerDriverPerWeekend = runConfiguration.raffleConfiguration.limitOnePrizePerDriverPerWeekend
         };
         var eventDrawingResult = await raffleService.ExecuteRaffleAsync(eventRaffleConfig,
             perEventPrizePrizeDescriptions,
             eventRaceResults,
-            previousWinners,
+            eventPrizePreviousWinners,
             prizeLimitChecker,
             round => eventResourceIdBuilder.Copy().WithEventDrawingRound(round.ToString()));
         drawingResults.Add(eventDrawingResult);

@@ -21,7 +21,7 @@ public class TestSpeedHiveClient(ITestOutputHelper testOutputHelper)
         var sp = services.BuildServiceProvider();
 
         var client = sp.GetRequiredService<SpeedHiveClient>();
-        var results = (await client.GetResultsFromJsonUrl(new Uri("https://eventresults-api.speedhive.com/api/v0.2.3/eventresults/sessions/8939601/classification"))).ToList();
+        var results = (await client.GetResultsFromJsonUrl(new Uri("https://eventresults-api.speedhive.com/api/v0.2.3/eventresults/sessions/8939601/classification"))).rows.ToList();
         Assert.True(results.Count > 0);
     }
 }

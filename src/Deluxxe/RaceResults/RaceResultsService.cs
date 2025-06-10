@@ -17,16 +17,22 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerialize
         }
         else
         {
-            raceResults = new List<RaceResultRecord>(await speedHiveClient.GetResultsFromJsonUrl(raceResultUri, cancellationToken));
-            if (serializerOptions.writeIntermediates)
+            var name = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(raceResultUri.AbsoluteUri))).Replace("/", "_");
+            var filePath = Path.Combine(serializerOptions.outputDirectory, $"{name}-source-race-results.json");
+            var file = new FileInfo(filePath);
+
+            if (file.Exists)
             {
-                var name = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(raceResultUri.AbsoluteUri))).Replace("/", "_");
-                var filePath = Path.Combine(serializerOptions.outputDirectory, $"{name}-source-race-results.json");
-                var file = new FileInfo(filePath);
-                if (!file.Exists)
+                raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(new Uri($"file://{file.FullName}"), extensions: ["json"], cancellationToken))!.rows;
+            }
+            else
+            {
+                var response = await speedHiveClient.GetResultsFromJsonUrl(raceResultUri, cancellationToken); 
+                raceResults = new List<RaceResultRecord>(response.rows);
+                if (serializerOptions.writeIntermediates)
                 {
                     await using var stream = file.OpenWrite();
-                    await stream.WriteAsync(JsonSerializer.SerializeToUtf8Bytes(raceResults, options: new JsonSerializerOptions()
+                    await stream.WriteAsync(JsonSerializer.SerializeToUtf8Bytes(response, options: new JsonSerializerOptions()
                     {
                         IndentSize = 2,
                         WriteIndented = true

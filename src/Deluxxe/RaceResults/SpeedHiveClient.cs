@@ -21,7 +21,7 @@ namespace Deluxxe.RaceResults
             _client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0)");
         }
         
-        public async Task<IEnumerable<RaceResultRecord>> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)
+        public async Task<RaceResultResponse> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)
         {
             using var response = await _client.GetAsync(url, token);
 
@@ -34,7 +34,7 @@ namespace Deluxxe.RaceResults
             throw new HttpRequestException($"Unable to get race results from url: {url}, response: {response}, responseCode: {response.StatusCode}");
         }
 
-        public static async Task<IEnumerable<RaceResultRecord>> ParseJsonAsync(StreamReader reader, CancellationToken token = default)
+        public static async Task<RaceResultResponse> ParseJsonAsync(StreamReader reader, CancellationToken token = default)
         {
             var content = await reader.ReadToEndAsync(token);
             var results = JsonSerializer.Deserialize<RaceResultResponse>(content);
@@ -44,7 +44,7 @@ namespace Deluxxe.RaceResults
                 throw new DataException("unable to parse given json stream!");
             }
 
-            return results.rows;
+            return results;
         }
 
         public static Uri GetApiJsonUrlFromUiUrl(Uri uiUrl)

@@ -9,4 +9,6 @@ public record RaffleConfiguration
     public int randomDrawingSeed { get; init; }
 
     public bool filterDriversWithWinningHistory { get; init; }
+
+    public bool limitOnePrizePerDriverPerWeekend { get; init; }
 }

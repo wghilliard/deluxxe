@@ -1,0 +1,197 @@
+[
+    {
+        "id": 3044415,
+        "name": "NWR-SCCA Majors & Regional",
+        "sport": "Car",
+        "startDate": "2025-05-24",
+        "updatedAt": "2025-05-28T02:18:29+02:00",
+        "uploadSoftware": {
+            "name": "Orbits",
+            "version": "5.13.1"
+        },
+        "hasChamp": true,
+        "location": {
+            "id": 384117,
+            "name": "Pacific Raceways",
+            "length": 2.25,
+            "lengthUnit": "mi",
+            "lengthLabel": "2.2500 mi",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            },
+            "lon": 0.0,
+            "lat": 0.0
+        },
+        "organization": {
+            "id": 2334,
+            "name": "Northwest Region SCCA",
+            "logo": null,
+            "url": "http://www.nwr-scca.org/",
+            "city": "",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            }
+        },
+        "sessions": null
+    },
+    {
+        "id": 3032241,
+        "name": "IRDC Spring Sprints",
+        "sport": "Car",
+        "startDate": "2025-05-17",
+        "updatedAt": "2025-05-29T23:40:23+02:00",
+        "uploadSoftware": {
+            "name": "Orbits",
+            "version": "5.13.1"
+        },
+        "hasChamp": true,
+        "location": {
+            "id": 381891,
+            "name": "Pacific Raceway",
+            "length": 2.25,
+            "lengthUnit": "mi",
+            "lengthLabel": "2.2500 mi",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            },
+            "lon": 0.0,
+            "lat": 0.0
+        },
+        "organization": {
+            "id": 743550,
+            "name": "IRDC",
+            "logo": null,
+            "url": null,
+            "city": "Vancouver",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            }
+        },
+        "sessions": null
+    },
+    {
+        "id": 2998194,
+        "name": "Rose City Opener XXXIII",
+        "sport": "Car",
+        "startDate": "2025-04-26",
+        "updatedAt": "2025-05-04T20:04:05+02:00",
+        "uploadSoftware": {
+            "name": "Orbits",
+            "version": "5.13.1"
+        },
+        "hasChamp": true,
+        "location": {
+            "id": 377559,
+            "name": "PIR",
+            "length": 1.915,
+            "lengthUnit": "mi",
+            "lengthLabel": "1.9150 mi",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            },
+            "lon": 0.0,
+            "lat": 0.0
+        },
+        "organization": {
+            "id": 719193,
+            "name": "Cascade Sports Car Club",
+            "logo": null,
+            "url": "",
+            "city": "PORTLAND",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            }
+        },
+        "sessions": null
+    },
+    {
+        "id": 2988297,
+        "name": "Cascade Test and Tune HPDE",
+        "sport": "Car",
+        "startDate": "2025-04-25",
+        "updatedAt": "2025-04-26T01:48:36+02:00",
+        "uploadSoftware": {
+            "name": "Orbits",
+            "version": "5.13.1"
+        },
+        "hasChamp": true,
+        "location": {
+            "id": 376200,
+            "name": "Portland International Raceway",
+            "length": 1.915,
+            "lengthUnit": "mi",
+            "lengthLabel": "1.9150 mi",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            },
+            "lon": 0.0,
+            "lat": 0.0
+        },
+        "organization": {
+            "id": 719193,
+            "name": "Cascade Sports Car Club",
+            "logo": null,
+            "url": "",
+            "city": "PORTLAND",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            }
+        },
+        "sessions": null
+    },
+    {
+        "id": 2986956,
+        "name": "4 Hours of the Caacades",
+        "sport": "Car",
+        "startDate": "2024-10-12",
+        "updatedAt": "2025-04-23T01:35:07+02:00",
+        "uploadSoftware": {
+            "name": "Orbits",
+            "version": "5.13.1"
+        },
+        "hasChamp": true,
+        "location": {
+            "id": 371232,
+            "name": "Portland International Raceway",
+            "length": 1.915,
+            "lengthUnit": "mi",
+            "lengthLabel": "1.9150 mi",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            },
+            "lon": 0.0,
+            "lat": 0.0
+        },
+        "organization": {
+            "id": 719193,
+            "name": "Cascade Sports Car Club",
+            "logo": null,
+            "url": "",
+            "city": "PORTLAND",
+            "country": {
+                "id": 840,
+                "name": "United States",
+                "alpha2": "US"
+            }
+        },
+        "sessions": null
+    }
+]
