@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using Deluxxe.Resources;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
@@ -16,26 +17,51 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         Func<int, ResourceIdBuilder> resourceIdBuilder
     )
     {
-        var stickerManager = await stickerProvider.GetStickerManager(raffleExecutionConfiguration.StickerMapUri);
+        var stickerManager = await stickerProvider.GetStickerManager(raffleExecutionConfiguration.StickerMapUri, raffleExecutionConfiguration.StickerMapSchemaVersion);
 
         logger.LogInformation("starting drawing rounds");
         using var activity = activitySource.StartActivity("starting drawing rounds");
-        var randomSeed = DateTimeOffset.UtcNow.Millisecond;
-        var random = new Random(randomSeed);
 
-        var scopedPreviousWinners = new List<PrizeWinner>(previousWinners);
-        var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptions);
+        Action<PrizeDescription[]> shuffle;
+        if (raffleExecutionConfiguration.RandomShuffleSeed == 0)
+        {
+            shuffle = prizes => RandomNumberGenerator.Shuffle<PrizeDescription>(prizes);
+        }
+        else
+        {
+            activity?.AddTag("randomShuffleSeed", raffleExecutionConfiguration.RandomShuffleSeed);
+            shuffle = prizes => new Random(raffleExecutionConfiguration.RandomShuffleSeed).Shuffle(prizes);
+        }
+
+        var prizeDescriptionsArray = prizeDescriptions.ToArray();
+        shuffle(prizeDescriptionsArray);
+
+        Func<int, int> getNextRandomInt;
+        if (raffleExecutionConfiguration.RandomDrawingSeed == 0)
+        {
+            activity?.AddTag("randomDrawingSeed", "none");
+            getNextRandomInt = RandomNumberGenerator.GetInt32;
+        }
+        else
+        {
+            activity?.AddTag("randomDrawingSeed", raffleExecutionConfiguration.RandomDrawingSeed);
+            getNextRandomInt = new Random(raffleExecutionConfiguration.RandomDrawingSeed).Next;
+        }
+
+        var scopedPreviousWinners = raffleExecutionConfiguration.LimitOnePrizePerDriverPerWeekend ? new List<PrizeWinner>(previousWinners) : new List<PrizeWinner>();
+        var scopedPrizeDescriptions = new List<PrizeDescription>(prizeDescriptionsArray);
         var results = new List<DrawingRoundResult>();
         for (var round = 0; round < raffleExecutionConfiguration.MaxRounds; round++)
         {
             using var roundActivity = activitySource.StartActivity("drawing-round");
+            roundActivity?.SetTag("round", round);
             if (scopedPrizeDescriptions.Count == 0)
             {
                 logger.LogInformation("awarded all prizes!");
                 break;
             }
 
-            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker, random);
+            var raffle = new PrizeRaffle(prizeRaffleLogger, activitySource, stickerManager, prizeLimitChecker, getNextRandomInt);
 
             var scopedResourceIdBuilder = resourceIdBuilder(round);
 
@@ -47,8 +73,10 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
                 },
                 round);
 
-            logger.LogInformation($"sat {drawingResult.winners.Count} won");
-            logger.LogInformation($"sat {drawingResult.notAwarded.Count} not-awarded");
+            roundActivity?.SetTag("awarded prizes", drawingResult.winners.Count);
+            roundActivity?.SetTag("not-awarded prizes", drawingResult.notAwarded.Count);
+            logger.LogInformation("{winnersCount} won", drawingResult.winners.Count);
+            logger.LogInformation("{notAwardedCount} not-awarded", drawingResult.notAwarded.Count);
 
             results.Add(drawingResult);
             scopedPrizeDescriptions = [..drawingResult.notAwarded];
@@ -64,7 +92,6 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         return new DrawingResult
         {
             drawingType = raffleExecutionConfiguration.DrawingType,
-            randomSeed = randomSeed,
             winners = results.SelectMany(result => result.winners).ToList(),
             notAwarded = scopedPrizeDescriptions
         };

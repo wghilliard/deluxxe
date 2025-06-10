@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "deluxxecli": {
+      "version": "1.0.47",
+      "commands": [
+        "vexxed.deluxxe"
+      ],
+      "rollForward": false
+    }
+  }
+}

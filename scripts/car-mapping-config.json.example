@@ -1,0 +1,10 @@
+{
+  "comment": "Copy this file to car-mapping-config.json and update with your actual values",
+  "spreadsheet_id": "uwu",
+  "range_name": "Sheet1!A:Z",
+  "google_credentials_file": "credentials.json",
+  "column_mapping": {
+  },
+  "output_columns": [
+  ]
+}

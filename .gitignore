@@ -4,6 +4,11 @@
 # Azure Functions localsettings file
 local.settings.json
 
+# Car mapping configuration (contains sensitive URLs)
+scripts/client_secret_*.json
+scripts/token.json
+scripts/car-mapping-config.json
+
 # User-specific files
 *.suo
 *.user
@@ -262,6 +267,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+.venv
+venv
 
 # Pubished folder 
 **/out/
@@ -269,3 +276,12 @@ __pycache__/
 # .Azure
 **/.azure/
 .azure
+
+# macos
+.DS_Store
+
+# dotnet
+nupkg
+
+# Deluxxe Outputs
+output

@@ -23,9 +23,14 @@ public static class Program
         };
         configFileOption.AddAlias("-c");
         raffleCommand.Add(configFileOption);
-        raffleCommand.SetHandler(async configFile => { await HandleRaffleCommand(configFile); },
-            configFileOption);
+        raffleCommand.SetHandler(async configFile => await HandleRaffleCommand(configFile), configFileOption);
 
+        var validateDriversCommand = new Command("validate-drivers");
+        validateDriversCommand.AddAlias("-v");
+        validateDriversCommand.Add(configFileOption);
+        validateDriversCommand.SetHandler(async configFile => await HandleValidateDriversCommand(configFile), configFileOption);
+
+        rootCommand.Add(validateDriversCommand);
         rootCommand.Add(raffleCommand);
 
 
@@ -44,7 +49,7 @@ public static class Program
         }
 
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddSingleton(raffleRunConfig!.jsonOptions);
+        builder.Services.AddSingleton(raffleRunConfig!.serializerOptions);
         builder.Services.AddLogging(opts => opts.AddConsole());
 
         builder.Services.AddOpenTelemetry()
@@ -55,16 +60,59 @@ public static class Program
                 .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); }));
 
         builder.Services.AddSingleton(new ActivitySource("DeluxxeCli"));
-        builder.Services.AddHostedService<RaffleCliWorker>();
         builder.Services.AddDeluxxe();
         builder.Services.AddDeluxxeJson();
         builder.Services.AddHttpClient();
 
         var completionTokenSource = new CancellationTokenSource();
         builder.Services.AddSingleton(new CompletionToken(completionTokenSource));
-        builder.Services.AddSingleton(raffleRunConfig!);
+        builder.Services.AddSingleton(raffleRunConfig);
+        builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
+        builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
+        
+        builder.Services.AddHostedService<RaffleCliWorker>();
         var host = builder.Build();
 
         await host.RunAsync(completionTokenSource.Token);
+    }
+    
+    private static async Task HandleValidateDriversCommand(FileInfo configFile)
+    {
+        await using var reader = configFile.OpenRead();
+        var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
+        reader.Close();
+        
+        if (raffleRunConfig is null)
+        {
+            await Console.Error.WriteLineAsync("No raffle run configuration found.");
+        }
+        
+        var builder = Host.CreateApplicationBuilder();
+        builder.Services.AddSingleton(raffleRunConfig!.serializerOptions);
+        builder.Services.AddLogging(opts => opts.AddConsole());
+
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(resource => resource.AddService("DeluxxeCli"))
+            .WithTracing(tracing => tracing
+                .AddSource("DeluxxeCli")
+                .AddConsoleExporter(opts => opts.Targets = ConsoleExporterOutputTargets.Debug)
+                .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); }));
+
+        builder.Services.AddSingleton(new ActivitySource("DeluxxeCli"));
+        builder.Services.AddDeluxxe();
+        builder.Services.AddDeluxxeJson();
+        builder.Services.AddHttpClient();
+
+        var completionTokenSource = new CancellationTokenSource();
+        builder.Services.AddSingleton(new CompletionToken(completionTokenSource));
+        builder.Services.AddSingleton(raffleRunConfig);
+        builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
+        builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
+        
+        builder.Services.AddHostedService<ValidateDriversCliWorker>();
+        var host = builder.Build();
+
+        await host.RunAsync(completionTokenSource.Token);
+
     }
 }

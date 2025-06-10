@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deluxxe", "src\Deluxxe\Deluxxe.csproj", "{7C951B15-BCF4-4D9F-BD85-09A45933A2BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeluxxeFunc", "src\DeluxxeFunc\DeluxxeFunc.csproj", "{958F3B03-3631-4DA2-BBFB-FE7502226882}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{70E5CE74-5DD1-4745-9318-D327058BF3EF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deluxxe.Tests", "test\Deluxxe.Tests\Deluxxe.Tests.csproj", "{5F3B98AA-EDB3-4389-B113-296660DA08FE}"
@@ -34,10 +32,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{958F3B03-3631-4DA2-BBFB-FE7502226882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{958F3B03-3631-4DA2-BBFB-FE7502226882}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{958F3B03-3631-4DA2-BBFB-FE7502226882}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{958F3B03-3631-4DA2-BBFB-FE7502226882}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F3B98AA-EDB3-4389-B113-296660DA08FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F3B98AA-EDB3-4389-B113-296660DA08FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F3B98AA-EDB3-4389-B113-296660DA08FE}.Release|Any CPU.ActiveCfg = Release|Any CPU

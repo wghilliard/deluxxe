@@ -1,32 +1,34 @@
 using System.Diagnostics;
+using Deluxxe.Raffles;
+using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Sponsors;
 
-public class StickerProviderUriResolver(ActivitySource activitySource, IEnumerable<IStickerRecordProvider> recordProviders)
+public class StickerProviderUriResolver(ActivitySource activitySource, IEnumerable<IStickerRecordProvider> recordProviders, RaffleConfiguration raffleConfiguration, ILogger<InMemoryStickerManager> logger)
 {
-    public async Task<StickerParseResult?> Get(Uri uri)
+    private async Task<StickerParseResult> Get(Uri uri, string schemaVersion)
     {
         using var activity = activitySource.StartActivity("resolve-sticker-map-uri");
         foreach (var provider in recordProviders)
         {
-            var result = await provider.Get(uri);
-            if (result != null)
+            var result = await provider.Get(uri, schemaVersion);
+            if (!result.IsEmpty())
             {
                 return result;
             }
         }
 
-        return null;
+        return default;
     }
 
-    public async Task<IStickerManager> GetStickerManager(Uri uri)
+    public async Task<IStickerManager> GetStickerManager(Uri uri, string schemaVersion)
     {
-        var mapping = (await Get(uri))?.CarToStickerMapping;
-        if (mapping == null)
+        var parseResult = await Get(uri, schemaVersion);
+        if (parseResult.IsEmpty())
         {
             throw new Exception("Unable to resolve sticker map uri");
         }
 
-        return new InMemoryStickerManager(mapping);
+        return new InMemoryStickerManager(logger, parseResult, raffleConfiguration.allowRentersToWin);
     }
 }

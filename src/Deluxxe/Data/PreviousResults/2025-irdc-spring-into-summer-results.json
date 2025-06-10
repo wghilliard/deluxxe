@@ -8,7 +8,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Scott Eckert",
             "carNumber": "121"
           },
@@ -20,7 +20,7 @@
             "description": "$50 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Rob Johnston",
             "carNumber": "141"
           },
@@ -32,7 +32,7 @@
             "description": "$50 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Madison McCulloch",
             "carNumber": "25"
           },
@@ -44,7 +44,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Bryce Scott",
             "carNumber": "89"
           },
@@ -56,7 +56,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "David Stenner",
             "carNumber": "172"
           },
@@ -68,7 +68,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Kyle Byers",
             "carNumber": "55"
           },
@@ -80,7 +80,7 @@
             "description": "$100 Cash",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "John Houlihan",
             "carNumber": "287"
           },
@@ -92,7 +92,7 @@
             "description": "$100 Cash",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Drew Wagner",
             "carNumber": "88"
           },
@@ -104,7 +104,7 @@
             "description": "$100 Cash",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Jim Cissell",
             "carNumber": "119"
           },
@@ -116,7 +116,7 @@
             "description": "$100 Gift Card",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Martin Berryman",
             "carNumber": "150"
           },
@@ -128,7 +128,7 @@
             "description": "$50 Gas Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Lee Storgaard",
             "carNumber": "84"
           },
@@ -140,7 +140,7 @@
             "description": "$500 Toyo Bucks",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Isaiah Dummer",
             "carNumber": "71"
           },
@@ -152,7 +152,7 @@
             "description": "$500 Toyo Bucks",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Ronald Adrianse",
             "carNumber": "106"
           },
@@ -171,7 +171,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Guy Berry",
             "carNumber": "191"
           },
@@ -183,7 +183,7 @@
             "description": "$50 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Brian Bercovitz",
             "carNumber": "96"
           },
@@ -195,7 +195,7 @@
             "description": "$50 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Chuck Hurley",
             "carNumber": "95"
           },
@@ -207,7 +207,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Norman Salmon",
             "carNumber": "105"
           },
@@ -219,7 +219,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Daniele Hovington",
             "carNumber": "91"
           },
@@ -231,7 +231,7 @@
             "description": "$100 Gift Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Rob Scholl",
             "carNumber": "122"
           },
@@ -243,7 +243,7 @@
             "description": "$100 Cash",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Jake Borrelli",
             "carNumber": "1"
           },
@@ -255,7 +255,7 @@
             "description": "$100 Cash",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Andrew Michel",
             "carNumber": "08"
           },
@@ -267,7 +267,7 @@
             "description": "$100 Cash",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "John McDermott",
             "carNumber": "75"
           },
@@ -279,7 +279,7 @@
             "description": "$100 Gift Card",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Grayson Hilliard",
             "carNumber": "168"
           },
@@ -291,7 +291,7 @@
             "description": "$50 Gas Card",
             "sku": "1"
           },
-          "driver": {
+          "candidate": {
             "name": "Corey Peters",
             "carNumber": "244"
           },
@@ -303,7 +303,7 @@
             "description": "$500 Toyo Bucks",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Matt Lowell",
             "carNumber": "151"
           },
@@ -315,7 +315,7 @@
             "description": "$500 Toyo Bucks",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Corey Peters",
             "carNumber": "244"
           },
@@ -334,7 +334,7 @@
             "description": "$100 Gift Card",
             "sku": "2"
           },
-          "driver": {
+          "candidate": {
             "name": "Matt Lowell",
             "carNumber": "151"
           },
@@ -346,7 +346,7 @@
             "description": "$200 Gift Card",
             "sku": "3"
           },
-          "driver": {
+          "candidate": {
             "name": "Jim Cissell",
             "carNumber": "119"
           },
@@ -361,5 +361,5 @@
   "resourceId": "season/2025/event/irdc-spring-into-summer/2609223",
   "name": "irdc-spring-into-summer",
   "season": "2025",
-  "configurationName": "2025-spring-into-summer-pro3-started"
+  "configurationName": "2025-spring-into-summer-pro3"
 }

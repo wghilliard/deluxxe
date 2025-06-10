@@ -8,7 +8,7 @@ public class PrizeLimitChecker
     private readonly Dictionary<string, Dictionary<string, int>> _prizeCounts;
     private readonly Dictionary<string, int> _prizeLimits;
 
-    public PrizeLimitChecker(IList<SponsorRecord> sponsorRecords)
+    public PrizeLimitChecker(IList<PrizeDescriptionRecord> sponsorRecords)
     {
         _prizeLimits = sponsorRecords.ToDictionary(GetPrizeKey, record => record.seasonalLimit);
         _prizeCounts = new Dictionary<string, Dictionary<string, int>>();
@@ -18,10 +18,10 @@ public class PrizeLimitChecker
     {
         foreach (var prizeWinner in prizeWinners)
         {
-            if (!_prizeCounts.TryGetValue(prizeWinner.driver.name, out var value))
+            if (!_prizeCounts.TryGetValue(prizeWinner.candidate.name, out var value))
             {
                 value = new Dictionary<string, int>();
-                _prizeCounts.Add(prizeWinner.driver.name, value);
+                _prizeCounts.Add(prizeWinner.candidate.name, value);
             }
 
             var prizeKey = GetPrizeKey(prizeWinner.prizeDescription);
@@ -31,7 +31,7 @@ public class PrizeLimitChecker
         }
     }
 
-    public bool IsBelowLimit(PrizeDescription prize, Driver driver)
+    public bool IsBelowLimit(PrizeDescription prize, DrawingCandidate driver)
     {
         _prizeCounts.TryGetValue(driver.name, out var counts);
         if (counts is null)
@@ -52,9 +52,9 @@ public class PrizeLimitChecker
         return prizeCount < seasonLimit;
     }
 
-    private static string GetPrizeKey(SponsorRecord sponsor)
+    private static string GetPrizeKey(PrizeDescriptionRecord prizeDescription)
     {
-        return GetPrizeKey(sponsor.name, sponsor.sku);
+        return GetPrizeKey(prizeDescription.name, prizeDescription.sku);
     }
 
     private static string GetPrizeKey(PrizeDescription prize)

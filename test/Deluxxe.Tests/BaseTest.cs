@@ -27,8 +27,8 @@ public class BaseTest : IDisposable
             .SetResourceBuilder(ResourceBuilder.CreateDefault()
                 .AddService("Deluxxe.Tests"))
             .AddSource(GetType().Name)
-            .AddConsoleExporter(opts => opts.Targets = ConsoleExporterOutputTargets.Debug)
-            .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); })
+            // .AddConsoleExporter(opts => opts.Targets = ConsoleExporterOutputTargets.Debug)
+            // .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); })
             .Build();
 
         loggerFactory = LoggerFactory.Create(builder =>
@@ -36,9 +36,9 @@ public class BaseTest : IDisposable
             builder.AddOpenTelemetry(logging =>
             {
                 // logging.AddConsoleExporter();
-                logging.AddOtlpExporter();
+                // logging.AddOtlpExporter();
             });
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, XUnitLoggerProvider>());
+            // builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, XUnitLoggerProvider>());
             builder.Services.AddSingleton(testOutputHelper);
         });
 

@@ -1,0 +1,317 @@
+{
+    "id": 3032241,
+    "name": "IRDC Spring Sprints",
+    "sport": "Car",
+    "startDate": "2025-05-17",
+    "updatedAt": "2025-05-29T23:40:23+02:00",
+    "uploadSoftware": {
+        "name": "Orbits",
+        "version": "5.13.1"
+    },
+    "hasChamp": true,
+    "location": {
+        "id": 381891,
+        "name": "Pacific Raceway",
+        "length": 2.25,
+        "lengthUnit": "mi",
+        "lengthLabel": "2.2500 mi",
+        "country": {
+            "id": 840,
+            "name": "United States",
+            "alpha2": "US"
+        },
+        "lon": 0.0,
+        "lat": 0.0
+    },
+    "organization": {
+        "id": 743550,
+        "name": "IRDC",
+        "logo": null,
+        "url": null,
+        "city": "Vancouver",
+        "country": {
+            "id": 840,
+            "name": "United States",
+            "alpha2": "US"
+        }
+    },
+    "sessions": {
+        "sessions": [],
+        "groups": [
+            {
+                "id": 3032244,
+                "name": "Group 1",
+                "date": "2025-05-12",
+                "subGroups": [],
+                "sessions": [
+                    {
+                        "id": 10546962,
+                        "name": "Sat Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-17T10:09:00",
+                        "groupName": "Group 1",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546965,
+                        "name": "Sat Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-17T13:53:00",
+                        "groupName": "Group 1",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546968,
+                        "name": "Sun Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-18T10:15:00",
+                        "groupName": "Group 1",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546971,
+                        "name": "Sun Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-18T13:38:00",
+                        "groupName": "Group 1",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    }
+                ]
+            },
+            {
+                "id": 3032247,
+                "name": "Group 4",
+                "date": "2025-05-12",
+                "subGroups": [],
+                "sessions": [
+                    {
+                        "id": 10546974,
+                        "name": "Sat Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-17T10:36:00",
+                        "groupName": "Group 4",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546977,
+                        "name": "Sat Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-17T14:37:00",
+                        "groupName": "Group 4",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546980,
+                        "name": "Sun Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-18T10:45:00",
+                        "groupName": "Group 4",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546983,
+                        "name": "Sun Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-18T14:22:00",
+                        "groupName": "Group 4",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    }
+                ]
+            },
+            {
+                "id": 3032250,
+                "name": "Group 5/2",
+                "date": "2025-05-12",
+                "subGroups": [],
+                "sessions": [
+                    {
+                        "id": 10546986,
+                        "name": "Sat Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-17T09:15:00",
+                        "groupName": "Group 5/2",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546989,
+                        "name": "Sat Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-17T12:25:00",
+                        "groupName": "Group 5/2",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546992,
+                        "name": "Sun Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-18T09:15:00",
+                        "groupName": "Group 5/2",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10546995,
+                        "name": "Sun Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-18T12:10:00",
+                        "groupName": "Group 5/2",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    }
+                ]
+            },
+            {
+                "id": 3032253,
+                "name": "Group 6/3",
+                "date": "2025-05-12",
+                "subGroups": [],
+                "sessions": [
+                    {
+                        "id": 10546998,
+                        "name": "Sat Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-17T09:42:00",
+                        "groupName": "Group 6/3",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10547001,
+                        "name": "Sat Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-17T13:09:00",
+                        "groupName": "Group 6/3",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10547004,
+                        "name": "Sun Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-18T09:45:00",
+                        "groupName": "Group 6/3",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10547007,
+                        "name": "Sun Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-18T12:54:00",
+                        "groupName": "Group 6/3",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    }
+                ]
+            },
+            {
+                "id": 3032256,
+                "name": "Group 8",
+                "date": "2025-05-12",
+                "subGroups": [],
+                "sessions": [
+                    {
+                        "id": 10547010,
+                        "name": "Sat Qual",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "qualify",
+                        "startTime": "2025-05-17T11:03:00",
+                        "groupName": "Group 8",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    },
+                    {
+                        "id": 10547013,
+                        "name": "Sat Race",
+                        "comment": null,
+                        "eventId": 3032241,
+                        "type": "race",
+                        "startTime": "2025-05-17T15:21:00",
+                        "groupName": "Group 8",
+                        "isMerge": false,
+                        "resultStatus": "Official",
+                        "participated": 0,
+                        "announcements": null
+                    }
+                ]
+            }
+        ]
+    }
+}

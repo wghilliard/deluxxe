@@ -16,7 +16,7 @@ public class TestRaceResultParsers(ITestOutputHelper testOutputHelper)
     {
         Stream stream = new FileStream(Path.Combine("TestData", "race-results.json"), FileMode.Open);
         using var reader = new StreamReader(stream);
-        var results = (await SpeedHiveClient.ParseJsonAsync(reader)).ToList();
+        var results = (await SpeedHiveClient.ParseJsonAsync(reader)).rows.ToList();
 
         Assert.True(results.Count > 0);
 
@@ -53,7 +53,7 @@ public class TestRaceResultParsers(ITestOutputHelper testOutputHelper)
         mockFactory.Setup(m => m.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
         var client = new SpeedHiveClient(Source, mockFactory.Object);
-        var results = (await client.GetResultsFromJsonUrl(new Uri("http://localhost"))).ToList();
+        var results = (await client.GetResultsFromJsonUrl(new Uri("http://localhost"))).rows.ToList();
         Assert.True(results.Count > 0);
     }
     

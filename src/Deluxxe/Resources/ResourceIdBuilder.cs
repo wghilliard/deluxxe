@@ -14,6 +14,7 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
     private const string DrawingSegmentName = "drawing";
     private const string RoundSegmentName = "round";
     private const string PrizeSegmentName = "prize";
+    private const string SerialSegmentName = "serial";
 
     public ResourceIdBuilder WithSeason(string season)
     {
@@ -115,6 +116,19 @@ public class ResourceIdBuilder(IList<string>? parts = null, ResourcePartsTracker
         return this;
     }
 
+    public ResourceIdBuilder WithSerial(string serial)
+    {
+        if (tracker.HasFlag(ResourcePartsTracker.Serial))
+        {
+            throw new ArgumentException("cannot add serial twice");
+        }
+
+        _tracker |= ResourcePartsTracker.Serial;
+        _parts.Add(SerialSegmentName);
+        _parts.Add(serial.Sanitize());
+        return this;
+    }
+
     public ResourceIdBuilder Copy()
     {
         var newParts = new List<string>();
@@ -153,4 +167,5 @@ public enum ResourcePartsTracker
     Event = 1 << 1,
     Drawing = 1 << 2,
     Prize = 1 << 3,
+    Serial = 1 << 4,
 }

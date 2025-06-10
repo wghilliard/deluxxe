@@ -1,24 +1,44 @@
-
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using Deluxxe.IO;
 using Deluxxe.Raffles;
 
 namespace Deluxxe.RaceResults;
 
-public class RaceResultsService(SpeedHiveClient speedHiveClient)
+public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerializerOptions serializerOptions)
 {
     public async Task<IList<Driver>> GetAllDriversAsync(Uri raceResultUri, Dictionary<string, string> conditions, CancellationToken cancellationToken)
     {
-        IEnumerable<RaceResultRecord> raceResults;
+        IList<RaceResultRecord> raceResults;
         if (raceResultUri.IsFile)
         {
-            // Stream raceResultsStream = new FileStream(FileUriParser.Parse(raceResultUri, extensions: ["json"])!.First().FullName, FileMode.Open);
-            // using var raceResultsStreamReader = new StreamReader(raceResultsStream, Encoding.UTF8);
-            // raceResults = JsonSerializer.Deserialize<RaceResultResponse>(await raceResultsStreamReader.ReadToEndAsync(cancellationToken))!.rows;
             raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(raceResultUri, extensions: ["json"], cancellationToken))!.rows;
         }
         else
         {
-            raceResults = await speedHiveClient.GetResultsFromJsonUrl(raceResultUri, cancellationToken);
+            var name = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(raceResultUri.AbsoluteUri))).Replace("/", "_");
+            var filePath = Path.Combine(serializerOptions.outputDirectory, $"{name}-source-race-results.json");
+            var file = new FileInfo(filePath);
+
+            if (file.Exists)
+            {
+                raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(new Uri($"file://{file.FullName}"), extensions: ["json"], cancellationToken))!.rows;
+            }
+            else
+            {
+                var response = await speedHiveClient.GetResultsFromJsonUrl(raceResultUri, cancellationToken); 
+                raceResults = new List<RaceResultRecord>(response.rows);
+                if (serializerOptions.writeIntermediates)
+                {
+                    await using var stream = file.OpenWrite();
+                    await stream.WriteAsync(JsonSerializer.SerializeToUtf8Bytes(response, options: new JsonSerializerOptions()
+                    {
+                        IndentSize = 2,
+                        WriteIndented = true
+                    }), cancellationToken);
+                }
+            }
         }
 
         var loadedConditions = conditions.Select(pair => new Condition(pair.Key, pair.Value)).ToList();

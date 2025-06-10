@@ -14,9 +14,10 @@ public class TestResourceIdBuilder(ITestOutputHelper testOutputHelper)
             .WithEvent("spring-into-summer", "123")
             .WithRaceDrawingRound("saturday-group-1", "1234", "1")
             .WithPrize("toyo", "1")
+            .WithSerial("1")
             .Build();
 
-        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/race/saturday-group-1/1234/round/1/prize/toyo/1", resourceId);
+        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/race/saturday-group-1/1234/round/1/prize/toyo/1/serial/1", resourceId);
     }
 
     [Fact]
@@ -27,9 +28,10 @@ public class TestResourceIdBuilder(ITestOutputHelper testOutputHelper)
             .WithEvent("spring-into-summer", "123")
             .WithEventDrawingRound("1")
             .WithPrize("toyo", "1")
+            .WithSerial("1")
             .Build();
 
-        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/event/round/1/prize/toyo/1", resourceId);
+        Assert.Equal("season/2025/event/spring-into-summer/123/drawing/event/round/1/prize/toyo/1/serial/1", resourceId);
     }
 
     [Fact]
