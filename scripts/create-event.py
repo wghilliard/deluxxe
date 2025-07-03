@@ -86,9 +86,9 @@ def extract_group1_race_sessions(event_details: Dict[str, Any]) -> List[Dict[str
     groups = sessions.get("groups", [])
     
     for group in groups:
-        if group.get("name") == "Group 1":
+        if group.get("name").lower() == "group 1":
             for session in group.get("sessions", []):
-                if session.get("type") == "race":
+                if session.get("type").lower() == "race":
                     group1_races.append(session)
     
     return group1_races

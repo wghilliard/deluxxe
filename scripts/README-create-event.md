@@ -19,7 +19,7 @@ python create-event.py -n "2025-06-15-test-event" -o /path/to/output -e 3032241
 
 ### SpeedHive Integration (Recommended)
 ```bash
-python create-event.py -n "2025-06-15-pacific-northwest" -o ../output -a "MYLAPS-GA-fee46dbc16df4da7ad0a8f8c973a563d"
+python create-event.py -n "2025-06-15-pacific-northwest" -o ./output -a "MYLAPS-GA-fee46dbc16df4da7ad0a8f8c973a563d"
 ```
 
 ### Full Example with All Options
