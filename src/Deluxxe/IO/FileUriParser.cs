@@ -1,11 +1,21 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Deluxxe.IO;
 
 public static class FileUriParser
 {
     private const string FileScheme = "file";
+
+    private static readonly JsonSerializerOptions DeserializingOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+        }
+    };
 
     public static IEnumerable<FileInfo> Parse(Uri uri, IList<string>? extensions = null)
     {
@@ -55,7 +65,7 @@ public static class FileUriParser
     {
         await using var stream = new FileStream(Parse(uri, extensions).First().FullName, FileMode.Open);
         using var streamReader = new StreamReader(stream, Encoding.UTF8);
-        return JsonSerializer.Deserialize<T>(await streamReader.ReadToEndAsync(cancellationToken));
+        return JsonSerializer.Deserialize<T>(await streamReader.ReadToEndAsync(cancellationToken), DeserializingOptions);
     }
 
     public static Uri Generate(string outputDirectory, string fileName)

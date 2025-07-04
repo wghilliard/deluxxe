@@ -8,7 +8,12 @@ namespace Deluxxe.RaceResults;
 
 public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerializerOptions serializerOptions)
 {
-    public async Task<IList<Driver>> GetAllDriversAsync(Uri raceResultUri, Dictionary<string, string> conditions, CancellationToken cancellationToken)
+    public Task<IList<Driver>> GetAllDriversAsync(string sessionId, Dictionary<string, string> conditions, CancellationToken cancellationToken)
+    {
+        return GetAllDriversAsync(SpeedHiveClient.GetApiJsonUrlFromSessionId(sessionId), conditions, cancellationToken);
+    }
+
+    private async Task<IList<Driver>> GetAllDriversAsync(Uri raceResultUri, Dictionary<string, string> conditions, CancellationToken cancellationToken)
     {
         IList<RaceResultRecord> raceResults;
         if (raceResultUri.IsFile)
@@ -27,7 +32,7 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerialize
             }
             else
             {
-                var response = await speedHiveClient.GetResultsFromJsonUrl(raceResultUri, cancellationToken); 
+                var response = await speedHiveClient.GetResultsFromJsonUrl(raceResultUri, cancellationToken);
                 raceResults = new List<RaceResultRecord>(response.rows);
                 if (serializerOptions.writeIntermediates)
                 {
@@ -48,5 +53,27 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerialize
                 name = result.name,
                 carNumber = result.startNumber
             }).ToList();
+    }
+
+    public Task<FileInfo> SaveResultsAsPdfAsync(string sessionId, CancellationToken cancellationToken)
+    {
+        return SaveResultsAsPdfAsync(SpeedHiveClient.GetUiUrlFromSessionId(sessionId), cancellationToken);
+    }
+
+    private async Task<FileInfo> SaveResultsAsPdfAsync(Uri raceResultUiUrl, CancellationToken cancellationToken)
+    {
+        var name = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(raceResultUiUrl.AbsoluteUri))).Replace("/", "_");
+        var filePath = Path.Combine(serializerOptions.outputDirectory, $"{name}-race-results.pdf");
+        var file = new FileInfo(filePath);
+
+        if (file.Exists)
+        {
+            return file;
+        }
+
+        var pdfBytes = await speedHiveClient.GetResultsAsPdfAsync(raceResultUiUrl, cancellationToken);
+        await File.WriteAllBytesAsync(file.FullName, pdfBytes, cancellationToken);
+
+        return file;
     }
 }

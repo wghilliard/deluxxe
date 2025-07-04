@@ -10,9 +10,10 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" />
         <PackageReference Include="Microsoft.Extensions.Http"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+        <PackageReference Include="Microsoft.Playwright" />
         <PackageReference Include="OpenTelemetry"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <Content Include="Data/**/*.*" Pack="True" PackagePath="contentFiles/Data">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>

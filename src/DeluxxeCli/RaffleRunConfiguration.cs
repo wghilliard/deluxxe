@@ -23,5 +23,5 @@ public struct RaceResultConfiguration
 {
     public string sessionName { get; init; }
     public required string sessionId { get; init; }
-    public required Uri raceResultUri { get; init; }
+    public Uri raceResultUri { get; init; }
 }

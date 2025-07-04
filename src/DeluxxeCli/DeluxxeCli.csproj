@@ -8,7 +8,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>vexxed.deluxxe</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
-        <Version>1.0.47</Version>
+        <Version>1.0.83</Version>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Deluxxe/Deluxxe.csproj"/>
@@ -18,6 +18,7 @@
         <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"/>
         <PackageReference Include="OpenTelemetry.Exporter.Console"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
         <PackageReference Include="OpenTelemetry"/>
         <PackageReference Include="System.CommandLine"/>
     </ItemGroup>

@@ -36,7 +36,7 @@ public class RaffleCliWorker(
             logger.LogError("unable to load sponsor records from URI");
         }
 
-        var exceptions = PrizeDescriptionRecordValidator.Validate(prizeDescriptionRecords!);
+        var exceptions = PrizeDescriptionRecordValidator.Validate(prizeDescriptionRecords);
 
         foreach (var exception in exceptions)
         {
@@ -45,21 +45,6 @@ public class RaffleCliWorker(
         }
 
         logger.LogInformation("sponsor records validated");
-
-        var perRacePrizePrizeDescriptions = new List<PrizeDescription>();
-        foreach (var record in prizeDescriptionRecords.perRacePrizes)
-        {
-            for (var count = 0; count < record.count; count++)
-            {
-                perRacePrizePrizeDescriptions.Add(new PrizeDescription()
-                {
-                    description = record.description,
-                    sponsorName = record.name,
-                    sku = record.sku,
-                    serial = (count + 1).ToString()
-                });
-            }
-        }
 
         var prizeLimitChecker = new PrizeLimitChecker([..prizeDescriptionRecords.perEventPrizes, ..prizeDescriptionRecords.perRacePrizes]);
 
@@ -79,7 +64,9 @@ public class RaffleCliWorker(
             var raceDrawingActivity = activitySource.StartActivity("race-drawing");
 
             // 4. get the race results
-            var eligibleDrivers = await raceResultsService.GetAllDriversAsync(result.raceResultUri, runConfiguration.conditions, token);
+            var eligibleDrivers = await raceResultsService.GetAllDriversAsync(result.sessionId, runConfiguration.conditions, token);
+            var perRacePrizePrizeDescriptions = PrizeDescriptionGenerator.GeneratePrizeDescriptions(prizeDescriptionRecords.perRacePrizes, eligibleDrivers);
+
             eventRaceResults.AddRange(eligibleDrivers);
 
             var raffleConfiguration = new RaffleExecutionConfiguration
@@ -114,20 +101,7 @@ public class RaffleCliWorker(
             raceDrawingActivity?.Dispose();
         }
 
-        var perEventPrizePrizeDescriptions = new List<PrizeDescription>();
-        foreach (var record in prizeDescriptionRecords.perEventPrizes)
-        {
-            for (var count = 0; count < record.count; count++)
-            {
-                perEventPrizePrizeDescriptions.Add(new PrizeDescription()
-                {
-                    description = record.description,
-                    sponsorName = record.name,
-                    sku = record.sku,
-                    serial = (count + 1).ToString(),
-                });
-            }
-        }
+        var perEventPrizePrizeDescriptions = PrizeDescriptionGenerator.GeneratePrizeDescriptions(prizeDescriptionRecords.perEventPrizes, eventRaceResults);
 
         using var eventDrawingActivity = activitySource.StartActivity("event-drawing");
 

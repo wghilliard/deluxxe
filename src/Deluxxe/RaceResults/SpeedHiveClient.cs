@@ -2,12 +2,17 @@ using System.Data;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Net.Http.Json;
+using Microsoft.Playwright;
 
 namespace Deluxxe.RaceResults
 {
     public class SpeedHiveClient
     {
-        private const string JsonBaseUrl = "https://eventresults-api.speedhive.com/api/{0}/eventresults/sessions/{1}/classification";
+        private const string SessionResultsJsonBaseUrl = "https://eventresults-api.speedhive.com/api/{0}/eventresults/sessions/{1}/classification";
+        private const string SessionResultsUiBaseUrl = "https://speedhive.mylaps.com/sessions/{0}#byclass";
+        private const string EventsForDriverJsonBaseUrl = "https://eventresults-api.speedhive.com/api/{0}/eventresults/accounts/{1}/events?sportCategory=Motorized&count=100";
+        private const string EventsDetailsJsonBaseUrl = "https://eventresults-api.speedhive.com/api/{0}/eventresults/events/{1}?sessions=true";
 
         private const string ApiVersion = "v0.2.3";
 
@@ -20,7 +25,28 @@ namespace Deluxxe.RaceResults
             _client.DefaultRequestHeaders.Add("Referer", "https://speedhive.mylaps.com/");
             _client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0)");
         }
-        
+
+        public async Task<List<SpeedHiveEvent>?> GetEventsAsync(string mylapsAccountId, CancellationToken token = default)
+        {
+            return await _client.GetFromJsonAsync<List<SpeedHiveEvent>>(string.Format(EventsForDriverJsonBaseUrl, ApiVersion, mylapsAccountId), token);
+        }
+
+        public async Task<SpeedHiveEventDetails?> GetEventDetailsAsync(int eventId, CancellationToken token = default)
+        {
+            return await _client.GetFromJsonAsync<SpeedHiveEventDetails>(string.Format(EventsDetailsJsonBaseUrl, ApiVersion, eventId), token);
+        }
+
+        public async Task<byte[]> GetResultsAsPdfAsync(Uri uiUrl, CancellationToken token = default)
+        {
+            using var playwright = await Playwright.CreateAsync();
+            await using var browser = await playwright.Chromium.LaunchAsync();
+            var page = await browser.NewPageAsync();
+            await page.GotoAsync(uiUrl.ToString());
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new PageWaitForLoadStateOptions { Timeout = 5000 });
+            var pdfBytes = await page.PdfAsync(new PagePdfOptions { PrintBackground = true });
+            return pdfBytes;
+        }
+
         public async Task<RaceResultResponse> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)
         {
             using var response = await _client.GetAsync(url, token);
@@ -58,12 +84,17 @@ namespace Deluxxe.RaceResults
             // /sessions/8939619?one=two
             var sessionId = path[2];
 
-            return new Uri(string.Format(JsonBaseUrl, ApiVersion, sessionId));
+            return new Uri(string.Format(SessionResultsJsonBaseUrl, ApiVersion, sessionId));
         }
 
         public static Uri GetApiJsonUrlFromSessionId(string sessionId)
         {
-            return new Uri(string.Format(JsonBaseUrl, ApiVersion, sessionId));
+            return new Uri(string.Format(SessionResultsJsonBaseUrl, ApiVersion, sessionId));
+        }
+
+        public static Uri GetUiUrlFromSessionId(string sessionId)
+        {
+            return new Uri(string.Format(SessionResultsUiBaseUrl, sessionId));
         }
     }
 }

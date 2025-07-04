@@ -7,6 +7,8 @@ public readonly struct PrizeDescriptionRecord
     public required int count { get; init; }
     public required string sku { get; init; }
     public int seasonalLimit { get; init; }
+    public ValueFunc valueFunc { get; init; }
+    public Dictionary<string, string> valueMap { get; init; }
 
     public PrizeDescriptionRecordAggregateException Validate()
     {
@@ -32,6 +34,11 @@ public readonly struct PrizeDescriptionRecord
             exceptions.Add(new ArgumentException("seasonal limit must be equal to or greater than zero"));
         }
 
+        if (valueFunc is not ValueFunc.Empty && (valueMap is null || valueMap.Count == 0))
+        {
+            exceptions.Add(new ArgumentException("valueMap is required when valueFunc is not Empty"));
+        }
+
         return new PrizeDescriptionRecordAggregateException(this, exceptions);
     }
 }
@@ -50,6 +57,13 @@ public class PrizeDescriptionRecordException(PrizeDescriptionRecord prizeDescrip
 
 public struct PrizeDescriptionRecords
 {
+    public required string version { get; init; }
     public required List<PrizeDescriptionRecord> perRacePrizes { get; init; }
     public required List<PrizeDescriptionRecord> perEventPrizes { get; init; }
+}
+
+public enum ValueFunc
+{
+    Empty,
+    CountAtOrBelow,
 }
