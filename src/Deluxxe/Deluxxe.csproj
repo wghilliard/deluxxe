@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -11,13 +11,15 @@
         <PackageReference Include="Microsoft.Extensions.Http"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
         <PackageReference Include="Microsoft.Playwright" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+        <PackageReference Include="Microsoft.AspNetCore.Components" />
         <PackageReference Include="OpenTelemetry"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="Data/**/*.*" Pack="True" PackagePath="contentFiles/Data">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </Content>
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--        <Content Include="Data/**/*.*" Pack="True" PackagePath="contentFiles/Data">-->
+<!--            <CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
+<!--            <CopyToPublishDirectory>Always</CopyToPublishDirectory>-->
+<!--        </Content>-->
+<!--    </ItemGroup>-->
 </Project>

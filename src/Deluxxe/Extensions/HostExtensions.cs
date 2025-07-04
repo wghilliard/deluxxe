@@ -1,6 +1,8 @@
+using Deluxxe.Mail;
 using Deluxxe.RaceResults;
 using Deluxxe.Raffles;
 using Deluxxe.Sponsors;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Deluxxe.Extensions;
@@ -16,6 +18,9 @@ public static class HostExtensions
         services.AddSingleton<RaceResultsService>();
         services.AddSingleton<SpeedHiveClient>();
         services.AddSingleton<PreviousWinnerLoader>();
+        services.AddSingleton<RepresentationCalculator>();
+        services.AddSingleton<Renderer>();
+        services.AddSingleton<HtmlRenderer>();
 
         services.AddTransient<PrizeRaffle>();
         return services;

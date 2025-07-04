@@ -52,12 +52,20 @@ public static class Program
 
         createEventCommand.SetHandler(HandleCreateEventCommand, eventNameOption, dateOption, outputDirOption, mylapsAccountOption, eventIdOption);
 
+        var renderEmailsCommand = new Command("render-emails")
+        {
+            eventNameOption,
+            outputDirOption
+        };
+        renderEmailsCommand.SetHandler(HandleRenderEmailsCommand, outputDirOption, eventNameOption);
+        
         // entrypoint
         var rootCommand = new RootCommand
         {
             validateDriversCommand,
             raffleCommand,
-            createEventCommand
+            createEventCommand,
+            renderEmailsCommand
         };
 
         await rootCommand.InvokeAsync(args);
@@ -141,6 +149,38 @@ public static class Program
         builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
 
         builder.Services.AddHostedService<ValidateDriversCliWorker>();
+        var host = builder.Build();
+
+        await host.RunAsync(completionTokenSource.Token);
+    }
+
+    private static async Task HandleRenderEmailsCommand(FileInfo outputDir, string eventName)
+    {
+        var configFile = new FileInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe", "deluxxe.json"));
+        var deluxxeDir = new DirectoryInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe"));
+        await using var reader = configFile.OpenRead();
+        var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
+        reader.Close();
+
+        if (raffleRunConfig is null)
+        {
+            await Console.Error.WriteLineAsync("No raffle run configuration found.");
+            return;
+        }
+
+        Directory.SetCurrentDirectory(deluxxeDir.FullName);
+
+        var (builder, completionTokenSource) = HostApplicationBuilder();
+        // builder.Services.AddSingleton(new ValidateDriversOptions
+        // {
+        //     OutputDir = outputDir.FullName,
+        //     EventNameWithDatePrefix = eventName
+        // });
+        builder.Services.AddSingleton(raffleRunConfig);
+        builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
+        builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
+
+        builder.Services.AddHostedService<RenderEmailsCliWorker>();
         var host = builder.Build();
 
         await host.RunAsync(completionTokenSource.Token);

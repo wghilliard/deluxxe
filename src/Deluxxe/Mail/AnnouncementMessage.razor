@@ -1,0 +1,114 @@
+@using Deluxxe.Raffles
+<body font-family="Arial, Helvetica, sans-serif" style="font-size: 14px; line-height: 1.5;">
+<p>Hello Drivers!</p>
+<p>The following table details our raffle winners!</p>
+<table>
+    <tr>
+        <td><b>Name</b></td>
+        <td><b>Sponsor</b></td>
+        <td><b>Prize Description</b></td>
+        <td><b>Prize Unique Identifier</b></td>
+    </tr>
+    @foreach (var drawing in raffleResult.drawings)
+    {
+        @foreach (var result in drawing.winners)
+        {
+            <tr>
+                <td>@result.candidate.name</td>
+                <td>@result.prizeDescription.sponsorName</td>
+                <td>@result.prizeDescription.description</td>
+                <td>@result.resourceId</td>
+            </tr>
+        }
+    }
+</table>
+<p>If you have questions / comments, please include the Prize Unique Identifier so the respondent (me) can assert when
+    the prize was awarded.</p>
+<h2>How To Redeem</h2>
+<h3>425 Motorsports / Griots Garage / Racer On Rails / Red Line Oil</h3>
+<p>You may have your prize mailed or you may collect it in person at the next event. Please fill out this form declaring
+    your preference!</p>
+<p><a href="https://forms.gle/JsrBN6hdUePND3an7">https://forms.gle/JsrBN6hdUePND3an7</a></p>
+<p><b>Please do not contact the Sponsor directly!</b></p>
+<h3>Bimmerworld / Advanced Auto Fabrication</h3>
+<p>You will receive an email from the Sponsor directly with instructions on how to redeem the prize.</p>
+<h3>Toyo Tires</h3>
+<p>You will receive a direct email from me with next steps on how to redeem the prize.</p>
+<p>Note — ToyoBucks are awarded based on the number of cars that take the green flag, the table below details the
+    schedule:</p>
+<p>3-5: $85, 6-10: $175, 11-15: $265, 16-20: $355, 21-24: $440, 25-30: $550, 31+: $600.</p>
+<h2>Method</h2>
+<p>For those interested, I’ve detailed the important notes about how these raffles are conducted below.</p>
+<h3>Sponsor Representation</h3>
+<table>
+    <tr>
+        <td>Sponsor</td>
+        <td>Representation</td>
+    </tr>
+    @foreach (var sponsor in sponsorRepresentationTable)
+    {
+        <tr>
+            <td>@sponsor.Key</td>
+            <td>@sponsor.Value</td>
+        </tr>
+    }
+</table>
+<h3>The Rules</h3>
+<ul>
+    <li>Every PRO3 race presents drivers with an equal opportunity for winning a prize, no previous prize wins are
+        considered *
+        <ul>
+            <li>ToyoBucks can only be won twice a season by a given Driver</li>
+        </ul>
+    </li>
+    <li>Novices are not eligible to win prizes as they do not compete in Group 1 - PRO3</li>
+    <li>There are (usually) 2 race-prize raffles and 1 event-prize raffle per race weekend (3 raffles total)</li>
+    <li>Drivers must have the sponsor’s sticker displayed in order to be eligible for the drawing of a given prize by
+        that sponsor
+    </li>
+    <li>Drivers may not win more than one prize per race, and the algorithm discourages Drivers from winning twice in
+        one weekend
+    </li>
+    <li>Drivers who rent a car are not eligible to win, the prize will be “forwarded” to the owner of the car</li>
+</ul>
+<h3>The Process</h3>
+<ul>
+    <li>Prizes are shuffled before each raffle</li>
+    <li>For each prize in the raffle type (race vs event), prizes are awarded by randomly picking a Driver out of the
+        eligible candidates
+    </li>
+    <li>Each raffle (and prize shuffling) uses <a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator?view=net-9.0">Pseudo Random Number Generation</a> 
+        with cryptographically strong random values. It’s the same sort of random number generation that keeps your website connections secure.
+    </li>
+    <li>I have verified the Pseudo Random Number Generation adheres to a Uniform Distribution using a Chi-Square test
+        (n=100,000*10, df=28, significance=0.05, test statistic=33.3), this means that everyone should have equal odds
+        of winning.
+    </li>
+    <li>The table is sorted by Raffle Drawing then by Driver Name</li>
+</ul>
+<h3>The Statistics</h3>
+<ul>
+    <li>Repeating winners is not anomalous!
+        <ul>
+            <li>Roughly speaking, with a grid of 30 drivers and 10 prizes, the likelihood of a driver winning a prize is
+                33% per raffle, assuming the driver has all of the stickers! It’s even higher if other drivers don’t
+                have the stickers!
+            </li>
+            <li>So the likelihood of someone winning in two raffles would be .33^2=11% at a minimum! Neat!</li>
+        </ul>
+    </li>
+    <li>I make mistakes! It’s possible something went wrong, but I’m doing by best!
+        <ul>
+            <li>All code is publicly available on <a href="https://github.com/wghilliard/deluxxe">GitHub</a>.</li>
+            <li>Trace files and program outputs are available upon request!</li>
+        </ul>
+    </li>
+</ul>
+<p>See ya on grid!</p>
+</body>
+
+@code {
+    [Parameter] public required RaffleResult raffleResult { get; set; }
+
+    [Parameter] public required Dictionary<string, string> sponsorRepresentationTable { get; set; }
+}
