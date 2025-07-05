@@ -17,9 +17,9 @@ public static class Program
     public static async Task Main(string[] args)
     {
         // common options
-        var outputDirOption = new Option<FileInfo>("--output-dir") { IsRequired = true };
+        var outputDirOption = new Option<DirectoryInfo>("--output-dir") { IsRequired = true };
         outputDirOption.AddAlias("-o");
-        outputDirOption.SetDefaultValue(new FileInfo("./output"));
+        outputDirOption.SetDefaultValue(new DirectoryInfo("./output"));
         var eventNameOption = new Option<string>("--event-name") { IsRequired = true };
         eventNameOption.AddAlias("-e");
 
@@ -37,6 +37,12 @@ public static class Program
             outputDirOption
         };
         validateDriversCommand.SetHandler(HandleValidateDriversCommand, outputDirOption, eventNameOption);
+
+        var downloadStickerMapCommand = new Command("download-sticker-map")
+        {
+            outputDirOption
+        };
+        downloadStickerMapCommand.SetHandler(HandleDownloadStickerMapCommand, outputDirOption);
 
         var dateOption = new Option<string>("--date") { IsRequired = true };
         var mylapsAccountOption = new Option<string>("--mylaps-account-id");
@@ -58,22 +64,39 @@ public static class Program
             outputDirOption
         };
         renderEmailsCommand.SetHandler(HandleRenderEmailsCommand, outputDirOption, eventNameOption);
-        
+
         // entrypoint
         var rootCommand = new RootCommand
         {
             validateDriversCommand,
             raffleCommand,
             createEventCommand,
-            renderEmailsCommand
+            renderEmailsCommand,
+            downloadStickerMapCommand
         };
 
         await rootCommand.InvokeAsync(args);
     }
 
-    private static async Task HandleCreateEventCommand(string eventName, string date, FileInfo outputDir, string? mylapsAccountId, int? eventId)
+    private static async Task HandleDownloadStickerMapCommand(DirectoryInfo outputDir)
     {
-        var (builder, completionTokenSource) = HostApplicationBuilder();
+        var (builder, completionTokenSource) = HostApplicationBuilder(new RuntimeContext
+        {
+            outputDir = outputDir
+        });
+
+        builder.Services.AddHostedService<DownloadStickerMapCliWorker>();
+        var host = builder.Build();
+        await host.RunAsync(completionTokenSource.Token);
+    }
+
+    private static async Task HandleCreateEventCommand(string eventName, string date, DirectoryInfo outputDir, string? mylapsAccountId, int? eventId)
+    {
+        var (builder, completionTokenSource) = HostApplicationBuilder(new RuntimeContext
+        {
+            outputDir = outputDir,
+            uniqueEventName = eventName
+        });
         builder.Services.AddSingleton(new CreateEventOptions
         {
             EventName = eventName,
@@ -84,7 +107,6 @@ public static class Program
         });
         builder.Services.AddSingleton(new RaffleSerializerOptions
         {
-            outputDirectory = ".",
             shouldOverwrite = true,
             writeIntermediates = true
         });
@@ -95,11 +117,15 @@ public static class Program
         await host.RunAsync(completionTokenSource.Token);
     }
 
-    private static async Task HandleRaffleCommand(FileInfo outputDir, string eventName)
+    private static async Task HandleRaffleCommand(DirectoryInfo outputDir, string eventName)
     {
-        var configFile = new FileInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe", "deluxxe.json"));
-        var deluxxeDir = new DirectoryInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe"));
-        await using var reader = configFile.OpenRead();
+        var ctx = new RuntimeContext
+        {
+            outputDir = outputDir,
+            uniqueEventName = eventName
+        };
+        var directoryManager = new FileSystemDirectoryManager(ctx);
+        await using var reader = directoryManager.deluxxeConfigFile.OpenRead();
         var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
         reader.Close();
 
@@ -109,9 +135,11 @@ public static class Program
             return;
         }
 
-        Directory.SetCurrentDirectory(deluxxeDir.FullName);
-
-        var (builder, completionTokenSource) = HostApplicationBuilder();
+        var (builder, completionTokenSource) = HostApplicationBuilder(new RuntimeContext
+        {
+            outputDir = outputDir,
+            uniqueEventName = eventName
+        });
         builder.Services.AddSingleton(raffleRunConfig);
         builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
         builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
@@ -122,11 +150,15 @@ public static class Program
         await host.RunAsync(completionTokenSource.Token);
     }
 
-    private static async Task HandleValidateDriversCommand(FileInfo outputDir, string eventName)
+    private static async Task HandleValidateDriversCommand(DirectoryInfo outputDir, string eventName)
     {
-        var configFile = new FileInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe", "deluxxe.json"));
-        var deluxxeDir = new DirectoryInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe"));
-        await using var reader = configFile.OpenRead();
+        var ctx = new RuntimeContext
+        {
+            outputDir = outputDir,
+            uniqueEventName = eventName
+        };
+        var directoryManager = new FileSystemDirectoryManager(ctx);
+        await using var reader = directoryManager.deluxxeConfigFile.OpenRead();
         var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
         reader.Close();
 
@@ -136,14 +168,13 @@ public static class Program
             return;
         }
 
-        Directory.SetCurrentDirectory(deluxxeDir.FullName);
 
-        var (builder, completionTokenSource) = HostApplicationBuilder();
-        builder.Services.AddSingleton(new ValidateDriversOptions
+        var (builder, completionTokenSource) = HostApplicationBuilder(new RuntimeContext
         {
-            OutputDir = outputDir.FullName,
-            EventNameWithDatePrefix = eventName
+            outputDir = outputDir,
+            uniqueEventName = eventName
         });
+
         builder.Services.AddSingleton(raffleRunConfig);
         builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
         builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
@@ -154,11 +185,15 @@ public static class Program
         await host.RunAsync(completionTokenSource.Token);
     }
 
-    private static async Task HandleRenderEmailsCommand(FileInfo outputDir, string eventName)
+    private static async Task HandleRenderEmailsCommand(DirectoryInfo outputDir, string eventName)
     {
-        var configFile = new FileInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe", "deluxxe.json"));
-        var deluxxeDir = new DirectoryInfo(Path.Combine(outputDir.FullName, eventName, "deluxxe"));
-        await using var reader = configFile.OpenRead();
+        var ctx = new RuntimeContext
+        {
+            outputDir = outputDir,
+            uniqueEventName = eventName
+        };
+        var directoryManager = new FileSystemDirectoryManager(ctx);
+        await using var reader = directoryManager.deluxxeConfigFile.OpenRead();
         var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
         reader.Close();
 
@@ -168,14 +203,8 @@ public static class Program
             return;
         }
 
-        Directory.SetCurrentDirectory(deluxxeDir.FullName);
+        var (builder, completionTokenSource) = HostApplicationBuilder(ctx);
 
-        var (builder, completionTokenSource) = HostApplicationBuilder();
-        // builder.Services.AddSingleton(new ValidateDriversOptions
-        // {
-        //     OutputDir = outputDir.FullName,
-        //     EventNameWithDatePrefix = eventName
-        // });
         builder.Services.AddSingleton(raffleRunConfig);
         builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
         builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
@@ -186,10 +215,12 @@ public static class Program
         await host.RunAsync(completionTokenSource.Token);
     }
 
-    private static (HostApplicationBuilder builder, CancellationTokenSource completionTokenSource) HostApplicationBuilder()
+    private static (HostApplicationBuilder builder, CancellationTokenSource completionTokenSource) HostApplicationBuilder(RuntimeContext ctx)
     {
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddLogging(opts => opts.AddConsole());
+        builder.Services.AddLogging(opts => opts.AddSimpleConsole(opts => { opts.SingleLine = true; }));
+        builder.Services.AddSingleton(ctx);
+        builder.Services.AddSingleton<IDirectoryManager, FileSystemDirectoryManager>();
 
         builder.Services.AddOpenTelemetry()
             .ConfigureResource(resource => resource.AddService("DeluxxeCli"))

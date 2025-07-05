@@ -18,7 +18,8 @@ public class RaffleCliWorker(
     RaffleService raffleService,
     RaceResultsService raceResultsService,
     IEnumerable<IRaffleResultWriter> raffleResultWriters,
-    PreviousWinnerLoader previousWinnerLoader)
+    PreviousWinnerLoader previousWinnerLoader,
+    IDirectoryManager directoryManager)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
@@ -29,7 +30,7 @@ public class RaffleCliWorker(
         var eventResourceIdBuilder = new ResourceIdBuilder().WithSeason(runConfiguration.season).WithEvent(runConfiguration.eventName, runConfiguration.eventId);
 
         // 2. get the prize descriptions
-        var prizeDescriptionRecords = await FileUriParser.ParseAndDeserializeSingleAsync<PrizeDescriptionRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
+        var prizeDescriptionRecords = await FileUriParser.ParseAndDeserializeSingleAsync<PrizeDescriptionRecords>(runConfiguration.prizeDescriptionUri, directoryManager, cancellationToken: token);
 
         if (prizeDescriptionRecords.perRacePrizes.Count == 0 && prizeDescriptionRecords.perEventPrizes.Count == 0)
         {
@@ -48,7 +49,7 @@ public class RaffleCliWorker(
 
         var prizeLimitChecker = new PrizeLimitChecker([..prizeDescriptionRecords.perEventPrizes, ..prizeDescriptionRecords.perRacePrizes]);
 
-        var previousWinners = await previousWinnerLoader.LoadAsync(runConfiguration.previousResultsUri, token);
+        var previousWinners = await previousWinnerLoader.LoadAsync(token);
         prizeLimitChecker.Update(previousWinners);
 
         var eventRaceResults = new List<Driver>();

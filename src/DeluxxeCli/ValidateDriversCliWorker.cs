@@ -13,7 +13,7 @@ public class ValidateDriversCliWorker(
     ActivitySource activitySource,
     ILogger<ValidateDriversCliWorker> logger,
     CompletionToken completionToken,
-    ValidateDriversOptions options,
+    IDirectoryManager directoryManager,
     RaffleRunConfiguration runConfiguration,
     RaceResultsService raceResultsService,
     StickerProviderUriResolver stickerProvider,
@@ -26,10 +26,10 @@ public class ValidateDriversCliWorker(
 
         var stickerManager = await stickerProvider.GetStickerManager(runConfiguration.stickerMapUri, runConfiguration.stickerMapSchemaVersion);
 
-        var prizeDescriptionRecords = await FileUriParser.ParseAndDeserializeSingleAsync<PrizeDescriptionRecords>(runConfiguration.prizeDescriptionUri, cancellationToken: token);
+        var prizeDescriptionRecords = await FileUriParser.ParseAndDeserializeSingleAsync<PrizeDescriptionRecords>(runConfiguration.prizeDescriptionUri, directoryManager, cancellationToken: token);
 
         var prizeLimitChecker = new PrizeLimitChecker([..prizeDescriptionRecords.perEventPrizes, ..prizeDescriptionRecords.perRacePrizes]);
-        var previousWinners = await previousWinnerLoader.LoadAsync(runConfiguration.previousResultsUri, token);
+        var previousWinners = await previousWinnerLoader.LoadAsync(token);
         prizeLimitChecker.Update(previousWinners);
 
         foreach (var result in runConfiguration.raceResults)
@@ -38,7 +38,7 @@ public class ValidateDriversCliWorker(
 
             foreach (var raceResult in raceResults)
             {
-                logger.LogInformation($"[driver={raceResult.name}][car={raceResult.carNumber}][owner{stickerManager.GetCandidateNameForCar(raceResult.carNumber, raceResult.name)}]");
+                logger.LogInformation($"[driver={raceResult.name}][car={raceResult.carNumber}][owner={stickerManager.GetCandidateNameForCar(raceResult.carNumber, raceResult.name)}]");
 
                 foreach (var prize in prizeDescriptionRecords.perRacePrizes)
                 {
@@ -67,7 +67,7 @@ public class ValidateDriversCliWorker(
             await writer.WriteLineAsync($"{sponsor},{stat}");
         }
 
-        var collateralPath = new DirectoryInfo(Path.Combine(options.OutputDir, options.EventNameWithDatePrefix, "collateral"));
+        var collateralPath = directoryManager.collateralDir;
 
         logger.LogInformation("writing collateral pdf files");
         var currentDir = Directory.GetCurrentDirectory();

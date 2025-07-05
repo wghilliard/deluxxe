@@ -1,0 +1,24 @@
+@using Deluxxe.Raffles
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@title</title>
+    <meta charset="utf-8">
+</head>
+<MessageStyle/>
+<body class="markdown-body">
+<p>Congratulations @(winner.candidate.name)! You’ve won @(winner.prizeDescription.description)!</p>
+<p>Attached to this email is the requisite collateral you need in order to redeem a Certificate at
+    <a href="https://toyoracerrebates.com/">https://toyoracerrebates.com/</a></p>
+<p>You have 30 days from the date of the race to claim this prize, please do not wait to submit the claim!</p>
+<br/>
+<p>@winner.resourceId</p>
+</body>
+</html>
+
+@code {
+    [Parameter] public required string title { get; set; }
+    [Parameter] public required string content { get; set; }
+    [Parameter] public required PrizeWinner winner { get; set; }
+}

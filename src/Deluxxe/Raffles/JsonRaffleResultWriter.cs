@@ -5,7 +5,7 @@ namespace Deluxxe.Raffles;
 
 using System.Text.Json;
 
-public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, RaffleSerializerOptions options) : IRaffleResultWriter
+public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, RaffleSerializerOptions options, IDirectoryManager directoryManager) : IRaffleResultWriter
 {
     private readonly JsonSerializerOptions _options = new()
     {
@@ -15,7 +15,7 @@ public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, Raff
     public async Task<Uri> WriteAsync(RaffleResult result, CancellationToken cancellationToken = default)
     {
         var fileName = $"{result.season}-{result.name}-results.json";
-        var file = new FileInfo(Path.Combine(Path.GetFullPath(options.outputDirectory), fileName));
+        var file = new FileInfo(Path.Combine(directoryManager.deluxxeDir.FullName, fileName));
 
         if (file.Exists && options.shouldOverwrite)
         {
@@ -26,6 +26,6 @@ public class JsonRaffleResultWriter(ILogger<JsonRaffleResultWriter> logger, Raff
         logger.LogInformation($"writing to {file.FullName}");
         await using var stream = new FileStream(file.FullName, FileMode.OpenOrCreate);
         await JsonSerializer.SerializeAsync(stream, result, cancellationToken: cancellationToken, options: _options);
-        return FileUriParser.Generate(options.outputDirectory, fileName);
+        return FileUriParser.Generate(directoryManager.deluxxeDirRelative, fileName);
     }
 }

@@ -17,7 +17,7 @@ public static class FileUriParser
         }
     };
 
-    public static IEnumerable<FileInfo> Parse(Uri uri, IList<string>? extensions = null)
+    public static IEnumerable<FileInfo> Parse(Uri uri, IDirectoryManager directoryManager, IList<string>? extensions = null)
     {
         if (uri.Scheme != FileScheme)
         {
@@ -28,7 +28,7 @@ public static class FileUriParser
         if (uri.Host == "local")
         {
             var segments = uri.Segments.Select(segment => segment.Trim('/'));
-            segments = segments.Prepend(Directory.GetCurrentDirectory());
+            segments = segments.Prepend(directoryManager.outputDir.FullName);
             fileHandle = new FileInfo(Path.Combine(segments.ToArray()));
         }
         else
@@ -61,9 +61,9 @@ public static class FileUriParser
         return handles;
     }
 
-    public static async Task<T?> ParseAndDeserializeSingleAsync<T>(Uri uri, IList<string>? extensions = null, CancellationToken cancellationToken = default)
+    public static async Task<T?> ParseAndDeserializeSingleAsync<T>(Uri uri, IDirectoryManager directoryManager, IList<string>? extensions = null, CancellationToken cancellationToken = default)
     {
-        await using var stream = new FileStream(Parse(uri, extensions).First().FullName, FileMode.Open);
+        await using var stream = new FileStream(Parse(uri, directoryManager, extensions).First().FullName, FileMode.Open);
         using var streamReader = new StreamReader(stream, Encoding.UTF8);
         return JsonSerializer.Deserialize<T>(await streamReader.ReadToEndAsync(cancellationToken), DeserializingOptions);
     }

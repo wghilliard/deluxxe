@@ -6,7 +6,7 @@ using Deluxxe.Raffles;
 
 namespace Deluxxe.RaceResults;
 
-public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerializerOptions serializerOptions)
+public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerializerOptions serializerOptions, IDirectoryManager directoryManager)
 {
     public Task<IList<Driver>> GetAllDriversAsync(string sessionId, Dictionary<string, string> conditions, CancellationToken cancellationToken)
     {
@@ -18,17 +18,17 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerialize
         IList<RaceResultRecord> raceResults;
         if (raceResultUri.IsFile)
         {
-            raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(raceResultUri, extensions: ["json"], cancellationToken))!.rows;
+            raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(raceResultUri, directoryManager, extensions: ["json"], cancellationToken))!.rows;
         }
         else
         {
             var name = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(raceResultUri.AbsoluteUri))).Replace("/", "_");
-            var filePath = Path.Combine(serializerOptions.outputDirectory, $"{name}-source-race-results.json");
+            var filePath = Path.Combine(directoryManager.deluxxeDir.FullName, $"{name}-source-race-results.json");
             var file = new FileInfo(filePath);
 
             if (file.Exists)
             {
-                raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(new Uri($"file://{file.FullName}"), extensions: ["json"], cancellationToken))!.rows;
+                raceResults = (await FileUriParser.ParseAndDeserializeSingleAsync<RaceResultResponse>(new Uri($"file://{file.FullName}"), directoryManager, extensions: ["json"], cancellationToken))!.rows;
             }
             else
             {
@@ -63,7 +63,7 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerialize
     private async Task<FileInfo> SaveResultsAsPdfAsync(Uri raceResultUiUrl, CancellationToken cancellationToken)
     {
         var name = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(raceResultUiUrl.AbsoluteUri))).Replace("/", "_");
-        var filePath = Path.Combine(serializerOptions.outputDirectory, $"{name}-race-results.pdf");
+        var filePath = Path.Combine(directoryManager.collateralDir.FullName, $"{name}-race-results.pdf");
         var file = new FileInfo(filePath);
 
         if (file.Exists)

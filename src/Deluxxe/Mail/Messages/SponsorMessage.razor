@@ -1,0 +1,43 @@
+@using Deluxxe.Raffles
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@title</title>
+    <meta charset="utf-8">
+</head>
+<MessageStyle/>
+<body class="markdown-body">
+<p>@content</p>
+<br/>
+<table>
+    <tr>
+        <td><b>Name</b></td>
+        <td><b>Sponsor</b></td>
+        <td><b>Prize Description</b></td>
+        <td><b>Prize Unique Identifier</b></td>
+        <td><b>Email Address</b></td>
+    </tr>
+    @foreach (var winner in winners)
+    {
+        <tr>
+            @{
+                emailAddressMap.TryGetValue(winner.candidate.name, out var email);
+            }
+            <td>@winner.candidate.name</td>
+            <td>@winner.prizeDescription.sponsorName</td>
+            <td>@winner.prizeDescription.description</td>
+            <td>@winner.resourceId</td>
+            <td>@(string.IsNullOrEmpty(email) ? "TODO" : email)</td>
+        </tr>
+    }
+</table>
+</body>
+</html>
+
+@code {
+    [Parameter] public required string title { get; set; }
+    [Parameter] public required string content { get; set; }
+    [Parameter] public required List<PrizeWinner> winners { get; set; }
+    [Parameter] public required Dictionary<string, string> emailAddressMap { get; set; }
+}

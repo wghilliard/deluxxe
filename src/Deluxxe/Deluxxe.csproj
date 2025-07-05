@@ -14,7 +14,19 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="Microsoft.AspNetCore.Components" />
         <PackageReference Include="OpenTelemetry"/>
+        <PackageReference Include="Google.Apis.Sheets.v4" />
     </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Data\PreviousResults\2025-irdc-spring-into-summer-results.json" />
+      <_ContentIncludedByDefault Remove="Data\prize-descriptions.json" />
+      <_ContentIncludedByDefault Remove="Data\sat-race-results.json" />
+      <_ContentIncludedByDefault Remove="Data\sun-race-results.json" />
+    </ItemGroup>
+
+<!--    <ItemGroup>-->
+<!--      <AdditionalFiles Include="Mail\Messages\AnnouncementMessage.razor" />-->
+<!--    </ItemGroup>-->
 
 <!--    <ItemGroup>-->
 <!--        <Content Include="Data/**/*.*" Pack="True" PackagePath="contentFiles/Data">-->

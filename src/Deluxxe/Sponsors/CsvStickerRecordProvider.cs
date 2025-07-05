@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Sponsors;
 
-public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<CsvStickerRecordProvider> logger) : IStickerRecordProvider
+public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<CsvStickerRecordProvider> logger, IDirectoryManager directoryManager) : IStickerRecordProvider
 {
     public async Task<StickerParseResult> Get(Uri uri, string schemaVersion)
     {
@@ -13,7 +13,7 @@ public class CsvStickerRecordProvider(ActivitySource activitySource, ILogger<Csv
             return default;
         }
 
-        var fileHandle = FileUriParser.Parse(uri).First();
+        var fileHandle = FileUriParser.Parse(uri, directoryManager).First();
 
         await using Stream stickerStream = new FileStream(fileHandle!.FullName, FileMode.Open);
         using var reader = new StreamReader(stickerStream);

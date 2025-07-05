@@ -1,3 +1,4 @@
+using Deluxxe.Google;
 using Deluxxe.Mail;
 using Deluxxe.RaceResults;
 using Deluxxe.Raffles;
@@ -21,6 +22,7 @@ public static class HostExtensions
         services.AddSingleton<RepresentationCalculator>();
         services.AddSingleton<Renderer>();
         services.AddSingleton<HtmlRenderer>();
+        services.AddSingleton<GoogleSheetService>();
 
         services.AddTransient<PrizeRaffle>();
         return services;

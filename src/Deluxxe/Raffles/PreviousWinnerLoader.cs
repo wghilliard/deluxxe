@@ -3,13 +3,13 @@ using Deluxxe.IO;
 
 namespace Deluxxe.Raffles;
 
-public class PreviousWinnerLoader(ActivitySource activitySource, IRaffleResultReader resultReader)
+public class PreviousWinnerLoader(ActivitySource activitySource, IRaffleResultReader resultReader, IDirectoryManager directoryManager)
 {
-    public async Task<IList<PrizeWinner>> LoadAsync(Uri previousResultsUri, CancellationToken cancellationToken)
+    public async Task<IList<PrizeWinner>> LoadAsync(CancellationToken cancellationToken)
     {
         using var activity = activitySource.StartActivity("Loading previous results");
         var previousResults = new List<PrizeWinner>();
-        var fileHandles = FileUriParser.Parse(previousResultsUri).ToList();
+        var fileHandles = directoryManager.previousResultsDir.GetFiles().ToList();
         activity?.AddTag("fileCount", fileHandles.Count);
         foreach (var fileHandle in fileHandles)
         {

@@ -1,5 +1,7 @@
+using Deluxxe.IO;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit.Abstractions;
 
 namespace Deluxxe.Tests.Sponsors;
@@ -9,9 +11,9 @@ public class TestCsvStickerRecordProvider(ITestOutputHelper testOutputHelper) : 
     [Fact]
     public async Task TestStickerRecordProvider_IsSuccessful()
     {
-        var service = new CsvStickerRecordProvider(activitySource, loggerFactory.CreateLogger<CsvStickerRecordProvider>());
+        var service = new CsvStickerRecordProvider(activitySource, loggerFactory.CreateLogger<CsvStickerRecordProvider>(), new Mock<IDirectoryManager>().Object);
 
-        await using var stream = new FileStream(Path.Combine("Data", "car-to-sticker-mapping-2025-04-22.csv"), FileMode.Open);
+        await using var stream = new FileStream(Path.Combine("TestData", "car-to-sticker-mapping-2025-04-22.csv"), FileMode.Open);
         using var reader = new StreamReader(stream);
         var result = await service.ParseCsvAsync(reader, "1.0");
 

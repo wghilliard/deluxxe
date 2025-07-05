@@ -13,7 +13,6 @@ public record RaffleRunConfiguration
     public required string stickerMapSchemaVersion { get; init; }
     public required Uri prizeDescriptionUri { get; init; }
     public required List<RaceResultConfiguration> raceResults { get; init; }
-    public required Uri previousResultsUri { get; init; }
     public required Dictionary<string, string> conditions { get; init; }
     public required RaffleSerializerOptions serializerOptions { get; init; }
     public required RaffleConfiguration raffleConfiguration { get; init; }
@@ -23,5 +22,4 @@ public struct RaceResultConfiguration
 {
     public string sessionName { get; init; }
     public required string sessionId { get; init; }
-    public Uri raceResultUri { get; init; }
 }

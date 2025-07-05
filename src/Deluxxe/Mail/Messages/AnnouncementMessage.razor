@@ -1,5 +1,13 @@
 @using Deluxxe.Raffles
-<body font-family="Arial, Helvetica, sans-serif" style="font-size: 14px; line-height: 1.5;">
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@title</title>
+    <meta charset="utf-8">
+</head>
+<MessageStyle/>
+<body class="markdown-body">
 <p>Hello Drivers!</p>
 <p>The following table details our raffle winners!</p>
 <table>
@@ -77,8 +85,12 @@
     <li>For each prize in the raffle type (race vs event), prizes are awarded by randomly picking a Driver out of the
         eligible candidates
     </li>
-    <li>Each raffle (and prize shuffling) uses <a href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator?view=net-9.0">Pseudo Random Number Generation</a> 
-        with cryptographically strong random values. It’s the same sort of random number generation that keeps your website connections secure.
+    <li>Each raffle (and prize shuffling) uses
+        <a
+            href="https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator?view=net-9.0">Pseudo
+            Random Number Generation</a>
+        with cryptographically strong random values. It’s the same sort of random number generation that keeps your
+        website connections secure.
     </li>
     <li>I have verified the Pseudo Random Number Generation adheres to a Uniform Distribution using a Chi-Square test
         (n=100,000*10, df=28, significance=0.05, test statistic=33.3), this means that everyone should have equal odds
@@ -106,9 +118,12 @@
 </ul>
 <p>See ya on grid!</p>
 </body>
+</html>
 
 @code {
     [Parameter] public required RaffleResult raffleResult { get; set; }
 
     [Parameter] public required Dictionary<string, string> sponsorRepresentationTable { get; set; }
+
+    [Parameter] public required string title { get; set; }
 }
