@@ -2,12 +2,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Deluxxe.IO;
+using Deluxxe.PDF;
+using Deluxxe.RaceResults.SpeedHive;
 using Deluxxe.Raffles;
 
 namespace Deluxxe.RaceResults;
 
-public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerializerOptions serializerOptions, IDirectoryManager directoryManager)
+public class RaceResultsService(SpeedHiveClient speedHiveClient, DeluxxeSerializerOptions serializerOptions, IDirectoryManager directoryManager, RenderingClient renderingClient)
 {
+    private const string ResultsPageLocatorText = "Download CSV";
+
     public Task<IList<Driver>> GetAllDriversAsync(string sessionId, Dictionary<string, string> conditions, CancellationToken cancellationToken)
     {
         return GetAllDriversAsync(SpeedHiveClient.GetApiJsonUrlFromSessionId(sessionId), conditions, cancellationToken);
@@ -68,10 +72,13 @@ public class RaceResultsService(SpeedHiveClient speedHiveClient, RaffleSerialize
 
         if (file.Exists)
         {
-            return file;
+            if (serializerOptions.shouldOverwrite)
+            {
+                file.Delete();
+            }
         }
 
-        var pdfBytes = await speedHiveClient.GetResultsAsPdfAsync(raceResultUiUrl, cancellationToken);
+        var pdfBytes = await renderingClient.GetResultsAsPdfAsync(raceResultUiUrl, ResultsPageLocatorText, cancellationToken);
         await File.WriteAllBytesAsync(file.FullName, pdfBytes, cancellationToken);
 
         return file;

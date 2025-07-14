@@ -7,3 +7,12 @@ services:
       - "5778:5778"
       - "9411:9411"
       - "16686:16686"
+  chrome:
+    image: "ghcr.io/browserless/chromium:latest"
+    ports:
+      - "3000:3000"
+  proxy:
+    image: python:latest
+    ports:
+      - "3001:3001"
+    command: "python -m http.server 3001"

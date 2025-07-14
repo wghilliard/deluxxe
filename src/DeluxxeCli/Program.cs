@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Deluxxe.Extensions;
 using Deluxxe.IO;
+using Deluxxe.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -105,7 +106,7 @@ public static class Program
             MylapsAccountId = mylapsAccountId,
             EventId = eventId
         });
-        builder.Services.AddSingleton(new RaffleSerializerOptions
+        builder.Services.AddSingleton(new DeluxxeSerializerOptions
         {
             shouldOverwrite = true,
             writeIntermediates = true
@@ -193,10 +194,15 @@ public static class Program
             uniqueEventName = eventName
         };
         var directoryManager = new FileSystemDirectoryManager(ctx);
-        await using var reader = directoryManager.deluxxeConfigFile.OpenRead();
-        var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(reader);
-        reader.Close();
 
+        await using var raffleRunConfigReader = directoryManager.deluxxeConfigFile.OpenRead();
+        var raffleRunConfig = JsonSerializer.Deserialize<RaffleRunConfiguration>(raffleRunConfigReader);
+        raffleRunConfigReader.Close();
+        
+        var operatorConfigReader = directoryManager.operatorConfigFile.OpenRead();
+        var operatorConfig = JsonSerializer.Deserialize<OperatorConfiguration>(operatorConfigReader)!;
+        operatorConfigReader.Close();
+        
         if (raffleRunConfig is null)
         {
             await Console.Error.WriteLineAsync("No raffle run configuration found.");
@@ -208,6 +214,7 @@ public static class Program
         builder.Services.AddSingleton(raffleRunConfig);
         builder.Services.AddSingleton(raffleRunConfig.raffleConfiguration);
         builder.Services.AddSingleton(raffleRunConfig.serializerOptions);
+        builder.Services.AddSingleton(operatorConfig);
 
         builder.Services.AddHostedService<RenderEmailsCliWorker>();
         var host = builder.Build();

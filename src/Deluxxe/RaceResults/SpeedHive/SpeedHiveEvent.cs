@@ -17,6 +17,8 @@ public class SpeedHiveEvent
     public required SpeedHiveOrganization Organization { get; set; }
 }
 
+
+
 public class SpeedHiveOrganization
 {
     [JsonPropertyName("name")]

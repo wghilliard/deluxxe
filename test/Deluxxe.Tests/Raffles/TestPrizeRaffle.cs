@@ -152,6 +152,7 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
 
         var aggregatedResults = new Dictionary<string, int>();
         var candidateMapping = new Dictionary<string, int>();
+        var driverPerSponsorWinCount = new Dictionary<string, Dictionary<string, int>>();
 
         var samples = new List<int>();
 
@@ -171,6 +172,16 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
                 if (!aggregatedResults.TryAdd(winner.candidate.name, 1))
                 {
                     aggregatedResults[winner.candidate.name] += 1;
+                }
+
+                if (!driverPerSponsorWinCount.TryGetValue(winner.candidate.name, out var sponsorCount))
+                {
+                    driverPerSponsorWinCount[winner.candidate.name] = sponsorCount = new Dictionary<string, int>();
+                }
+
+                if (!sponsorCount.TryAdd(winner.prizeDescription.sponsorName, 1))
+                {
+                    sponsorCount[winner.prizeDescription.sponsorName] += 1;
                 }
 
                 samples.Add(candidateMapping[winner.candidate.name]);
@@ -195,6 +206,14 @@ public class TestPrizeRaffle(ITestOutputHelper testOutputHelper) : BaseTest(test
         {
             double diff = observed[i] - expected;
             chiSquare += diff * diff / expected;
+        }
+
+        foreach (var (driver, wins) in driverPerSponsorWinCount)
+        {
+            var minWin = wins.MinBy(x => x.Value);
+            var maxWin = wins.MaxBy(x => x.Value);
+            var avgWin = wins.Average(x => x.Value);
+            _testOutputHelper.WriteLine($"Driver {driver} min wins: {minWin.Value}/{maxWin.Value}/{avgWin} - {minWin.Key}/{maxWin.Key}");
         }
 
         _testOutputHelper.WriteLine($"degrees of freedom: {nDrivers - 1}, chi square: {chiSquare}, criticalValue: {criticalValue}, expectedValue:{expected}");

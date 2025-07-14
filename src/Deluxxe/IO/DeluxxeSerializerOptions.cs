@@ -1,8 +1,8 @@
 namespace Deluxxe.IO;
 
-public record RaffleSerializerOptions
+public record DeluxxeSerializerOptions
 {
     public bool shouldOverwrite { get; init; }
-    
+
     public bool writeIntermediates { get; init; }
 }

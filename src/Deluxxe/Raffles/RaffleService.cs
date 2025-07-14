@@ -11,7 +11,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
     public async Task<DrawingResult> ExecuteRaffleAsync(
         RaffleExecutionConfiguration raffleExecutionConfiguration,
         IList<PrizeDescription> prizeDescriptions,
-        IList<Driver> drivers,
+        IList<Driver> eligibleDrivers,
         IList<PrizeWinner> previousWinners,
         PrizeLimitChecker prizeLimitChecker,
         Func<int, ResourceIdBuilder> resourceIdBuilder
@@ -65,7 +65,7 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
 
             var scopedResourceIdBuilder = resourceIdBuilder(round);
 
-            var drawingResult = raffle.DrawPrizes(scopedPrizeDescriptions, drivers, scopedPreviousWinners, new DrawingConfiguration
+            var drawingResult = raffle.DrawPrizes(scopedPrizeDescriptions, eligibleDrivers, scopedPreviousWinners, new DrawingConfiguration
                 {
                     DrawingType = raffleExecutionConfiguration.DrawingType,
                     Season = raffleExecutionConfiguration.Season,
@@ -93,7 +93,9 @@ public class RaffleService(ActivitySource activitySource, StickerProviderUriReso
         {
             drawingType = raffleExecutionConfiguration.DrawingType,
             winners = results.SelectMany(result => result.winners).ToList(),
-            notAwarded = scopedPrizeDescriptions
+            notAwarded = scopedPrizeDescriptions,
+            startTime = raffleExecutionConfiguration.SessionStartTime,
+            eligibleCandidatesCount = eligibleDrivers.Count,
         };
     }
 }

@@ -4,6 +4,7 @@ using System.Text.Json;
 using Deluxxe.Google;
 using Deluxxe.IO;
 using Deluxxe.Mail;
+using Deluxxe.PDF;
 using Deluxxe.Raffles;
 using Deluxxe.Sponsors;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +21,7 @@ public class RenderEmailsCliWorker(
     IDirectoryManager directoryManager,
     Renderer renderer,
     GoogleSheetService googleSheetService,
+    ProxyClient proxyClient,
     ILogger<RenderEmailsCliWorker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
@@ -35,13 +37,14 @@ public class RenderEmailsCliWorker(
                 carNumber = winner.candidate.carNumber,
                 name = winner.candidate.name,
             })
+            .Distinct()
             .ToList());
 
         // announcement email
         var announcementText = await renderer.RenderAnnouncement(raffleResult, sponsorRepresentationTable);
         const string announcementHtmlFileName = "announcement-email.html";
         var announcementFile = Path.Combine(directoryManager.collateralDir.FullName, announcementHtmlFileName);
-        await WriteEmailToFileAsync(announcementFile, announcementText);
+        await WriteToFileAsync(announcementFile, announcementText);
 
         // bimmerworld email
 
@@ -60,7 +63,7 @@ public class RenderEmailsCliWorker(
         var sheetsService = await googleSheetService.AuthenticateAsync(credPath, tokenPath);
         var values = await googleSheetService.DownloadSheetDataAsync(sheetsService, config.SpreadsheetId, config.RangeName);
 
-        if (values == null || values.Count == 0)
+        if (values.Count == 0)
         {
             logger.LogInformation("No data found in the sheet.");
             completionToken.Complete();
@@ -94,33 +97,40 @@ public class RenderEmailsCliWorker(
         var bimmerworldText = await renderer.RenderBimmerworld(raffleResult, emailAddressMap);
         const string bimmerworldHtmlFileName = "bimmerworld-email.html";
         var bimmerworldFile = Path.Combine(directoryManager.collateralDir.FullName, bimmerworldHtmlFileName);
-        await WriteEmailToFileAsync(bimmerworldFile, bimmerworldText);
+        await WriteToFileAsync(bimmerworldFile, bimmerworldText);
 
         // aaf
         var aafText = await renderer.RenderAaf(raffleResult, emailAddressMap);
         const string aafHtmlFileName = "aaf-email.html";
         var aafFile = Path.Combine(directoryManager.collateralDir.FullName, aafHtmlFileName);
-        await WriteEmailToFileAsync(aafFile, aafText);
+        await WriteToFileAsync(aafFile, aafText);
 
         // ror
         var rorText = await renderer.RenderRoR(raffleResult, emailAddressMap);
         const string rorHtmlFileName = "ror-email.html";
         var rorFile = Path.Combine(directoryManager.collateralDir.FullName, rorHtmlFileName);
-        await WriteEmailToFileAsync(rorFile, rorText);
+        await WriteToFileAsync(rorFile, rorText);
 
         // toyo
         var toyoTextMap = await renderer.RenderDriverToyo(raffleResult);
+        var toyoAwardMap = await renderer.RenderToyoAwardCollateral(raffleResult);
         foreach (var (shortName, text) in toyoTextMap)
         {
             var toyoFileName = $"{shortName}-toyo-email.html";
             var toyoFile = Path.Combine(directoryManager.collateralDir.FullName, toyoFileName);
-            await WriteEmailToFileAsync(toyoFile, text);
+            await WriteToFileAsync(toyoFile, text);
+
+            var toyoAwardFileName = $"{shortName}-toyo-award.html";
+            var toyoAwardFile = Path.Combine(directoryManager.collateralDir.FullName, toyoAwardFileName);
+            await WriteToFileAsync(toyoAwardFile, toyoAwardMap[shortName]);
+
+            await proxyClient.UploadAsync(toyoAwardFileName, toyoAwardMap[shortName], token);
         }
 
         completionToken.Complete();
     }
 
-    private static async Task WriteEmailToFileAsync(string fileName, string content)
+    private static async Task WriteToFileAsync(string fileName, string content)
     {
         if (File.Exists(fileName))
         {

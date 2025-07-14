@@ -5,6 +5,7 @@ public interface IDirectoryManager
     DirectoryInfo outputDir { get; }
     DirectoryInfo eventDir { get; }
     DirectoryInfo configDir { get; }
+    FileInfo operatorConfigFile { get; }
     DirectoryInfo deluxxeDir { get; }
 
     string deluxxeDirRelative { get; }

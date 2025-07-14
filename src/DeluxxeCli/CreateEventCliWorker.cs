@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Deluxxe.RaceResults;
+using Deluxxe.RaceResults.SpeedHive;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +34,7 @@ public class CreateEventCliWorker(
         collateralPath.Create();
 
         int? eventId = options.EventId;
-        List<SpeedHiveSession> raceSessions = [];
+        List<SpeedHiveSession> raceSessions;
 
         if (!string.IsNullOrEmpty(options.MylapsAccountId))
         {
@@ -73,6 +74,10 @@ public class CreateEventCliWorker(
                 .Where(s => string.Equals(s.Type, "race", StringComparison.OrdinalIgnoreCase))
                 .ToList();
             logger.LogInformation($"Found {raceSessions.Count} Group 1 race sessions.");
+        }
+        else
+        {
+            throw new ArgumentException($"Could not find event details for event ID {eventId.Value}. Please check the event ID.");
         }
 
         var carMappingFile = outputDir.GetFiles("car-to-sticker-mapping-*.csv").MaxBy(f => f.Name);
@@ -131,6 +136,7 @@ public class CreateEventCliWorker(
             {
                 sessionName = session.Name.Split(' ')[0].ToLower(),
                 sessionId = session.Id.ToString(),
+                startTime = session.StartTime
             });
         }
 
@@ -142,7 +148,8 @@ public class CreateEventCliWorker(
             eventId = eventId.Value.ToString(),
             stickerMapUri = new Uri($"file://local/{carMappingFile.Name}"),
             prizeDescriptionUri = new Uri($"file://local/{prizeFile.Name}"),
-            raceResults = raceResults
+            raceResults = raceResults,
+            trackName = eventDetails.Location.Name
         };
 
         var configPath = Path.Combine(deluxxePath.FullName, "deluxxe.json");

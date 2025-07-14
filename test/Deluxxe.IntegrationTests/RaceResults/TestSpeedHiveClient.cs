@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Deluxxe.RaceResults;
+using Deluxxe.RaceResults.SpeedHive;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 

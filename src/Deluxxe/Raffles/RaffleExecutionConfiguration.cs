@@ -11,4 +11,6 @@ public struct RaffleExecutionConfiguration
     public required int RandomShuffleSeed { get; init; }
     public required int RandomDrawingSeed { get; init; }
     public required bool LimitOnePrizePerDriverPerWeekend { get; init; }
+    
+    public required string SessionStartTime { get; init; }
 }

@@ -1,0 +1,89 @@
+@using Deluxxe.Raffles
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>TOYO TIRES Rebate Award Application - BMW PRO3 Races</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+<div style="text-align:center;"><img src="logo_pro3_square.png" alt="PRO3 Logo" style="width:300px;"/></div>
+<h2 style="text-align:center;">Exhibit B</h2>
+<h1 style="text-align:center; font-size:1.3em;">TOYO TIRES Rebate Award Application - BMW PRO3 Races</h1>
+<p style="text-align:center;">Redeemable for: Toyo RAI or RR, Award based on Raffle</p>
+<div style="max-width:700px; margin:auto;">
+    <label>Driver's Name: <span
+            style="text-decoration: underline; font-weight:bold;">@winner.candidate.name</span></label>
+    <br/>
+    <label>Street Address: <span
+            style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span></label>
+    <br/>
+    <label>City/State: <span
+            style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span>
+        Zip: <span
+            style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span></label>
+    <br/>
+    <label>Phone: <span
+            style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span></label>
+    <br/>
+
+    <h3 style="text-decoration: underline;">RACE INFORMATION — <span style="font-weight:normal;">Limit one feature
+                race per day.</span></h3>
+    <label>Event Name: <span style="text-decoration: underline; font-weight:bold;">@eventName</span> Date:
+        <span style="text-decoration: underline; font-weight:bold;">@eventDate</span></label>
+    <br/>
+    <label>Name of Race Course: <span style="text-decoration: underline; font-weight:bold;">@trackName</span></label>
+    <br/>
+    <label>Make and Model of Car: <span style="text-decoration: underline; font-weight:bold;">BMW E30</span></label>
+    <br/>
+    <label>Toyo Tire Size: <span style="text-decoration: underline; font-weight:bold;">225/50R15</span></label>
+    <br/>
+
+    <h3 style="text-decoration: underline;">Verification of Tires Used and Display of Decals:</h3>
+    <label>Technical Official Name: <span style="text-decoration: underline; font-weight:bold;">@officialsName</span></label><br/>
+    <label>Signature: <span
+            style="display:inline-block; width:150px; border-bottom:1px solid #000;"></span></label><br/>
+    <label>Qualifying Toyo Decals (Official's Initials): <span style="text-decoration: underline; font-weight:bold;">@officialsInitials</span></label><br/><br/>
+
+    <h3 style="text-decoration: underline;">PRO-3 Race Results:</h3>
+    <label>Number of PRO3 cars taking green flag: <span style="text-decoration: underline; font-weight:bold;">@numCars</span></label><br/>
+    <label>TOYO BUCKS: <span style="text-decoration: underline; font-weight:bold;">@winner.prizeDescription.description</span></label><br/><br/>
+
+    <h3 style="text-decoration: underline;">Award Schedule:</h3>
+    <p><b>3-5: $85, 6-10: $175, 11-15: $265, 16-20: $355, 21-24: $440, 25-30: $550, 31+: $600.</b></p>
+    <p>The amount of the award will be split between two drivers that are chosen by raffle at each race. The Award
+        Schedule shows the split amount each may receive. Driver must take the green flag to be eligible for the
+        raffle.</p>
+    <ul>
+        <li>The above rebate awards are redeemable through any official Toyo Tires Motorsports dealer towards the
+            purchase of new Toyo Proxes RR or RAI Tires.
+        </li>
+        <li>"Toyo Bucks" rebates must be claimed within 30 days from the event date. Rebates must be redeemed at an
+            official Toyo Motorsports dealer within 90 days from when the rebate was issued.
+        </li>
+        <li>To be eligible, PRO3 applicant must have competed on Toyo RAI or RR tires and displayed official Toyo
+            Decals consisting of four (4) 2x18 on the front, rear and both sides of car. Lettering to be contrasting
+            color to car color.
+        </li>
+    </ul>
+    <p style="font-weight:bold; text-align:center; font-size:1.1em; text-decoration:underline;">THIS FORM AND A COPY
+        OF THE OFFICIAL RACE RESULTS MUST BE SUBMITTED ONLINE AT WWW.TOYORACERREBATES.COM</p>
+    <br/>
+    <br/>
+    <p>@winner.resourceId</p>
+</div>
+</body>
+
+</html>
+
+@code {
+    [Parameter] public required PrizeWinner winner { get; set; }
+    [Parameter] public required int numCars { get; set; }
+    [Parameter] public required string eventName { get; set; }
+    [Parameter] public required string eventDate { get; set; }
+    [Parameter] public required string trackName { get; set; }
+    [Parameter] public required string officialsInitials { get; set; }
+    [Parameter] public required string officialsName { get; set; }
+}

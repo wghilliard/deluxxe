@@ -1,12 +1,17 @@
-
 using System.Text.Json.Serialization;
 
-namespace Deluxxe.SpeedHive;
+namespace Deluxxe.RaceResults.SpeedHive;
 
 public class SpeedHiveEventDetails
 {
     [JsonPropertyName("sessions")]
     public required SpeedHiveSessions Sessions { get; set; }
+
+    [JsonPropertyName("location")]
+    public required SpeedHiveEventLocation Location { get; set; }
+
+    [JsonPropertyName("startDate")]
+    public required string StartDate { get; init; }
 }
 
 public class SpeedHiveSessions
@@ -31,4 +36,16 @@ public class SpeedHiveSession
 
     [JsonPropertyName("type")]
     public required string Type { get; set; }
+
+    [JsonPropertyName("name")]
+    public required string Name { get; set; }
+    
+    [JsonPropertyName("startTime")]
+    public required string StartTime { get; set; }
+}
+
+public class SpeedHiveEventLocation
+{
+    [JsonPropertyName("name")]
+    public required string Name { get; set; }
 }

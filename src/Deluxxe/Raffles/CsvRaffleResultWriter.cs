@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Deluxxe.Raffles;
 
-public class CsvRaffleResultWriter(ILogger<CsvRaffleResultWriter> logger, RaffleSerializerOptions options, IDirectoryManager directoryManager) : IRaffleResultWriter
+public class CsvRaffleResultWriter(ILogger<CsvRaffleResultWriter> logger, DeluxxeSerializerOptions options, IDirectoryManager directoryManager) : IRaffleResultWriter
 {
     public async Task<Uri> WriteAsync(RaffleResult result, CancellationToken cancellationToken)
     {

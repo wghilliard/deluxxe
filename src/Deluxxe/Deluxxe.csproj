@@ -23,15 +23,4 @@
       <_ContentIncludedByDefault Remove="Data\sat-race-results.json" />
       <_ContentIncludedByDefault Remove="Data\sun-race-results.json" />
     </ItemGroup>
-
-<!--    <ItemGroup>-->
-<!--      <AdditionalFiles Include="Mail\Messages\AnnouncementMessage.razor" />-->
-<!--    </ItemGroup>-->
-
-<!--    <ItemGroup>-->
-<!--        <Content Include="Data/**/*.*" Pack="True" PackagePath="contentFiles/Data">-->
-<!--            <CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-<!--            <CopyToPublishDirectory>Always</CopyToPublishDirectory>-->
-<!--        </Content>-->
-<!--    </ItemGroup>-->
 </Project>

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using Deluxxe.RaceResults;
+using Deluxxe.RaceResults.SpeedHive;
 using Moq;
 using Moq.Protected;
 using Xunit.Abstractions;

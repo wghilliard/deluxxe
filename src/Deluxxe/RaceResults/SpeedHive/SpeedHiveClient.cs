@@ -1,11 +1,10 @@
 using System.Data;
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Net.Http.Json;
-using Microsoft.Playwright;
 
-namespace Deluxxe.RaceResults
+namespace Deluxxe.RaceResults.SpeedHive
 {
     public class SpeedHiveClient
     {
@@ -34,17 +33,6 @@ namespace Deluxxe.RaceResults
         public async Task<SpeedHiveEventDetails?> GetEventDetailsAsync(int eventId, CancellationToken token = default)
         {
             return await _client.GetFromJsonAsync<SpeedHiveEventDetails>(string.Format(EventsDetailsJsonBaseUrl, ApiVersion, eventId), token);
-        }
-
-        public async Task<byte[]> GetResultsAsPdfAsync(Uri uiUrl, CancellationToken token = default)
-        {
-            using var playwright = await Playwright.CreateAsync();
-            await using var browser = await playwright.Chromium.LaunchAsync();
-            var page = await browser.NewPageAsync();
-            await page.GotoAsync(uiUrl.ToString());
-            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new PageWaitForLoadStateOptions { Timeout = 5000 });
-            var pdfBytes = await page.PdfAsync(new PagePdfOptions { PrintBackground = true });
-            return pdfBytes;
         }
 
         public async Task<RaceResultResponse> GetResultsFromJsonUrl(Uri url, CancellationToken token = default)

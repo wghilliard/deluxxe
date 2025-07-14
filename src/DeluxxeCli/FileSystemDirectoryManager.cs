@@ -9,6 +9,9 @@ public class FileSystemDirectoryManager(RuntimeContext runtimeContext) : IDirect
     private const string DeluxxeDirectoryName = "deluxxe";
     private const string PreviousResultsDirectoryName = "previous-results";
 
+    private const string OperatorConfigFileName = "operator_config.json";
+    private const string DeluxxeConfigFileName = "deluxxe.json";
+
     public DirectoryInfo outputDir { get; } = runtimeContext.outputDir;
 
     public DirectoryInfo eventDir
@@ -25,6 +28,8 @@ public class FileSystemDirectoryManager(RuntimeContext runtimeContext) : IDirect
     }
 
     public DirectoryInfo configDir => new(Path.Combine(outputDir.FullName, ConfigurationDirectoryName));
+
+    public FileInfo operatorConfigFile => new(Path.Combine(configDir.FullName, OperatorConfigFileName));
 
     public DirectoryInfo deluxxeDir
     {
@@ -50,7 +55,7 @@ public class FileSystemDirectoryManager(RuntimeContext runtimeContext) : IDirect
                 throw new InvalidOperationException("Event name is not set in the runtime context.");
             }
 
-            return new FileInfo(Path.Combine(deluxxeDir.FullName, "deluxxe.json"));
+            return new FileInfo(Path.Combine(deluxxeDir.FullName, DeluxxeConfigFileName));
         }
     }
 
