@@ -11,8 +11,8 @@ services:
     image: "ghcr.io/browserless/chromium:latest"
     ports:
       - "3000:3000"
-  proxy:
-    image: python:latest
-    ports:
-      - "3001:3001"
-    command: "python -m http.server 3001"
+#  proxy:
+#    image: python:latest
+#    ports:
+#      - "3001:3001"
+#    command: "python -m http.server 3001"

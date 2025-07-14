@@ -9,28 +9,34 @@
 </head>
 
 <body>
-<div style="text-align:center;"><img src="logo_pro3_square.png" alt="PRO3 Logo" style="width:300px;"/></div>
-<h2 style="text-align:center;">Exhibit B</h2>
+<h3 style="text-align:center;">Exhibit B</h3>
+<div style="text-align:center;"><img src="data:image/png;base64,@encodedLogo" alt="PRO3 Logo" style="width:300px;"/></div>
 <h1 style="text-align:center; font-size:1.3em;">TOYO TIRES Rebate Award Application - BMW PRO3 Races</h1>
 <p style="text-align:center;">Redeemable for: Toyo RAI or RR, Award based on Raffle</p>
 <div style="max-width:700px; margin:auto;">
-    <label>Driver's Name: <span
+    <label>Driver's Name:
+        <span
             style="text-decoration: underline; font-weight:bold;">@winner.candidate.name</span></label>
     <br/>
-    <label>Street Address: <span
+    <label>Street Address:
+        <span
             style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span></label>
     <br/>
-    <label>City/State: <span
+    <label>City/State:
+        <span
             style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span>
-        Zip: <span
+        Zip:
+        <span
             style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span></label>
     <br/>
-    <label>Phone: <span
+    <label>Phone:
+        <span
             style="display:inline-block; text-decoration: underline; font-weight:bold; width:200px; border-bottom:1px solid #000;"></span></label>
     <br/>
 
-    <h3 style="text-decoration: underline;">RACE INFORMATION — <span style="font-weight:normal;">Limit one feature
-                race per day.</span></h3>
+    <h3 style="text-decoration: underline;">RACE INFORMATION —
+        <span style="font-weight:normal;">Limit one feature
+            race per day.</span></h3>
     <label>Event Name: <span style="text-decoration: underline; font-weight:bold;">@eventName</span> Date:
         <span style="text-decoration: underline; font-weight:bold;">@eventDate</span></label>
     <br/>
@@ -43,8 +49,7 @@
 
     <h3 style="text-decoration: underline;">Verification of Tires Used and Display of Decals:</h3>
     <label>Technical Official Name: <span style="text-decoration: underline; font-weight:bold;">@officialsName</span></label><br/>
-    <label>Signature: <span
-            style="display:inline-block; width:150px; border-bottom:1px solid #000;"></span></label><br/>
+    <label style="display:inline-block;">Signature: <span ><img src="data:image/png;base64,@encodedSignature" alt="@officialsName signature" width="100px"/></span></label><br/>
     <label>Qualifying Toyo Decals (Official's Initials): <span style="text-decoration: underline; font-weight:bold;">@officialsInitials</span></label><br/><br/>
 
     <h3 style="text-decoration: underline;">PRO-3 Race Results:</h3>
@@ -86,4 +91,6 @@
     [Parameter] public required string trackName { get; set; }
     [Parameter] public required string officialsInitials { get; set; }
     [Parameter] public required string officialsName { get; set; }
+    [Parameter] public required string encodedLogo { get; set; }
+    [Parameter] public required string encodedSignature { get; set; }
 }

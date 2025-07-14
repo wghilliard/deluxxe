@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using Deluxxe.IO;
 using Deluxxe.Mail.Collateral;
 using Deluxxe.Mail.Messages;
 using Deluxxe.Raffles;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Deluxxe.Mail;
 
-public class Renderer(ActivitySource activitySource, HtmlRenderer htmlRenderer, OperatorConfiguration operatorConfiguration)
+public class Renderer(ActivitySource activitySource, HtmlRenderer htmlRenderer, OperatorConfiguration operatorConfiguration, IDirectoryManager directoryManager)
 {
     public async Task<string> RenderAnnouncement(RaffleResult raffleResult, IDictionary<string, string> sponsorRepresentationTable)
     {
@@ -95,6 +96,15 @@ public class Renderer(ActivitySource activitySource, HtmlRenderer htmlRenderer, 
             .Where(tuple => tuple.winner.prizeDescription.sponsorName == SponsorConstants.ToyoTires)
             .ToList();
 
+        var logoFile = new FileInfo(Path.Combine(directoryManager.staticContentDir.FullName, "pro3-logo.png"));
+        var signatureFile = new FileInfo(Path.Combine(directoryManager.staticContentDir.FullName, "toyo-signature.png"));
+
+        var logoBytes = await File.ReadAllBytesAsync(logoFile.FullName);
+        var encodedLogo = Convert.ToBase64String(logoBytes);
+
+        var signatureBytes = await File.ReadAllBytesAsync(signatureFile.FullName);
+        var encodedSignature = Convert.ToBase64String(signatureBytes);
+
         foreach (var (winner, drawing) in winners)
         {
             var shortName = $"{string.Concat(winner.candidate.name.Split(' ').Select(word => word[0])).ToLower()}-{winner.candidate.carNumber}";
@@ -109,6 +119,8 @@ public class Renderer(ActivitySource activitySource, HtmlRenderer htmlRenderer, 
                     { "numCars", drawing.eligibleCandidatesCount },
                     { "officialsInitials", string.Concat(operatorConfiguration.name.Split(' ').Select(a => a.First())) },
                     { "officialsName", operatorConfiguration.name },
+                    { "encodedLogo", encodedLogo },
+                    { "encodedSignature", encodedSignature }
                 };
 
                 var parameters = ParameterView.FromDictionary(dictionary);

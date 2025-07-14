@@ -21,7 +21,7 @@ public class RenderEmailsCliWorker(
     IDirectoryManager directoryManager,
     Renderer renderer,
     GoogleSheetService googleSheetService,
-    ProxyClient proxyClient,
+    RenderingClient renderingClient,
     ILogger<RenderEmailsCliWorker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
@@ -124,7 +124,10 @@ public class RenderEmailsCliWorker(
             var toyoAwardFile = Path.Combine(directoryManager.collateralDir.FullName, toyoAwardFileName);
             await WriteToFileAsync(toyoAwardFile, toyoAwardMap[shortName]);
 
-            await proxyClient.UploadAsync(toyoAwardFileName, toyoAwardMap[shortName], token);
+            var toyoAwardPdfFileName = $"{shortName}-toyo-award.pdf";
+            var toyoAwardPdfFile = Path.Combine(directoryManager.collateralDir.FullName, toyoAwardPdfFileName);
+            var toyoAwardPdf = await renderingClient.RenderContentAsPdfAsync(toyoAwardMap[shortName], token);
+            await WriteToFileAsync(toyoAwardPdfFile, toyoAwardPdf);
         }
 
         completionToken.Complete();
@@ -140,5 +143,17 @@ public class RenderEmailsCliWorker(
         await using var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true);
         await using var writer = new StreamWriter(stream, Encoding.UTF8);
         await writer.WriteAsync(content);
+    }
+
+    private static async Task WriteToFileAsync(string fileName, byte[] content)
+    {
+        if (File.Exists(fileName))
+        {
+            File.Delete(fileName);
+        }
+
+        await using var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true);
+        // await using var writer = new Strea(stream);
+        await stream.WriteAsync(content);
     }
 }

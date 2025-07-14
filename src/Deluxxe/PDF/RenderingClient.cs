@@ -40,4 +40,27 @@ public class RenderingClient(ActivitySource activitySource, IPlaywright playwrig
 
         return pdfBytes;
     }
+
+    public async Task<byte[]> RenderContentAsPdfAsync(string content, CancellationToken token = default)
+    {
+        using var activity = activitySource.StartActivity();
+        activity?.AddTag("timeout", Timeout);
+
+        await using var browser = await playwright.Chromium.ConnectAsync("ws://localhost:3000/chromium/playwright", _browserTypeConnectOptions);
+
+        activity?.AddEvent(new ActivityEvent("connected-to-browser"));
+
+        var page = await browser.NewPageAsync();
+        await page.SetViewportSizeAsync(794, 1123);
+        activity?.SetTag("viewport-width", 794);
+        activity?.SetTag("viewport-height", 1123);
+
+        await page.SetContentAsync(content);
+        activity?.AddEvent(new ActivityEvent("initial-page-loaded"));
+
+        var pdfBytes = await page.PdfAsync(new PagePdfOptions { PrintBackground = true });
+        activity?.AddEvent(new ActivityEvent("pdf-rendered"));
+
+        return pdfBytes;
+    }
 }

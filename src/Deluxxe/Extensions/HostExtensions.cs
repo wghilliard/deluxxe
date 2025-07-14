@@ -39,7 +39,6 @@ public static class HostExtensions
 
         // Deluxxe.PDF
         services.AddSingleton<RenderingClient>();
-        services.AddSingleton<ProxyClient>();
         services.AddSingleton<IPlaywright>(_ => Playwright.CreateAsync().GetAwaiter().GetResult());
 
         return services;

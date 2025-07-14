@@ -8,11 +8,14 @@ public class FileSystemDirectoryManager(RuntimeContext runtimeContext) : IDirect
     private const string CollateralDirectoryName = "collateral";
     private const string DeluxxeDirectoryName = "deluxxe";
     private const string PreviousResultsDirectoryName = "previous-results";
+    private const string StaticContentDirectoryName = "static-content";
 
     private const string OperatorConfigFileName = "operator_config.json";
     private const string DeluxxeConfigFileName = "deluxxe.json";
 
     public DirectoryInfo outputDir { get; } = runtimeContext.outputDir;
+
+    public DirectoryInfo staticContentDir => new(Path.Combine(outputDir.FullName, StaticContentDirectoryName));
 
     public DirectoryInfo eventDir
     {
